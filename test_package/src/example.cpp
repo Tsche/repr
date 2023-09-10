@@ -1,12 +1,7 @@
-#include "repr.h"
-#include <vector>
-#include <string>
+#include <repr>
+#include <iostream>
 
 int main() {
-    repr();
-
-    std::vector<std::string> vec;
-    vec.push_back("test_package");
-
-    repr_print_vector(vec);
+    auto str = repr(nullptr);
+    std::cout << "repr(nullptr) = " << str;
 }

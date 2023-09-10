@@ -16,8 +16,8 @@ class reprRecipe(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {"shared": [True, False], "fPIC": [True, False], "test": [True, False]}
+    default_options = {"shared": False, "fPIC": True, "test": False}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
@@ -30,6 +30,10 @@ class reprRecipe(ConanFile):
         if self.options.shared:
             self.options.rm_safe("fPIC")
 
+    def requirements(self):
+        if self.options.test:
+            self.test_requires("gtest/1.14.0")
+
     def layout(self):
         cmake_layout(self)
 
@@ -41,7 +45,7 @@ class reprRecipe(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure()
+        cmake.configure(variables={'ENABLE_TESTS': self.options.test})
         cmake.build()
 
     def package(self):
@@ -51,7 +55,6 @@ class reprRecipe(ConanFile):
     def package_info(self):
         self.cpp_info.libs = ["repr"]
 
-    
-
-    
-
+    def test(self):
+        cmake = CMake(self)
+        cmake.test()

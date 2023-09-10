@@ -1,0 +1,10 @@
+#pragma once
+
+#include <string>
+#include <detail/visibility.h>
+#include <detail/fundamental.h>
+#include <detail/pointer.h>
+#include <detail/iterable.h>
+
+template <typename T>
+EXPORT std::string repr(T) = delete;
