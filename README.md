@@ -67,7 +67,7 @@ You can customize the representation of user-defined types by overloading the `r
 struct MyType {
     unsigned value;
 
-    MyType(int val) : value(val) {}
+    MyType(unsigned val) : value(val) {}
 
     // Custom representation for MyType
     std::string repr() const {
