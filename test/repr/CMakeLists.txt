@@ -3,4 +3,5 @@ target_sources(repr_test PRIVATE
   pointer.cpp
   initializer_list.cpp
   pair.cpp
+  customization.cpp
 )

@@ -1,9 +1,5 @@
 #pragma once
-
 #include <string>
-
-#include <librepr/detail/default.h>
-#include <librepr/detail/visibility.h>
 
 #include <librepr/typename.h>
 #include <librepr/repr.h>
@@ -11,9 +7,6 @@
 namespace librepr {
 struct repr_wrapper {
   template <typename T>
-    requires requires(T const& obj) {
-      { librepr::repr(obj) } -> std::same_as<std::string>;
-    }
   auto operator()(T const& obj) const  -> std::string {
     //TODO this could be static once msvc supports it
     return librepr::repr(obj); 

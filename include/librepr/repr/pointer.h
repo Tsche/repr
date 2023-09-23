@@ -12,8 +12,8 @@ EXPORT std::string repr(char const* obj);
 
 template <typename T>
   requires std::is_pointer<T>::value
-EXPORT std::string repr(T obj) {
-  return std::format("({}){:p}", get_name<T>(), static_cast<void*>(obj));
+EXPORT std::string repr(T const& obj) {
+  return std::format("({}){:p}", get_name<T>(), static_cast<void const*>(obj));  
 }
 
 }  // namespace librepr
