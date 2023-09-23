@@ -1,6 +1,7 @@
 #include <format>
-#include <detail/fundamental.h>
+#include <librepr/repr/fundamental.h>
 
+namespace librepr {
 // Boolean type
 std::string repr(bool obj) {
   return (obj) ? "true" : "false";
@@ -39,23 +40,23 @@ std::string repr(unsigned long long obj) {
   return std::format("{}ULL", obj);
 }
 
-
 // Floating-point types
 std::string repr(float obj) {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}F", obj, (is_integer)?".0":"");
+  return std::format("{}{}F", obj, (is_integer) ? ".0" : "");
 }
 
 std::string repr(double obj) {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}", obj, (is_integer)?".0":"");
+  return std::format("{}{}", obj, (is_integer) ? ".0" : "");
 }
 std::string repr(long double obj) {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}L", obj, (is_integer)?".0":"");
+  return std::format("{}{}L", obj, (is_integer) ? ".0" : "");
 }
 
 // Character types
 std::string repr(char obj) {
   return std::format("'{:c}'", obj);
 }
+}  // namespace repr_v1

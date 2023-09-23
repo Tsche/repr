@@ -1,0 +1,16 @@
+ColumnLimit: 120
+BasedOnStyle: Chromium
+IndentWidth: 2
+AccessModifierOffset: -2
+
+AlignConsecutiveAssignments: true
+
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+AllowShortBlocksOnASingleLine: true
+
+SortIncludes: false

@@ -1,13 +1,18 @@
 cmake_minimum_required(VERSION 3.15)
+include(cmake/warnings.cmake)
+
 project(repr CXX)
 
 add_library(repr "")
+enable_warnings(repr)
+set_property(TARGET repr PROPERTY CXX_STANDARD 23)
 
 target_include_directories(repr PUBLIC 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-set_property(TARGET repr PROPERTY CXX_STANDARD 23)
+add_subdirectory(src)
+
 
 option(ENABLE_TESTS "Enable tests" OFF)
 if(ENABLE_TESTS)
@@ -36,6 +41,3 @@ install(TARGETS ${TARGET}
         ARCHIVE DESTINATION lib # Windows import libraries (.lib)
         RUNTIME DESTINATION bin # Windows DLLs
         LIBRARY DESTINATION lib) # shared libraries (ie Linux .so)
-
-
-add_subdirectory(src)

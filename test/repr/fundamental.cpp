@@ -1,17 +1,16 @@
 #include <gtest/gtest.h>
 #include <repr>
 
-
 TEST(fundamental, bool) {
   EXPECT_EQ(repr(true), "true");
   EXPECT_EQ(repr(false), "false");
 }
 
 TEST(fundamental, short) {
-  EXPECT_EQ(repr(short(0)), "0");
-  EXPECT_EQ(repr(short(1)), "1");
-  EXPECT_EQ(repr((unsigned short)0), "0");
-  EXPECT_EQ(repr((unsigned short)1), "1");
+  EXPECT_EQ(repr(static_cast<short>(0)), "0");
+  EXPECT_EQ(repr(static_cast<short>(1)), "1");
+  EXPECT_EQ(repr(static_cast<unsigned short>(0)), "0");
+  EXPECT_EQ(repr(static_cast<unsigned short>(1)), "1");
 }
 
 TEST(fundamental, int) {
@@ -61,5 +60,5 @@ TEST(fundamental, long_double) {
 
 TEST(fundamental, char) {
   EXPECT_EQ(repr('a'), "'a'");
-  EXPECT_EQ(repr((char)0xff), "'\xFF'");
+  EXPECT_EQ(repr('\xFF'), "'\xFF'");
 }
