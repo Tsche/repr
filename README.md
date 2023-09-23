@@ -65,18 +65,18 @@ You can customize the representation of user-defined types by overloading the `r
 #include <format>
 
 struct MyType {
-    int value;
+    unsigned value;
 
     MyType(int val) : value(val) {}
 
     // Custom representation for MyType
-    friend std::string repr(const MyType& obj) {
-        return std::format("MyType({})", obj.value);
+    std::string repr() const {
+        return std::format("MyType({})", repr(value));
     }
 };
 
 int main() {
-    MyType myObject(42);
+    auto myObject = MyType{42U};
     std::string repr_str = repr(myObject);
     std::print("Repr of myObject: {}\n", repr_str);
 }
