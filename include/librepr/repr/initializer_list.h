@@ -30,18 +30,14 @@ EXPORT std::string repr(T (&obj)[N]) {
   return std::format("{}", detail::to_init_list(obj));
 }
 
-template <typename First, typename Second>
-EXPORT std::string repr(std::pair<First, Second> const& obj) {
-  return std::format("std::pair<{}, {}>{{{}, {}}}", get_name<First>(), get_name<Second>(), repr(obj.first),
-                     repr(obj.second));
-}
-
 }  // namespace librepr
 
 namespace librepr::detail {
 
 template <typename First, typename Second>
 std::string to_init_list(std::pair<First, Second> const& obj) {
+  // this exists solely to denoise the output a little, gotta redo this properly at some point
+  // std::map etc. are constructible from std::initializer_list<std::pair<key_type, mapped_type>>
   return std::format("{{{}, {}}}", obj.first, obj.second);
 }
 

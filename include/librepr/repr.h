@@ -2,7 +2,8 @@
 
 #include <librepr/repr/fundamental.h>
 #include <librepr/repr/pointer.h>
-#include <librepr/repr/iterable.h>
+#include <librepr/repr/pair.h>
+#include <librepr/repr/initializer_list.h>
 
 namespace librepr {
 
