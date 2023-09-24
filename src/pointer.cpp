@@ -2,12 +2,12 @@
 
 namespace librepr {
 
-std::string repr(std::nullptr_t) {
-  return "nullptr";
+ObjectInfo<std::nullptr_t, Literal> repr(std::nullptr_t) {
+  return {nullptr, "nullptr"};
 }
 
-std::string repr(char const* obj) {
-  return std::format("\"{}\"", obj);
+ObjectInfo<char const*, Literal> repr(char const* obj) {
+  return {obj, std::format("\"{}\"", obj)};
 }
 
 }  // namespace librepr

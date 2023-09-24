@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <librepr/typename.h>
+#include <librepr/type_info.h>
 
 template <typename T>
 std::string get_demangled() {

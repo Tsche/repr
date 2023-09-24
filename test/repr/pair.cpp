@@ -9,5 +9,5 @@ TEST(pair, pair) {
 
 TEST(pair, pair_of_pairs) {
   auto obj = std::pair<std::pair<int, char>, std::pair<char, int>>{{1, '2'}, {'3', 4}};
-  EXPECT_EQ(repr(obj), "std::pair<std::pair<int, char>, std::pair<char, int>>{{1, '2'}, {'3', 4}]");
+  EXPECT_EQ(repr(obj), "std::pair<std::pair<int, char>, std::pair<char, int>>{{1, '2'}, {'3', 4}}");
 }

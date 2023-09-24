@@ -19,15 +19,28 @@ namespace librepr {
 template <typename T>
 std::string get_name();
 
-namespace detail {
 template <typename T>
 struct TypeInfo {
   static std::string name() { return librepr::get_name_raw<T>(); }
+
+  static constexpr bool is_fundamental = std::is_fundamental_v<T>;
+  static constexpr bool is_templated = false;
+};
+
+template <>
+struct TypeInfo<std::string> {
+  // TODO figure out how to find aliases properly
+  static std::string name() { return "std::string"; }
+
+  static constexpr bool is_fundamental = false;
+  static constexpr bool is_templated = false;
 };
 
 template <template <typename...> typename U, typename... Ts>
 struct TypeInfo<U<Ts...>> {
   using parameters = std::tuple<Ts...>;
+  static constexpr bool is_fundamental = false;
+  static constexpr bool is_templated = true;
 
 private:
   template <std::size_t offset, std::size_t... indices>
@@ -82,7 +95,7 @@ public:
     }(std::make_index_sequence<argument_count>());
   }
 };
-}
+
 
 template <typename T>
 char const* get_mangled_name() {
@@ -98,7 +111,7 @@ char const* get_mangled_name() {
 
 template <typename T>
 std::string get_name() {
-  return librepr::detail::TypeInfo<T>::name();
+  return librepr::TypeInfo<T>::name();
 }
 
 }  // namespace librepr

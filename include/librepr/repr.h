@@ -1,5 +1,7 @@
 #pragma once
 
+#include <librepr/object_info.h>
+
 #include <librepr/repr/fundamental.h>
 #include <librepr/repr/pointer.h>
 #include <librepr/repr/pair.h>
@@ -9,9 +11,9 @@
 namespace librepr {
 
 template <typename T>
-EXPORT std::string repr(T const& obj){
+EXPORT ObjectInfo<T, Literal> repr(T const& obj){
   // Fallback for when we couldn't find a suitable repr
-  return std::format("[{} object at {:p}]", librepr::get_name<T>(), static_cast<void const*>(&obj));
+  return {obj, std::format("[{} object at {:p}]", librepr::get_name<T>(), static_cast<void const*>(&obj))};
 }
 
 template <typename T>

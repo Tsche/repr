@@ -3,60 +3,55 @@
 
 namespace librepr {
 // Boolean type
-std::string repr(bool obj) {
-  return (obj) ? "true" : "false";
+auto repr(bool const& obj) -> ObjectInfo<bool, Literal> {
+  return {obj, (obj) ? "true" : "false"};
 }
 
 // Integer types
-std::string repr(signed short obj) {
-  return std::format("{}", obj);
+auto repr(signed short const& obj) -> ObjectInfo<signed short, Literal> {
+  return {obj, std::format("{}", obj)};
 }
 
-std::string repr(unsigned short obj) {
-  return std::format("{}", obj);
+auto repr(unsigned short const& obj) -> ObjectInfo<unsigned short, Literal> {
+  return {obj, std::format("{}", obj)};
 }
-
-std::string repr(signed int obj) {
-  return std::format("{}", obj);
+auto repr(signed int const& obj) -> ObjectInfo<signed int, Literal> {
+  return {obj, std::format("{}", obj)};
 }
-
-std::string repr(unsigned int obj) {
-  return std::format("{}U", obj);
+auto repr(unsigned int const& obj) -> ObjectInfo<unsigned int, Literal> {
+  return {obj, std::format("{}U", obj)};
 }
-
-std::string repr(signed long obj) {
-  return std::format("{}L", obj);
+auto repr(signed long const& obj) -> ObjectInfo<signed long, Literal> {
+  return {obj, std::format("{}L", obj)};
 }
-
-std::string repr(unsigned long obj) {
-  return std::format("{}UL", obj);
+auto repr(unsigned long const& obj) -> ObjectInfo<unsigned long, Literal> {
+  return {obj, std::format("{}UL", obj)};
 }
-
-std::string repr(signed long long obj) {
-  return std::format("{}LL", obj);
+auto repr(signed long long const& obj) -> ObjectInfo<signed long long, Literal> {
+  return {obj, std::format("{}LL", obj)};
 }
-
-std::string repr(unsigned long long obj) {
-  return std::format("{}ULL", obj);
+auto repr(unsigned long long const& obj) -> ObjectInfo<unsigned long long, Literal> {
+  return {obj, std::format("{}ULL", obj)};
 }
 
 // Floating-point types
-std::string repr(float obj) {
+auto repr(float const& obj) -> ObjectInfo<float, Literal> {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}F", obj, (is_integer) ? ".0" : "");
+  return {obj, std::format("{}{}F", obj, (is_integer) ? ".0" : "")};
 }
 
-std::string repr(double obj) {
+auto repr(double const& obj) -> ObjectInfo<double, Literal> {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}", obj, (is_integer) ? ".0" : "");
+  return {obj, std::format("{}{}", obj, (is_integer) ? ".0" : "")};
 }
-std::string repr(long double obj) {
+
+auto repr(long double const& obj) -> ObjectInfo<long double, Literal> {
   auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}L", obj, (is_integer) ? ".0" : "");
+  return {obj, std::format("{}{}L", obj, (is_integer) ? ".0" : "")};
 }
 
 // Character types
-std::string repr(char obj) {
-  return std::format("'{:c}'", obj);
+auto repr(char const& obj) -> ObjectInfo<char, Literal> {
+  return {obj, std::format("'{:c}'", obj)};
 }
-}  // namespace repr_v1
+}  // namespace librepr

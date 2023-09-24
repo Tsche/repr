@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
 
-#include <librepr/typename.h>
+#include <librepr/type_info.h>
+#include <librepr/object_info.h>
 #include <librepr/repr.h>
 
 namespace librepr {
 struct repr_wrapper {
   template <typename T>
-  auto operator()(T const& obj) const  -> std::string {
+  auto operator()(T const& obj) const {
     //TODO this could be static once msvc supports it
     return librepr::repr(obj); 
   }
