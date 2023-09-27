@@ -42,7 +42,7 @@ struct BracedList {
     stream << '{';
     std::apply(
         [&stream, with_type](auto&&... args) {
-          const char* delimiter = "";
+          [[maybe_unused]] const char* delimiter = "";
           (((stream << delimiter << args.to_string(with_type, with_type)), delimiter = ", "), ...);
         },
         value);

@@ -14,7 +14,8 @@ Checks: "*,
         -cppcoreguidelines-non-private-member-variables-in-classes,
         -misc-non-private-member-variables-in-classes,
         -hicpp-named-parameter,
-        -clang-diagnostic-unknown-attributes
+        -clang-diagnostic-unknown-attributes,
+        -readability-named-parameter
 "
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

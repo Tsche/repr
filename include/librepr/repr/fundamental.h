@@ -1,29 +1,27 @@
 #pragma once
 #include <string>
 #include <librepr/detail/visibility.h>
-#include <librepr/object_info.h>
-
 namespace librepr {
 
 // Boolean type
-EXPORT auto repr(bool const& obj) -> ObjectInfo<bool, Literal>;
+EXPORT std::string repr(bool const& obj);
 
 // Integer types
-EXPORT auto repr(signed short const& obj) -> ObjectInfo<signed short, Literal>;
-EXPORT auto repr(unsigned short const& obj) -> ObjectInfo<unsigned short, Literal>;
-EXPORT auto repr(signed int const& obj) -> ObjectInfo<signed int, Literal>;
-EXPORT auto repr(unsigned int const& obj) -> ObjectInfo<unsigned int, Literal>;
-EXPORT auto repr(signed long const& obj) -> ObjectInfo<signed long, Literal>;
-EXPORT auto repr(unsigned long const& obj) -> ObjectInfo<unsigned long, Literal>;
-EXPORT auto repr(signed long long const& obj) -> ObjectInfo<signed long long, Literal>;
-EXPORT auto repr(unsigned long long const& obj) -> ObjectInfo<unsigned long long, Literal>;
+EXPORT std::string repr(signed short const& obj);
+EXPORT std::string repr(unsigned short const& obj);
+EXPORT std::string repr(signed int const& obj);
+EXPORT std::string repr(unsigned int const& obj);
+EXPORT std::string repr(signed long const& obj);
+EXPORT std::string repr(unsigned long const& obj);
+EXPORT std::string repr(signed long long const& obj);
+EXPORT std::string repr(unsigned long long const& obj);
 
 // Floating-point types
-EXPORT auto repr(float const& obj) -> ObjectInfo<float, Literal>;
-EXPORT auto repr(double const& obj) -> ObjectInfo<double, Literal>;
-EXPORT auto repr(long double const& obj) -> ObjectInfo<long double, Literal>;
+EXPORT std::string repr(float const& obj);
+EXPORT std::string repr(double const& obj);
+EXPORT std::string repr(long double const& obj);
 
 // Character types
-EXPORT auto repr(char const& obj) -> ObjectInfo<char, Literal>;
+EXPORT std::string repr(char const& obj);
 
 }  // namespace librepr

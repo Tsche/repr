@@ -1,4 +1,5 @@
 #include <librepr/demangle.h>
+#include <librepr/reflection/name.h>
 
 #include <cxxabi.h>
 #include <memory>

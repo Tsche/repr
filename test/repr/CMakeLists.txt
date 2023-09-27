@@ -4,4 +4,5 @@ target_sources(repr_test PRIVATE
   initializer_list.cpp
   pair.cpp
   customization.cpp
+  aggregate.cpp
 )

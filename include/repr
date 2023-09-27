@@ -5,12 +5,20 @@
 #include <librepr/object_info.h>
 #include <librepr/repr.h>
 
+#include <type_traits>
+
 namespace librepr {
 struct repr_wrapper {
   template <typename T>
   auto operator()(T const& obj) const {
     //TODO this could be static once msvc supports it
-    return librepr::repr(obj); 
+    using typeinfo = librepr::TypeInfo<T>;
+    if constexpr (not std::is_fundamental_v<typename typeinfo::type>){
+      return std::format("{}{{{}}}", typeinfo::name(), typeinfo::dump(obj));
+    }
+    else {
+      return typeinfo::dump(obj);
+    }
   }
 };
 
