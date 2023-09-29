@@ -20,7 +20,7 @@ struct ReprWrapper {
 }  // namespace librepr
 
 
-inline constexpr librepr::ReprWrapper repr {};
+static constexpr librepr::ReprWrapper repr {};
 
 template <typename T>
 inline constexpr librepr::TypeName<T> nameof {};
