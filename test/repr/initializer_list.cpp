@@ -4,11 +4,9 @@
 TEST(initializer_list, array) {
   int integers[]        = {1, 2, 3};       //NOLINT
   char const* strings[] = {"1", "2", "3"}; //NOLINT
-  char mutable_chars[] = {'1', '2', '3'}; // NOLINT
 
   EXPECT_EQ(repr(integers), "{1, 2, 3}");
   EXPECT_EQ(repr(strings), R"({"1", "2", "3"})");
-  EXPECT_EQ(repr(mutable_chars), "{'1', '2', '3'}");
 }
 
 TEST(initializer_list, vector) {

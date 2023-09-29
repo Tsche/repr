@@ -14,26 +14,28 @@
 #include "to_tuple.h"
 
 namespace librepr {
+
+template <typename T>
+struct is_literal {
+  static constexpr bool value = std::is_fundamental_v<T> || std::is_same_v<T, char const*>;
+};
+
+template <typename T, std::size_t N>
+struct is_literal<T[N]> {
+  static constexpr bool value = true;
+};
+
+template <typename T>
+inline constexpr bool is_literal_v = is_literal<T>::value;
+
 template <typename T>
 struct Reflect {
   using type = T;
 
   static std::string dump(T const& obj, bool with_type = true, bool /*explicit_types*/ = false) {
-    if (with_type) {
+    if (with_type and not is_literal_v<T>) {
       return librepr::get_name<T>() + librepr::repr(obj);
     }
-    return librepr::repr(obj);
-  }
-
-  static std::string layout() { return librepr::get_name<T>(); }
-};
-
-template <typename T>
-  requires std::is_fundamental_v<T>
-struct Reflect<T> {
-  using type = T;
-
-  static std::string dump(T const& obj, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
     return librepr::repr(obj);
   }
 
@@ -45,6 +47,9 @@ struct Reflect<T> {
   using type = T;
 
   static std::string dump(T const& obj, bool /*with_type*/ = true, bool /*explicit_types*/ = false) {
+    if (not is_literal_v<T>) {
+      return librepr::get_name<T>() + obj.repr();
+    }
     // TODO pass down explicit_types
     return obj.repr();
   }
@@ -143,12 +148,21 @@ struct Reflect<T> {
   static std::string layout() { return std::format("[{}]", librepr::get_name<typename T::value_type>()); }
 };
 
+template <>
+struct Reflect<char const*> {
+  static std::string dump(char const* obj, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
+    return librepr::repr(obj);
+  }
+
+  static std::string layout() { return "char const*"; }
+};
+
 template <typename T, std::size_t N>
 struct Reflect<T[N]> {
   using type = T;
 
   static std::string dump(T const (&obj)[N], bool /*with_type*/ = false, bool explicit_types = false) {
-    if constexpr (std::is_same_v<T, char const>) {
+    if constexpr (std::is_same_v<T, char>) {
       // emit as string literal
       return librepr::repr(obj);
     } else {
@@ -180,15 +194,6 @@ struct Reflect<T*> {
   }
 
   static std::string layout() { return librepr::get_name<T*>(); }
-};
-
-template <>
-struct Reflect<char const*> {
-  static std::string dump(char const* obj, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
-    return librepr::repr(obj);
-  }
-
-  static std::string layout() { return "char const*"; }
 };
 
 }  // namespace librepr
