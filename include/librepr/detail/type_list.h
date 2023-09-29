@@ -1,8 +1,16 @@
 #pragma once
 #include <tuple>
 
+#include "macros.h"
+
 namespace librepr::detail {
 
+#if __has_builtin(__type_pack_element)
+template <std::size_t index, typename... Ts>
+struct GetImpl {
+  using type = __type_pack_element<index, Ts...>;
+};
+#else
 template <std::size_t index, typename... Ts>
 struct GetImpl {};
 
@@ -15,6 +23,7 @@ template <std::size_t index, typename T, typename... Ts>
 struct GetImpl<index, T, Ts...> {
   using type = typename GetImpl<index - 1, Ts...>::type;
 };
+#endif
 
 template <typename... Ts>
 struct TypeList {

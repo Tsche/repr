@@ -11,4 +11,7 @@ std::string repr(char const* obj) {
   return std::format("\"{}\"", obj);
 }
 
+std::string repr(void const* obj){
+  return std::format("{}", obj);
+}
 }  // namespace librepr

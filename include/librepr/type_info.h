@@ -13,6 +13,8 @@ template <typename T>
 struct TypeInfo : Reflect<T>, librepr::detail::TemplateInfo<T> {
   using type = T;
   using Reflect<T>::dump;
+
+  TypeInfo() : Reflect<T>(), librepr::detail::TemplateInfo<T>() {}
 };
 
 

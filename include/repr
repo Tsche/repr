@@ -10,15 +10,9 @@
 namespace librepr {
 struct repr_wrapper {
   template <typename T>
-  auto operator()(T const& obj) const {
+  auto operator()(T const& obj) const -> librepr::ObjectInfo<T> {
     //TODO this could be static once msvc supports it
-    using typeinfo = librepr::TypeInfo<T>;
-    if constexpr (not std::is_fundamental_v<typename typeinfo::type>){
-      return std::format("{}{{{}}}", typeinfo::name(), typeinfo::dump(obj));
-    }
-    else {
-      return typeinfo::dump(obj);
-    }
+    return librepr::ObjectInfo<T>{obj};
   }
 };
 
