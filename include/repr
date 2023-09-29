@@ -8,7 +8,7 @@
 #include <type_traits>
 
 namespace librepr {
-struct repr_wrapper {
+struct ReprWrapper {
   template <typename T>
   auto operator()(T const& obj) const -> librepr::ObjectInfo<T> {
     //TODO this could be static once msvc supports it
@@ -20,7 +20,7 @@ struct repr_wrapper {
 }  // namespace librepr
 
 
-inline constexpr librepr::repr_wrapper repr {};
+inline constexpr librepr::ReprWrapper repr {};
 
 template <typename T>
 inline constexpr librepr::TypeName<T> nameof {};

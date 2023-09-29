@@ -9,7 +9,7 @@
 
 #include <librepr/detail/type_list.h>
 #include <librepr/detail/concepts.h>
-#include <librepr/repr/repr.h>
+#include <librepr/repr.h>
 
 #include "to_tuple.h"
 

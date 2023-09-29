@@ -1,8 +1,11 @@
 #pragma once
 #include <string>
 
+#include <librepr/detail/visibility.h>
+
+
 namespace librepr {
-std::string demangle(const char* mangled);
+EXPORT std::string demangle(const char* mangled);
 
 #if defined(_WIN32)
 namespace detail {

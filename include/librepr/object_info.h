@@ -9,8 +9,11 @@
 
 namespace librepr {
 
+struct ReprWrapper;
+
 template <typename T>
 struct ObjectInfo {
+  friend struct librepr::ReprWrapper;
   using type = T;
   T const& value;
   

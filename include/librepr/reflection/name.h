@@ -7,6 +7,7 @@
 #include <tuple>
 #include <type_traits>
 
+#include <librepr/detail/visibility.h>
 #include <librepr/detail/default.h>
 #include <librepr/detail/type_list.h>
 #include <librepr/name/ctti.h>
@@ -14,7 +15,7 @@
 
 namespace librepr {
 template <typename T>
-std::string get_name();
+EXPORT std::string get_name();
 
 namespace detail {
 
@@ -92,7 +93,7 @@ char const* get_mangled_name() {
 }
 
 template <typename T>
-std::string get_name() {
+EXPORT std::string get_name() {
   return librepr::detail::TemplateInfo<T>::name();
 }
 }  // namespace librepr
