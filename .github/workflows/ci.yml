@@ -12,6 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Set up compiler
+      run: |
+        add-apt-repository ppa:ubuntu-toolchain-r/test
+        apt update
+        apt -y install gcc-13
 
     - name: Install Conan
       id: conan
