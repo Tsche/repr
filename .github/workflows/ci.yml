@@ -19,13 +19,17 @@ jobs:
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         sudo apt update
         sudo apt -y install gcc-13
-
+    
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
     
+    - uses: actions/checkout@v3
+      with:
+        repository: Tsche/repr.wiki
+      
     - name: Set up Conan profile
-      run: conan profile detect
+      run: cp repr.wiki/conan.linux ~/.conan2/profiles/default
 
     - name: Build
       run: conan build . -o test=True -s build_type=Debug --build=missing
