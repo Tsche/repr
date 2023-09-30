@@ -16,9 +16,9 @@ jobs:
     
     - name: Set up compiler
       run: |
-        add-apt-repository ppa:ubuntu-toolchain-r/test
-        apt update
-        apt -y install gcc-13
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt update
+        sudo apt -y install gcc-13
 
     - name: Install Conan
       id: conan
