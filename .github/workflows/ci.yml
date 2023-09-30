@@ -17,7 +17,7 @@ jobs:
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         sudo apt update
         sudo apt -y install gcc-13
-    
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 --slave /usr/bin/g++ g++ /usr/bin/g++-13 
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
