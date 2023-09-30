@@ -2,17 +2,13 @@
 
 #include <librepr/repr/fundamental.h>
 #include <librepr/repr/pointer.h>
-#include <librepr/reflection/name.h>
 
 namespace librepr {
 
 template <typename T>
-std::string get_name();
-
-template <typename T>
 std::string repr(T const& obj){
   // Fallback for when we couldn't find a suitable repr
-  return std::format("[{} object at {:p}]", librepr::get_name<T>(), static_cast<void const*>(&obj));
+  return std::format(" object at {:p}", static_cast<void const*>(&obj));
 }
 
 }
