@@ -11,9 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    
+    steps:  
     - name: Set up compiler
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test
@@ -30,7 +28,8 @@ jobs:
       
     - name: Set up Conan profile
       run: cp repr.wiki/conan.linux ~/.conan2/profiles/default
-
+    
+    - uses: actions/checkout@v3
     - name: Build
       run: conan build . -o test=True -s build_type=Debug --build=missing
 
