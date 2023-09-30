@@ -27,7 +27,9 @@ jobs:
         repository: Tsche/repr.wiki
       
     - name: Set up Conan profile
-      run: cp conan.linux ~/.conan2/profiles/default
+      run: |
+        conan profile detect
+        cp conan.linux `conan profile path default`
     
     - uses: actions/checkout@v3
     - name: Build
