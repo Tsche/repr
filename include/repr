@@ -2,7 +2,6 @@
 #include <string>
 
 #include <librepr/type_info.h>
-#include <librepr/object_info.h>
 #include <librepr/repr.h>
 
 #include <type_traits>
@@ -10,9 +9,9 @@
 namespace librepr {
 struct ReprWrapper {
   template <typename T>
-  auto operator()(T const& obj) const -> librepr::ObjectInfo<T> {
+  std::string operator()(T const& obj, bool with_type = true, bool explicit_types = false) const {
     //TODO this could be static once msvc supports it
-    return librepr::ObjectInfo<T>{obj};
+    return librepr::TypeInfo<T>::dump(obj, with_type, explicit_types);
   }
 };
 
@@ -24,3 +23,6 @@ static constexpr librepr::ReprWrapper repr {};
 
 template <typename T>
 inline constexpr librepr::TypeName<T> nameof {};
+
+template <typename T>
+inline constexpr librepr::TypeInfo<T> typeinfo {};

@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <repr>
-#include <librepr/object_info.h>
 #include <string>
 
 struct CustomType {
