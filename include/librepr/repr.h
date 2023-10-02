@@ -2,6 +2,7 @@
 
 #include <librepr/repr/fundamental.h>
 #include <librepr/repr/pointer.h>
+#include <librepr/repr/enum.h>
 
 namespace librepr {
 

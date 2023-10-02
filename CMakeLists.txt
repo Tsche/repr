@@ -13,6 +13,13 @@ target_include_directories(repr PUBLIC
 
 add_subdirectory(src)
 
+find_package(magic_enum CONFIG REQUIRED)
+target_link_libraries(repr PUBLIC magic_enum::magic_enum)
+
+if(ENABLE_SANITIZERS)
+  target_compile_options(repr PUBLIC -fsanitize=address,undefined)
+  target_link_options(repr PUBLIC -fsanitize=address,undefined)
+endif()
 
 option(ENABLE_TESTS "Enable tests" OFF)
 if(ENABLE_TESTS)
@@ -24,7 +31,7 @@ if(ENABLE_TESTS)
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
   target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gmock)
-  
+
   include(GoogleTest)
   gtest_discover_tests(repr_test)
   

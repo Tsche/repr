@@ -6,4 +6,5 @@ target_sources(repr_test PRIVATE
   pair.cpp
   customization.cpp
   aggregate.cpp
+  enum.cpp
 )

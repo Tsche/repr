@@ -16,8 +16,10 @@ class reprRecipe(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False], "test": [True, False]}
-    default_options = {"shared": False, "fPIC": True, "test": False}
+    options = {"shared": [True, False], "fPIC": [True, False], 
+               "test": [True, False], "sanitizers": [True, False]}
+    
+    default_options = {"shared": False, "fPIC": True, "test": False, "sanitizers": False}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
@@ -31,6 +33,8 @@ class reprRecipe(ConanFile):
             self.options.rm_safe("fPIC")
 
     def requirements(self):
+        self.requires("magic_enum/0.9.3")
+
         if self.options.test:
             self.test_requires("gtest/1.14.0")
 
@@ -45,7 +49,7 @@ class reprRecipe(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure(variables={'ENABLE_TESTS': self.options.test})
+        cmake.configure(variables={'ENABLE_TESTS': self.options.test, 'ENABLE_SANITIZERS': self.options.sanitizers})
         cmake.build()
 
     def package(self):

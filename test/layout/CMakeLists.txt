@@ -5,4 +5,5 @@ target_sources(repr_test PRIVATE
   initializer_list.cpp
   pair.cpp
   aggregate.cpp
+  enum.cpp
 )
