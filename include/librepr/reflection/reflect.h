@@ -73,8 +73,7 @@ struct Reflect<T> {
   }
 
   static std::string layout() {
-    return std::format("{{{}, {}}}", librepr::get_name<typename T::first_type>(),
-                       librepr::get_name<typename T::second_type>());
+    return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
   }
 };
 
@@ -145,7 +144,7 @@ struct Reflect<T> {
     return list.str();
   }
 
-  static std::string layout() { return std::format("[{}]", librepr::get_name<typename T::value_type>()); }
+  static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }
 };
 
 template <>
@@ -154,7 +153,7 @@ struct Reflect<char const*> {
     return librepr::repr(obj);
   }
 
-  static std::string layout() { return "char const*"; }
+  static std::string layout() { return "str"; }
 };
 
 template <typename T, std::size_t N>
@@ -181,7 +180,8 @@ struct Reflect<T[N]> {
     }
   }
 
-  static std::string layout() { return std::format("{}[{}]", librepr::get_name<T>(), N); }
+  static std::string layout() { 
+    return std::format("{}[{}]", Reflect<type>::layout(), N); }
 };
 
 template <typename T>
@@ -194,6 +194,17 @@ struct Reflect<T*> {
   }
 
   static std::string layout() { return librepr::get_name<T*>(); }
+};
+
+template <typename T>
+struct Reflect<T[]> {
+  using type = T;
+
+  static std::string dump(T const* /*obj*/, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
+    return "{}";
+  }
+
+  static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }
 };
 
 }  // namespace librepr
