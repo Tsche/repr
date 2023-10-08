@@ -33,7 +33,7 @@ class reprRecipe(ConanFile):
             self.options.rm_safe("fPIC")
 
     def requirements(self):
-        self.requires("magic_enum/0.9.3")
+        self.requires("magic_enum/0.9.3", transitive_headers=True)
 
         if self.options.test:
             self.test_requires("gtest/1.14.0")
