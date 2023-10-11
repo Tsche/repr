@@ -19,4 +19,9 @@ concept has_repr_member = requires(T const& obj) {
 template <typename T>
 concept is_scoped_enum = not std::is_convertible_v<T, std::underlying_type_t<T>>;
 
+template <typename T>
+concept is_visitable = requires (T t){
+    std::visit([](auto){}, t);
+};
+
 };

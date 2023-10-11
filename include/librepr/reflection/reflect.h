@@ -11,6 +11,7 @@
 
 #include <librepr/detail/type_list.h>
 #include <librepr/detail/concepts.h>
+#include <librepr/detail/overload.h>
 #include <librepr/repr.h>
 
 #include "name.h"
@@ -199,7 +200,7 @@ struct Reflect<T*> {
 };
 
 template <typename T>
-struct Reflect<T[]> {
+struct Reflect<T[]> {  // NOLINT
   using type = T;
 
   static std::string dump(T const* /*obj*/, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
@@ -229,7 +230,7 @@ struct Reflect<T> {
       if (&element != &*std::begin(values)) {
         list << " | ";
       }
-      
+
       if constexpr (detail::is_scoped_enum<T>) {
         list << librepr::get_name<T>();
         list << "::";
@@ -241,4 +242,29 @@ struct Reflect<T> {
   }
 };
 
+template <template <typename...> class Variant, typename... Ts>
+  requires detail::is_visitable<Variant<Ts...>>
+struct Reflect<Variant<Ts...>> {
+  using type = Variant<Ts...>;
+
+  static std::string dump(type const& obj, bool with_type = false, bool explicit_types = false) {
+    auto stringified = std::visit(detail::Overload{[explicit_types](Ts const& alternative) {
+                                    return Reflect<Ts>::dump(alternative, explicit_types, explicit_types);
+                                  }...},
+                                  obj);
+
+    return std::format("{}{{{}}}", with_type ? librepr::get_name<Variant<Ts...>>() : "", stringified);
+  }
+
+  static std::string layout() {
+    std::ostringstream list{};
+    list << '<';
+
+    const char* sep = "";
+    (((list << sep << librepr::get_name<Ts>()), sep = " | "), ...);
+
+    list << '>';
+    return list.str();
+  }
+};
 }  // namespace librepr

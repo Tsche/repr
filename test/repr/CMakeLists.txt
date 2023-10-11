@@ -7,4 +7,5 @@ target_sources(repr_test PRIVATE
   customization.cpp
   aggregate.cpp
   enum.cpp
+  variant.cpp
 )
