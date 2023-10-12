@@ -92,6 +92,6 @@ If you'd like to contribute to librepr, please fork the repository, make your ch
 
 ## Contact
 
-For questions or issues related to this library, please [open an issue](https://github.com/your-username/librepr/issues).
+For questions or issues related to this library, please [open an issue](https://github.com/tsche/librepr/issues).
 
 Happy coding!
