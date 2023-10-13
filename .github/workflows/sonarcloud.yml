@@ -40,10 +40,10 @@ jobs:
       uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
 
     - name: Build
-      run: conan build . -s build_type=Debug --build=missing -o test=True
+      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o test=True
 
     - name: Run sonar-scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: sonar-scanner
+      run: sonar-scanner --define sonar.cfamily.build-wrapper-output="out"
