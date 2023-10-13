@@ -27,7 +27,7 @@ struct GetImpl<index, T, Ts...> {
 
 template <typename... Ts>
 struct TypeList {
-  static inline constexpr std::size_t size = sizeof...(Ts);
+  static constexpr std::size_t size = sizeof...(Ts);
 
   template <template <typename> class F>
   using map = TypeList<F<Ts>...>;

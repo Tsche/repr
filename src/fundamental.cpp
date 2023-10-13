@@ -1,10 +1,12 @@
 #include <format>
+#include <cmath>
+
 #include <librepr/repr/fundamental.h>
 
 namespace librepr {
 // Boolean type
 std::string repr(bool const& obj) {
-  return (obj) ? "true" : "false";
+  return obj ? "true" : "false";
 }
 
 // Integer types
@@ -36,18 +38,18 @@ std::string repr(unsigned long long const& obj) {
 
 // Floating-point types
 std::string repr(float const& obj) {
-  auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}F", obj, (is_integer) ? ".0" : "");
+  auto is_integer = rintf(obj) == obj;
+  return std::format("{}{}F", obj, is_integer ? ".0" : "");
 }
 
 std::string repr(double const& obj) {
-  auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}", obj, (is_integer) ? ".0" : "");
+  auto is_integer = rint(obj) == obj;
+  return std::format("{}{}", obj, is_integer ? ".0" : "");
 }
 
 std::string repr(long double const& obj) {
-  auto is_integer = static_cast<long long>(obj) == obj;
-  return std::format("{}{}L", obj, (is_integer) ? ".0" : "");
+  auto is_integer = rintl(obj) == obj;
+  return std::format("{}{}L", obj, is_integer ? ".0" : "");
 }
 
 // Character types

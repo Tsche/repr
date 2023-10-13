@@ -2,7 +2,7 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
 
-class reprRecipe(ConanFile):
+class ReprRecipe(ConanFile):
     name = "repr"
     version = "0.1"
     package_type = "library"

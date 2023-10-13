@@ -37,7 +37,7 @@ struct Reflect {
   using type = T;
 
   static std::string dump(T const& obj, bool with_type = true, bool /*explicit_types*/ = false) {
-    if (with_type and not is_literal_v<T>) {
+    if (with_type && !is_literal_v<T>) {
       return librepr::get_name<T>() + librepr::repr(obj);
     }
     return librepr::repr(obj);
@@ -51,7 +51,7 @@ struct Reflect<T> {
   using type = T;
 
   static std::string dump(T const& obj, bool /*with_type*/ = true, bool /*explicit_types*/ = false) {
-    if (not is_literal_v<T>) {
+    if (!is_literal_v<T>) {
       return librepr::get_name<T>() + obj.repr();
     }
     // TODO pass down explicit_types
@@ -71,7 +71,7 @@ struct Reflect<T> {
   using second_type = std::remove_cv_t<std::remove_reference_t<typename T::second_type>>;
 
   static std::string dump(T const& obj, bool with_type = true, bool explicit_types = false) {
-    return std::format("{}{{{}, {}}}", (with_type) ? librepr::get_name<T>() : "",
+    return std::format("{}{{{}, {}}}", with_type ? librepr::get_name<T>() : "",
                        Reflect<first_type>::dump(obj.first, explicit_types, explicit_types),
                        Reflect<second_type>::dump(obj.second, explicit_types, explicit_types));
   }
@@ -82,7 +82,7 @@ struct Reflect<T> {
 };
 
 template <typename T>
-  requires std::is_aggregate_v<T> && (not detail::has_repr_member<T>) && (not std::is_array_v<T>)
+  requires std::is_aggregate_v<T> && (!detail::has_repr_member<T> && !std::is_array_v<T>)
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
   using type         = librepr::detail::TypeList<>::from_tuple<member_tuple>::template map_t<
