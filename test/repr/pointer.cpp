@@ -16,8 +16,9 @@ struct Test {};
 //NOLINTBEGIN
 
 TEST(pointer, pointer) {
-  EXPECT_EQ(repr((int*)0x123ff), "(int*)0x123ff");
-  EXPECT_EQ(repr((testing::Test*)0x123ff), "(testing::Test*)0x123ff");
+  auto int_ptr = std::make_unique<int>(420);
+  EXPECT_EQ(repr(int_ptr.get()), "new int{420}");
+  EXPECT_EQ(repr((testing::Test*)0x0), "(testing::Test*)0x0");
   EXPECT_EQ(repr((void*)0x123ff), "(void*)0x123ff");
 }
 
