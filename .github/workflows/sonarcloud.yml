@@ -21,9 +21,6 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
     
-    - name: Install sonar-scanner and build-wrapper
-      uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
-    
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
@@ -38,6 +35,10 @@ jobs:
         cp conan.linux `conan profile path default`
     
     - uses: actions/checkout@v3
+
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
+
     - name: Build
       run: conan build . -s build_type=Debug --build=missing -o test=True
 
@@ -45,4 +46,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: SONAR_SCANNER_BIN
+      run: sonar-scanner
