@@ -62,8 +62,8 @@ struct TypeList {
   template <template <typename...> class T>
   using to = T<Ts...>;
 
-  template <typename T>
-  using from_tuple = decltype(do_from_tuple<T>(std::make_index_sequence<std::tuple_size_v<T>>{}));
+  template <typename Tuple>
+  using from_tuple = decltype(do_from_tuple<Tuple>(std::make_index_sequence<std::tuple_size_v<Tuple>>{}));
 };
 
 }  // namespace librepr
