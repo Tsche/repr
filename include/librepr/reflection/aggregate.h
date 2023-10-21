@@ -14,9 +14,10 @@ template <typename T>
 struct Reflect;
 
 template <typename T>
-  requires std::is_aggregate_v<T> && (!detail::has_repr_member<T>) && (!std::is_array_v<T>)
+  requires (!detail::has_repr_member<T>  && std::is_aggregate_v<T> && !std::is_array_v<T>)
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
+  static_assert(!std::is_same_v<member_tuple, void>);
   using type         = librepr::detail::TypeList<>::from_tuple<member_tuple>::template map_t<
       std::remove_reference>::template map_t<std::remove_cv>::template map<librepr::Reflect>;
 

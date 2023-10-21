@@ -1,5 +1,6 @@
 #pragma once
 #include <tuple>
+#include <type_traits>
 
 #include "arity.h"
 
@@ -7,6 +8,7 @@ namespace librepr::detail {
 
 //NOLINTBEGIN
 template <typename T>
+requires (std::is_aggregate_v<T> && !std::is_array_v<T>)
 auto to_tuple(T const& object) {
   // TODO generate this using cursed macros
 
