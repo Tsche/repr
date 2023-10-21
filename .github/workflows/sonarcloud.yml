@@ -43,13 +43,12 @@ jobs:
     - name: Build
       run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o test=True -o coverage=True
     
-    - name: Run Tests
-      run: ./build/Debug/repr_test
-    
     - name: Coverage
       run: |
-        gcovr -k -r . --sonarqube coverage.xml
+        ./build/Debug/repr_test
+        gcovr -v -k -r . --sonarqube coverage.xml
         cat coverage.xml
+        ls
 
     - name: Run sonar-scanner
       env:
