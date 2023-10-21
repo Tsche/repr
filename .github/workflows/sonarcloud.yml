@@ -48,7 +48,7 @@ jobs:
     
     - name: Coverage
       run: |
-        gcovr --sonarqube > coverage.xml
+        gcovr -k -r . --sonarqube coverage.xml
         cat coverage.xml
 
     - name: Run sonar-scanner
