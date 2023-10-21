@@ -17,9 +17,9 @@ class ReprRecipe(ConanFile):
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False], 
-               "test": [True, False], "sanitizers": [True, False]}
+               "test": [True, False], "sanitizers": [True, False], "coverage": [True, False]}
     
-    default_options = {"shared": False, "fPIC": True, "test": False, "sanitizers": False}
+    default_options = {"shared": False, "fPIC": True, "test": False, "sanitizers": False, "coverage": False}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
@@ -49,7 +49,9 @@ class ReprRecipe(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure(variables={'ENABLE_TESTS': self.options.test, 'ENABLE_SANITIZERS': self.options.sanitizers})
+        cmake.configure(variables={'ENABLE_TESTS': self.options.test, 
+                                   'ENABLE_SANITIZERS': self.options.sanitizers, 
+                                   'ENABLE_COVERAGE': self.options.coverage and self.options.test})
         cmake.build()
 
     def package(self):

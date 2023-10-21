@@ -22,6 +22,7 @@ if(ENABLE_SANITIZERS)
 endif()
 
 option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
 if(ENABLE_TESTS)
   message(STATUS "Building unit tests")
 
@@ -36,6 +37,16 @@ if(ENABLE_TESTS)
   gtest_discover_tests(repr_test)
   
   add_subdirectory(test)
+
+  if (ENABLE_COVERAGE)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_compile_options(repr_test PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage -fprofile-abs-path)
+      target_link_libraries(repr_test PRIVATE gcov)
+    else()
+      message( FATAL_ERROR "Currently only GCC is supported for coverage instrumentation." )
+    endif()
+
+  endif()
 endif()
 
 ## headers
