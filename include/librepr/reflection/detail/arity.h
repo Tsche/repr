@@ -2,11 +2,9 @@
 #include <type_traits>
 
 namespace librepr::detail {
-#include <type_traits>
-
 struct Universal {
     template <typename T>
-    constexpr operator T();
+    [[implicit]] constexpr operator T(); // NOLINT
 };
 
 template <typename T>
@@ -31,10 +29,7 @@ struct ArityImpl {
 
     template <typename... Trails>
     static consteval auto arity_simple_ag(auto... parameters) {
-        if constexpr (
-            requires {
-                T{parameters..., {Universal{}, Universal{}}, Trails{}..., Universal{}};
-            }) {
+        if constexpr (requires { T{parameters..., {Universal{}, Universal{}}, Trails{}..., Universal{}}; }) {
             return arity_simple_ag<Trails..., Universal>(parameters...);
         } else {
             return sizeof...(parameters) + sizeof...(Trails) + 1;
@@ -42,12 +37,8 @@ struct ArityImpl {
     }
 
     static consteval auto arity(int minus = 0, auto... parameters) {
-        if constexpr (
-            requires {
-                T{parameters..., {Universal{}, Universal{}}};
-            }) {
-            constexpr bool isArray =
-                arity_simple_ag(parameters...) != arity_simple(parameters...);
+        if constexpr (requires { T{parameters..., {Universal{}, Universal{}}}; }) {
+            constexpr bool isArray = arity_simple_ag(parameters...) != arity_simple(parameters...);
             if constexpr (isArray) {
                 minus += array_length(parameters...) - 1;
             }
