@@ -36,7 +36,7 @@ struct ArityImpl {
         }
     }
 
-    static consteval auto arity(int minus = 0, auto... parameters) {
+    static consteval auto arity(std::size_t minus = 0, auto... parameters) {
         if constexpr (requires { T{parameters..., {Universal{}, Universal{}}}; }) {
             constexpr bool isArray = arity_simple_ag(parameters...) != arity_simple(parameters...);
             if constexpr (isArray) {

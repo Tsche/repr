@@ -8,7 +8,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  sonarcloud:
     runs-on: ubuntu-latest
 
     steps:  
@@ -16,11 +16,11 @@ jobs:
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         sudo apt update
-        sudo apt -y install gcovr
         sudo apt -y install gcc-13
         sudo apt -y install g++-13
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+        sudo apt -y install gcovr
     
     - name: Install Conan
       id: conan
@@ -46,9 +46,8 @@ jobs:
     - name: Coverage
       run: |
         ./build/Debug/repr_test
-        gcovr -v -k -r . --sonarqube coverage.xml
+        gcovr -v --sonarqube coverage.xml
         cat coverage.xml
-        ls
 
     - name: Run sonar-scanner
       env:
