@@ -4,9 +4,13 @@
 #include <format>
 #include <type_traits>
 
+#include <librepr/reflection/name.h>
+
 #include <librepr/detail/concepts.h>
 #include <librepr/detail/overload.h>
-#include <librepr/reflection/name.h>
+
+#include "visitor.h"
+
 
 namespace librepr {
 template <typename T>
@@ -17,13 +21,11 @@ template <template <typename...> class Variant, typename... Ts>
 struct Reflect<Variant<Ts...>> {
   using type = Variant<Ts...>;
 
-  static std::string dump(type const& obj, bool with_type = false, bool explicit_types = false) {
-    auto stringified = std::visit(detail::Overload{[explicit_types](Ts const& alternative) {
-                                    return Reflect<Ts>::dump(alternative, explicit_types, explicit_types);
-                                  }...},
-                                  obj);
-
-    return std::format("{}{{{}}}", with_type ? librepr::get_name<Variant<Ts...>>() : "", stringified);
+  static void visit(auto&& visitor, type const& obj) {
+    ScopeGuard guard{visitor, std::type_identity<type>{}};
+    std::visit(detail::Overload{[&visitor](Ts const& alternative) {
+                                    return Reflect<Ts>::visit(std::forward<decltype(visitor)>(visitor), alternative);
+                                  }...}, obj);
   }
 
   static std::string layout() {

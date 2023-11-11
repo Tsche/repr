@@ -57,7 +57,6 @@ function(enable_warnings _TARGET)
     -Wdouble-promotion # warn if float is implicit promoted to double
     -Wformat=2 # warn on security issues around functions that format output (ie printf)
     -Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
-    -fconcepts-diagnostics-depth=2
   )
 
   if("${CLANG_WARNINGS}" STREQUAL "")
@@ -76,6 +75,7 @@ function(enable_warnings _TARGET)
       -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
       -Wuseless-cast # warn if you perform a cast to the same type
       -Wno-attributes # ignore unknown attribute warning
+      # -fconcepts-diagnostics-depth=2
     )
   endif()
 

@@ -5,6 +5,7 @@
 #include <format>
 
 #include <magic_enum.hpp>
+#include <librepr/reflection/name.h>
 
 #include <librepr/detail/concepts.h>
 
@@ -17,12 +18,10 @@ template <typename T>
 struct Reflect<T> {
   using type = T;
 
-  static std::string dump(T const& obj, bool /*with_type*/ = false, bool /*explicit_types*/ = false) {
-    if constexpr (detail::is_scoped_enum<T>) {
-      return std::format("{}::{}", librepr::get_name<T>(), librepr::repr(obj));
-    } else {
-      return std::format("{}", librepr::repr(obj));
-    }
+  static void visit(auto&& visitor, type const& obj) {
+    //TODO check typename against detail::is_scoped_enum<T>
+    // return std::format("{}::{}", librepr::get_name<T>(), librepr::repr(obj));
+    visitor(obj);
   }
 
   static std::string layout() {

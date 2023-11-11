@@ -3,6 +3,7 @@
 #include <sstream>
 #include <type_traits>
 #include <tuple>
+#include "librepr/reflection/visitor.h"
 
 #include <librepr/detail/type_list.h>
 #include <librepr/detail/concepts.h>
@@ -21,27 +22,15 @@ struct Reflect<T> {
   using type         = librepr::detail::TypeList<>::from_tuple<member_tuple>::template map_t<
       std::remove_reference>::template map_t<std::remove_cv>::template map<librepr::Reflect>;
 
-  static std::string dump(T const& obj, bool with_type = true, bool explicit_types = false) {
+  static void visit(auto&& visitor, T const& obj) {
     auto members = librepr::detail::to_tuple(obj);
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
-    return [with_type, explicit_types]<std::size_t... index>(std::index_sequence<index...>, auto const& tuple) {
-      std::ostringstream stream;
-
-      if (with_type) {
-        stream << librepr::get_name<T>();
-      }
-
-      stream << '{';
-      [[maybe_unused]] const char* delimiter = "";
-
-      (((stream << delimiter
-                << type::template get<index>::dump(std::get<index>(tuple), explicit_types, explicit_types)),
-        delimiter = ", "),
-       ...);
-      stream << '}';
-      return stream.str();
-    }(std::make_index_sequence<type::size>{}, librepr::detail::to_tuple(obj));
+    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    
+    []<std::size_t... index>(std::index_sequence<index...>, auto const& tuple, auto&& visitor_) {
+      (type::template get<index>::visit(std::forward<decltype(visitor_)>(visitor_), std::get<index>(tuple)), ...);
+    }(std::make_index_sequence<type::size>{}, librepr::detail::to_tuple(obj), std::forward<decltype(visitor)>(visitor));
   }
 
   static std::string layout() {

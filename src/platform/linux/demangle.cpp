@@ -1,5 +1,4 @@
 #include <librepr/demangle.h>
-#include <librepr/reflection/name.h>
 
 #include <cxxabi.h>
 #include <memory>
@@ -11,6 +10,6 @@ std::string demangle(const char* mangled) {
       abi::__cxa_demangle(mangled, nullptr, nullptr, nullptr), std::free};
 
   return std::string{(demangled) ? demangled.get() : mangled};
-};
+}
 
 }

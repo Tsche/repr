@@ -1,6 +1,8 @@
 #pragma once
 #include <concepts>
 #include <type_traits>
+#include <variant>
+#include <string>
 
 namespace librepr::detail {
 template <typename T>
@@ -25,4 +27,4 @@ concept variant_like = requires (T t){
     {t.index()} -> std::same_as<std::size_t>;
 };
 
-};
+}

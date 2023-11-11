@@ -10,11 +10,12 @@ namespace librepr {
 template <typename T>
 struct Reflect;
 
+/*
 template <typename T>
 struct Reflect<T*> {
   using type = T;
 
-  static std::string dump(T const* obj, bool /*with_type*/ = false, bool explicit_types = false) {
+  static std::string dump(T const* obj, bool with_type = false, bool explicit_types = false) {
     if constexpr (!std::is_same_v<T, void> && !std::is_pointer_v<T>) {
       // try to reflect whatever the pointer is pointing to
       // disabled for void* and pointer-to-pointer T
@@ -27,6 +28,13 @@ struct Reflect<T*> {
     return std::format("({}){}", librepr::get_name<T*>(), librepr::repr(static_cast<void const*>(obj)));
   }
 
+  static void visit(auto&& visitor, T const* obj) {
+    //TODO
+    visitor(librepr::repr(obj));
+  }
+
   static std::string layout() { return librepr::get_name<T*>(); }
 };
+*/
+
 }

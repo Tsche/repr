@@ -1,4 +1,5 @@
 **/build/
 .vscode/
 .vsconan/
+.cache/
 **/CMakeUserPresets.json

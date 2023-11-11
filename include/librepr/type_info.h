@@ -7,7 +7,7 @@ namespace librepr {
 template <typename T>
 struct TypeInfo : Reflect<T>, librepr::detail::TemplateInfo<T> {
   using type = T;
-  using Reflect<T>::dump;
+  using Reflect<T>::visit;
   using Reflect<T>::layout;
   friend std::ostream& operator<<(std::ostream& ctx, TypeInfo<T> const& obj) { return ctx << obj.name(); }
 };

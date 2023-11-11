@@ -11,16 +11,13 @@ namespace librepr {
 template <typename T>
 struct Reflect;
 
+//TODO figure out if this is needed
 template <detail::has_repr_member T>
 struct Reflect<T> {
   using type = T;
 
-  static std::string dump(T const& obj, bool /*with_type*/ = true, bool /*explicit_types*/ = false) {
-    if (!is_literal_v<T>) {
-      return librepr::get_name<T>() + obj.repr();
-    }
-    // TODO pass down explicit_types
-    return obj.repr();
+  static void visit(auto&& visitor, type const& obj) {
+    visitor(obj);
   }
 
   static std::string layout() {
