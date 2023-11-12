@@ -14,7 +14,6 @@
 #include "enum.h"
 #include "init_list.h"
 #include "pair.h"
-#include "pointer.h"
 #include "variant.h"
 
 namespace librepr {
