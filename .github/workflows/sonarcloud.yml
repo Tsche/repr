@@ -20,7 +20,7 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
         
-        sudo pip install -U gcovr --break-system-packages
+        sudo pip install -U gcovr
     
     - name: Install Conan
       id: conan
