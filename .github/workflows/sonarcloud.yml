@@ -46,7 +46,8 @@ jobs:
     - name: Coverage
       run: |
         ./build/Debug/repr_test
-        gcovr -v --sonarqube coverage.xml
+        ls /usr/bin -la
+        gcovr --verbose --gcov-executable gcov-13 --sonarqube coverage.xml
         cat coverage.xml
 
     - name: Run sonar-scanner
