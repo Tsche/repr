@@ -11,7 +11,6 @@
 
 #include "aggregate.h"
 #include "array.h"
-#include "custom.h"
 #include "enum.h"
 #include "init_list.h"
 #include "pair.h"

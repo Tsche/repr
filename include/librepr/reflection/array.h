@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <type_traits>
+#include <concepts>
 
 #include <librepr/reflection/name.h>
 #include "visitor.h"
@@ -12,6 +13,7 @@ template <typename T>
 struct Reflect;
 
 template <typename T, std::size_t N>
+requires (not std::same_as<T, char>) //TODO exclude other string literals
 struct Reflect<T[N]> {
   using type = T;
 

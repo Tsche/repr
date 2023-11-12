@@ -7,7 +7,7 @@ namespace librepr {
 struct Options {
   enum Source { RTTI, CTTI, SOURCE_LOCATION };
 
-  bool print_type        = false;
+  bool print_type       = true;
   bool explicit_types   = false;
   Source name_source    = RTTI;
   std::size_t indent    = 0;

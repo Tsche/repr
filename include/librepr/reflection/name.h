@@ -27,15 +27,16 @@ struct TemplateInfo {
 
 template <template <typename...> typename U, typename... Ts>
 struct TemplateInfo<U<Ts...>> {
-  using parameters                   = TypeList<Ts...>;
+  using type                         = U<Ts...>;
+  using arguments                   = TypeList<Ts...>;
   static constexpr bool is_templated = true;
 
 private:
   template <std::size_t... Idx>
   consteval static auto get_min_required(std::index_sequence<Idx...> seq) -> std::size_t {
     if constexpr (requires {
-                    typename U<typename parameters::template get<Idx>...>;
-                    requires std::is_same_v<U<Ts...>, U<typename parameters::template get<Idx>...>>;
+                    typename U<typename arguments::template get<Idx>...>;
+                    requires std::is_same_v<U<Ts...>, U<typename arguments::template get<Idx>...>>;
                   }) {
       if constexpr (sizeof...(Idx) == 0) {
         return 0;
@@ -48,22 +49,18 @@ private:
   constexpr static auto required_amount = get_min_required(std::make_index_sequence<sizeof...(Ts)>());
 
 public:
-  using arguments = std::tuple<Ts...>;
-  using required  = parameters::template slice<0, required_amount>;
-  using defaulted = parameters::template slice<required_amount>;
+  using required  = arguments::template slice<0, required_amount>;
+  using defaulted = arguments::template slice<required_amount>;
 
   static std::string name() {
-    using full_type = U<Ts...>;
-    auto full       = librepr::get_name_raw<full_type>();
+    auto full = librepr::get_name_raw<type>();
 
     auto marker = full.find('<');
     if (marker == full.npos) {
       return full;
     }
 
-    auto type      = std::string_view(full.data(), marker);
-    auto arguments = format_template_arguments();
-    return std::format("{}<{}>", type, arguments);
+    return std::format("{}<{}>", std::string_view(full.data(), marker), format_template_arguments());
   }
 
   static std::string format_template_arguments() {
@@ -72,7 +69,7 @@ public:
     return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
       const char* sep = "";
       std::ostringstream out;
-      (((out << sep << librepr::get_name<typename parameters::template get<Idx>>()), sep = ", "), ...);
+      (((out << sep << librepr::get_name<typename arguments::template get<Idx>>()), sep = ", "), ...);
       return out.str();
     }(std::make_index_sequence<argument_count>());
   }

@@ -8,10 +8,10 @@
 namespace librepr {
 struct ReprWrapper {
   template <typename T>
-  std::string operator()(T const& obj) const {
+  std::string operator()(T const& obj, Options options = {}) const {
     //TODO this could be static once msvc supports it
     //return librepr::TypeInfo<T>::dump(obj, with_type, explicit_types);
-    auto visitor = ReprVisitor{0};
+    auto visitor = ReprVisitor{options};
     librepr::TypeInfo<T>::visit(visitor, obj);
     return visitor.result;
   }
