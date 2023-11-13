@@ -1,5 +1,5 @@
 #include <librepr/detail/default.h>
-#include <librepr/demangle.h>
+#include <librepr/type/demangle.h>
 #include <librepr/reflection/name.h>
 
 #include <array>

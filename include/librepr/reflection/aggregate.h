@@ -4,8 +4,9 @@
 #include <type_traits>
 #include <tuple>
 
-#include <librepr/detail/type_list.h>
-#include <librepr/detail/concepts.h>
+#include <librepr/visitors/visitor.h>
+#include <librepr/util/type_list.h>
+#include <librepr/util/concepts.h>
 
 #include <librepr/reflection/detail/to_tuple.h>
 
@@ -18,30 +19,17 @@ template <typename T>
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>);
-  using type         = librepr::detail::TypeList<>::from_tuple<member_tuple>::template map_t<
-      std::remove_reference>::template map_t<std::remove_cv>::template map<librepr::Reflect>;
+  using type = rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
 
-  static std::string dump(T const& obj, bool with_type = true, bool explicit_types = false) {
+  static void visit(Visitor::Values auto&& visitor, T const& obj) {
     auto members = librepr::detail::to_tuple(obj);
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
-    return [with_type, explicit_types]<std::size_t... index>(std::index_sequence<index...>, auto const& tuple) {
-      std::ostringstream stream;
-
-      if (with_type) {
-        stream << librepr::get_name<T>();
-      }
-
-      stream << '{';
-      [[maybe_unused]] const char* delimiter = "";
-
-      (((stream << delimiter
-                << type::template get<index>::dump(std::get<index>(tuple), explicit_types, explicit_types)),
-        delimiter = ", "),
-       ...);
-      stream << '}';
-      return stream.str();
-    }(std::make_index_sequence<type::size>{}, librepr::detail::to_tuple(obj));
+    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    
+    []<std::size_t... index>(std::index_sequence<index...>, Visitor::Values auto&& visitor_, auto const& tuple) {
+      (type::template get<index>::visit(std::forward<decltype(visitor_)>(visitor_), std::get<index>(tuple)), ...);
+    }(std::make_index_sequence<type::size>{}, std::forward<decltype(visitor)>(visitor), members);
   }
 
   static std::string layout() {

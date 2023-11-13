@@ -1,7 +1,7 @@
 #include <concepts>
 #include <type_traits>
 
-#include <librepr/detail/type_list.h>
+#include <librepr/util/type_list.h>
 
 namespace librepr::detail {
 

@@ -1,10 +1,11 @@
 #pragma once
 #include <tuple>
 
-#include "macros.h"
+#include <librepr/detail/macros.h>
 
-namespace librepr::detail {
+namespace librepr {
 
+namespace detail {
 #if __has_builtin(__type_pack_element)
 template <std::size_t index, typename... Ts>
 struct GetImpl {
@@ -25,6 +26,18 @@ struct GetImpl<index, T, Ts...> {
 };
 #endif
 
+template<typename, template <typename...> class>
+struct ReBoxImpl;
+
+template<template <typename...> class From, typename... Args, template <typename...> class To>
+struct ReBoxImpl<From<Args...>, To>{
+    using type = To<Args...>;
+};
+}
+
+template <typename T, template <typename...> class To>
+using rebox = typename detail::ReBoxImpl<T, To>::type;
+
 template <typename... Ts>
 struct TypeList {
   static constexpr std::size_t size = sizeof...(Ts);
@@ -43,7 +56,7 @@ struct TypeList {
 
   template <std::size_t index>
   requires(sizeof...(Ts) > 0)
-  using get = typename GetImpl<index, Ts...>::type;
+  using get = typename detail::GetImpl<index, Ts...>::type;
 
   template <std::size_t offset, std::size_t... indices>
   static constexpr auto do_slice(std::index_sequence<indices...>) noexcept -> TypeList<get<indices + offset>...>;

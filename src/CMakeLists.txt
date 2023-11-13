@@ -1,10 +1,7 @@
-target_sources(repr PRIVATE 
-  fundamental.cpp
-  pointer.cpp  
+target_sources(repr PRIVATE  
+  options.cpp
 )
 
-IF (WIN32)
-  target_sources(repr PRIVATE demangle.windows.cpp)
-ELSE()
-  target_sources(repr PRIVATE demangle.linux.cpp)
-ENDIF()
+add_subdirectory(platform)
+add_subdirectory(repr)
+add_subdirectory(visitors)

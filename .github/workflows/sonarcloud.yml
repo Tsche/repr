@@ -3,7 +3,6 @@ name: SonarCloud
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -20,7 +19,8 @@ jobs:
         sudo apt -y install g++-13
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
-        sudo apt -y install gcovr
+        
+        sudo pip install -U gcovr
     
     - name: Install Conan
       id: conan
@@ -46,7 +46,8 @@ jobs:
     - name: Coverage
       run: |
         ./build/Debug/repr_test
-        gcovr -v --sonarqube coverage.xml
+        ls /usr/bin -la
+        gcovr --verbose --gcov-executable gcov-13 --sonarqube coverage.xml
         cat coverage.xml
 
     - name: Run sonar-scanner

@@ -3,6 +3,7 @@ include(cmake/warnings.cmake)
 
 project(repr CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(repr "")
 enable_warnings(repr)
 set_property(TARGET repr PROPERTY CXX_STANDARD 23)

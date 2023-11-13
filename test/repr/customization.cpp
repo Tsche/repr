@@ -9,7 +9,7 @@ struct CustomType {
 };
 
 TEST(customization, repr_member) {
-  EXPECT_EQ(repr(CustomType{"{custom_repr}"}), "CustomType{custom_repr}");
+  EXPECT_EQ(repr(CustomType{"custom_repr"}), "CustomType{custom_repr}");
 }
 
 struct CustomLiteral {

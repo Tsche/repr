@@ -2,16 +2,18 @@
 #include <string>
 
 #include <librepr/type_info.h>
-#include <librepr/repr.h>
-
+#include <librepr/visitors/repr.h>
 #include <type_traits>
 
 namespace librepr {
 struct ReprWrapper {
   template <typename T>
-  std::string operator()(T const& obj, bool with_type = true, bool explicit_types = false) const {
+  std::string operator()(T const& obj, Options options = {}) const {
     //TODO this could be static once msvc supports it
-    return librepr::TypeInfo<T>::dump(obj, with_type, explicit_types);
+    //return librepr::TypeInfo<T>::dump(obj, with_type, explicit_types);
+    auto visitor = ReprVisitor{options};
+    librepr::TypeInfo<T>::visit(visitor, obj);
+    return visitor.result;
   }
 };
 
