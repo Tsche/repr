@@ -46,14 +46,22 @@ public:
   template <typename T>
     requires detail::has_repr_member<T>
   void emit_value(T const& obj) {
-    emit_type<T>();
+    if constexpr (!librepr::is_literal_v<T>) {
+      emit_type<T>();
+      increase_nesting();
+    }
+
     result += obj.repr();
+
+    if constexpr (!librepr::is_literal_v<T>) {
+      decrease_nesting();
+    }
   }
 
-  //special case string literals
+  // special case string literals
   void emit_value(char const* obj) {
-    //TODO template this for wide string literals
-    // don't print a type, only print the separator if needed
+    // TODO template this for wide string literals
+    //  don't print a type, only print the separator if needed
     print_separator();
     result.append(std::format("\"{}\"", obj));
   }
