@@ -2,7 +2,7 @@
 #include <string>
 
 #include <librepr/type_info.h>
-#include <librepr/visitor.h>
+#include <librepr/visitors/repr.h>
 #include <type_traits>
 
 namespace librepr {

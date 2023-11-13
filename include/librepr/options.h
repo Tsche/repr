@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <string>
 
 #include <librepr/terminal.h>
@@ -14,6 +15,5 @@ struct Options {
   std::size_t max_width = librepr::get_terminal_width();
 
   [[nodiscard]] bool should_print_type(std::size_t level) const;
-  [[nodiscard]] std::string with_indent(std::string const& what, std::size_t level) const;
 };
 }  // namespace librepr

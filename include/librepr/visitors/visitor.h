@@ -2,15 +2,29 @@
 
 #include <concepts>
 
-template <typename V>
-concept ObjectVisitor = requires(V visitor) {
-  { visitor.template operator()<int>() };       // can visit types
-  { visitor.template operator()<int>(int{}) };  // can visit values
+namespace librepr {
 
+namespace Visitor {
+template <typename V>
+concept Values = requires(V visitor) {
+  // value visitation
+  { visitor.template operator()<int>(int{}) };
+};
+
+template <typename V>
+concept Types = requires(V visitor) {
+  // type visitation
+  { visitor.template operator()<int>() }; 
+};
+
+template <typename V>
+concept Hierarchical = requires(V visitor) {
   // nesting control
   { visitor.increase_nesting() };
   { visitor.decrease_nesting() };
-};
+} && Values<V> && Types<V>;
+
+}  // namespace Visitor
 
 template <template <typename> class Tag, typename T>
 concept TagType = std::same_as<typename Tag<T>::type, T>;
@@ -27,14 +41,17 @@ struct ScopeGuard {
   ScopeGuard(V& visitor_, Tag<T>) : ScopeGuard(visitor_) {}
 
   explicit ScopeGuard(V& visitor_) : visitor(visitor_) {
-    if constexpr (ObjectVisitor<V>) {
+    if constexpr (Visitor::Types<V>) {
       visitor.template operator()<T>();
+    }
+
+    if constexpr (Visitor::Hierarchical<V>){
       visitor.increase_nesting();
     }
   }
 
   ~ScopeGuard()
-    requires ObjectVisitor<V>
+    requires Visitor::Hierarchical<V>
   {
     visitor.decrease_nesting();
   }
@@ -43,3 +60,5 @@ struct ScopeGuard {
 
   V& visitor;
 };
+
+}  // namespace librepr

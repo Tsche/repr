@@ -1,13 +1,8 @@
 #pragma once
 #include <string>
-#include <format>
-#include <type_traits>
 
-
-#include <librepr/repr.h>
-#include <librepr/literal.h>
-
-#include "name.h"
+#include <librepr/visitors/visitor.h>
+#include <librepr/type/name.h>
 
 #include "aggregate.h"
 #include "array.h"
@@ -22,7 +17,7 @@ template <typename T>
 struct Reflect {
   using type = T;
 
-  static void visit(auto&& visitor, type const& obj) {
+  static void visit(Visitor::Values auto&& visitor, type const& obj) {
     visitor(obj);
   }
 
@@ -31,7 +26,7 @@ struct Reflect {
 
 template <>
 struct Reflect<char const*> {
-  static void visit(auto&& visitor, char const* obj) {
+  static void visit(Visitor::Values auto&& visitor, char const* obj) {
     visitor(obj);
   }
 

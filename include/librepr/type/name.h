@@ -9,9 +9,9 @@
 
 #include <librepr/detail/visibility.h>
 #include <librepr/detail/default.h>
-#include <librepr/detail/type_list.h>
-#include <librepr/name/ctti.h>
-#include <librepr/name/rtti.h>
+#include <librepr/util/type_list.h>
+#include "ctti.h"
+#include "rtti.h"
 
 namespace librepr {
 template <typename T>
@@ -69,7 +69,8 @@ public:
     return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
       const char* sep = "";
       std::ostringstream out;
-      (((out << sep << librepr::get_name<typename arguments::template get<Idx>>()), sep = ", "), ...);
+      
+      (((out << sep << TemplateInfo<typename arguments::template get<Idx>>::name()), sep = ", "), ...);
       return out.str();
     }(std::make_index_sequence<argument_count>());
   }

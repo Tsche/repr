@@ -1,15 +1,14 @@
 #pragma once
 #include <sstream>
 #include <string>
-#include <format>
 #include <type_traits>
 
-#include <librepr/reflection/name.h>
+#include <librepr/type/name.h>
 
-#include <librepr/detail/concepts.h>
-#include <librepr/detail/overload.h>
+#include <librepr/util/concepts.h>
+#include <librepr/util/overload.h>
 
-#include "visitor.h"
+#include <librepr/visitors/visitor.h>
 
 
 namespace librepr {
@@ -21,7 +20,7 @@ template <template <typename...> class Variant, typename... Ts>
 struct Reflect<Variant<Ts...>> {
   using type = Variant<Ts...>;
 
-  static void visit(auto&& visitor, type const& obj) {
+  static void visit(Visitor::Values auto&& visitor, type const& obj) {
     ScopeGuard guard{visitor, std::type_identity<type>{}};
     std::visit(detail::Overload{[&visitor](Ts const& alternative) {
                                     return Reflect<Ts>::visit(std::forward<decltype(visitor)>(visitor), alternative);

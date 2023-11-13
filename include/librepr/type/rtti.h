@@ -2,7 +2,7 @@
 #include <typeinfo>
 
 #include <librepr/detail/default.h>
-#include <librepr/demangle.h>
+#include "demangle.h"
 
 namespace librepr {
 
