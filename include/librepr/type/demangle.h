@@ -2,7 +2,6 @@
 #include <string>
 #include <string_view>
 
-#include <librepr/detail/visibility.h>
 
 #if defined _WIN32
 #pragma comment(lib, "dbghelp.lib")
@@ -31,7 +30,7 @@ namespace detail {
 }
 #endif
 
-[[nodiscard]] EXPORT inline std::string demangle(std::string_view mangled) {
+[[nodiscard]] inline std::string demangle(std::string_view mangled) {
 #if defined _WIN32
   auto buffer = std::array<char, REPR_DEMANGLE_MAX>{};
   auto result = ::UnDecorateSymbolName(mangled.data(), buffer.data(), REPR_DEMANGLE_MAX,

@@ -21,7 +21,8 @@ struct Reflect<T> {
   static_assert(!std::is_same_v<member_tuple, void>);
   using type = rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
 
-  static void visit(Visitor::Values auto&& visitor, T const& obj) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, T const& obj) {
     auto members = librepr::detail::to_tuple(obj);
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
@@ -29,7 +30,7 @@ struct Reflect<T> {
     
     []<std::size_t... index>(std::index_sequence<index...>, Visitor::Values auto&& visitor_, auto const& tuple) {
       (type::template get<index>::visit(std::forward<decltype(visitor_)>(visitor_), std::get<index>(tuple)), ...);
-    }(std::make_index_sequence<type::size>{}, std::forward<decltype(visitor)>(visitor), members);
+    }(std::make_index_sequence<type::size>{}, std::forward<V>(visitor), members);
   }
 
   static std::string layout() {

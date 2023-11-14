@@ -1,0 +1,15 @@
+[palgen]
+output = "build"
+
+[palgen.extensions]
+folders = ["tools"]
+inline = false
+
+[project]
+name = "librepr"
+version = "0.1"
+sources = ["include"]
+
+[amalgamate]
+root = "repr"
+filename = "amalgamated.h"

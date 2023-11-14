@@ -17,7 +17,8 @@ template <typename T>
 struct Reflect {
   using type = T;
 
-  static void visit(Visitor::Values auto&& visitor, type const& obj) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, type const& obj) {
     visitor(obj);
   }
 
@@ -26,7 +27,8 @@ struct Reflect {
 
 template <>
 struct Reflect<char const*> {
-  static void visit(Visitor::Values auto&& visitor, char const* obj) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, char const* obj) {
     visitor(obj);
   }
 

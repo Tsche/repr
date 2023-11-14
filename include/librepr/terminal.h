@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <librepr/detail/visibility.h>
 
 #if defined _WIN32
   #define WIN32_LEAN_AND_MEAN
@@ -11,7 +10,7 @@
 #endif
 
 namespace librepr {
-[[nodiscard]] EXPORT inline std::size_t get_terminal_width() {
+[[nodiscard]] inline std::size_t get_terminal_width() {
 #if defined _WIN32
   auto terminal_size = CONSOLE_SCREEN_BUFFER_INFO{};
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &terminal_size);

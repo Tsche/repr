@@ -18,10 +18,11 @@ struct Reflect<T> {
   using first_type  = std::remove_cv_t<std::remove_reference_t<typename T::first_type>>;
   using second_type = std::remove_cv_t<std::remove_reference_t<typename T::second_type>>;
 
-  static void visit(Visitor::Values auto&& visitor, type const& obj) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, type const& obj) {
     ScopeGuard guard{visitor, std::type_identity<type>{}};
-    Reflect<first_type>::visit(std::forward<decltype(visitor)>(visitor), obj.first);
-    Reflect<second_type>::visit(std::forward<decltype(visitor)>(visitor), obj.second);
+    Reflect<first_type>::visit(std::forward<V>(visitor), obj.first);
+    Reflect<second_type>::visit(std::forward<V>(visitor), obj.second);
   }
 
   static std::string layout() {

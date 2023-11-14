@@ -4,7 +4,7 @@
 namespace librepr::detail {
 struct Universal {
   template <typename T>
-  [[implicit]] constexpr operator T();  // NOLINT
+  /* implicit */ constexpr operator T();  // NOLINT
 };
 
 template <typename T>

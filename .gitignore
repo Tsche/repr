@@ -2,5 +2,7 @@
 .vscode/
 .vsconan/
 .cache/
+**/.idea
 **/CMakeUserPresets.json
 compile_commands.json
+**.pyc
