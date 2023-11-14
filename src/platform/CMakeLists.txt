@@ -1,5 +1,0 @@
-IF (WIN32)
-  add_subdirectory(windows)
-ELSE()
-  add_subdirectory(linux)
-ENDIF()

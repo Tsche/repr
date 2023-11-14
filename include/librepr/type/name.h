@@ -81,11 +81,8 @@ public:
 template <typename T>
 char const* get_mangled_name() {
 #if defined(_WIN32)
-  // This actually returns the mangled name of this function
-  // demangle(...) implements a dirty hack to work around that
-  return __FUNCDNAME__;
+  return typeid(T).raw_name();
 #else
-  // On Linux mangled names can only be retrieved using RTTI
   return typeid(T).name();
 #endif
 }

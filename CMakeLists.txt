@@ -4,23 +4,16 @@ include(cmake/warnings.cmake)
 project(repr CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_library(repr "")
-enable_warnings(repr)
+add_library(repr INTERFACE)
+
 set_property(TARGET repr PROPERTY CXX_STANDARD 23)
 
-target_include_directories(repr PUBLIC 
+target_include_directories(repr INTERFACE 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-add_subdirectory(src)
-
 find_package(magic_enum CONFIG REQUIRED)
-target_link_libraries(repr PUBLIC magic_enum::magic_enum)
-
-if(ENABLE_SANITIZERS)
-  target_compile_options(repr PUBLIC -fsanitize=address,undefined)
-  target_link_options(repr PUBLIC -fsanitize=address,undefined)
-endif()
+target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
@@ -29,6 +22,8 @@ if(ENABLE_TESTS)
 
   enable_testing()
   add_executable(repr_test "")
+  
+  enable_warnings(repr_test)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
@@ -48,6 +43,11 @@ if(ENABLE_TESTS)
       message(FATAL_ERROR "Currently only GCC is supported for coverage instrumentation.")
     endif()
 
+  endif()
+
+  if(ENABLE_SANITIZERS)
+    target_compile_options(repr_test INTERFACE -fsanitize=address,undefined)
+    target_link_options(repr_test INTERFACE -fsanitize=address,undefined)
   endif()
 endif()
 
