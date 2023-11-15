@@ -35,7 +35,7 @@ class ReprRecipe(ConanFile):
         if not self.conf.get("tools.build:skip_test", default=False):
             cmake = CMake(self)
             cmake.configure(variables={'ENABLE_SANITIZERS': self.options.sanitizers, 
-                                       'ENABLE_COVERAGE': self.options.coverage and self.options.test})
+                                       'ENABLE_COVERAGE': self.options.coverage})
             cmake.build()
 
     def package(self):
