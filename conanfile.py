@@ -39,6 +39,7 @@ class ReprRecipe(ConanFile):
             cmake.build()
 
     def package(self):
+        # TODO copy <repr>
         copy(self, "*.h", self.source_folder, self.package_folder)
 
     def package_info(self):
