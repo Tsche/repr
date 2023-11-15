@@ -15,9 +15,10 @@ target_include_directories(repr INTERFACE
 find_package(magic_enum CONFIG REQUIRED)
 target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
-option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
-if(ENABLE_TESTS)
+
+if(NOT BUILD_TESTING STREQUAL OFF)
   message(STATUS "Building unit tests")
 
   enable_testing()

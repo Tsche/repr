@@ -3,6 +3,7 @@ name: CI
 on:
   workflow_dispatch:
   push:
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -34,7 +35,7 @@ jobs:
     
     - uses: actions/checkout@v3
     - name: Build
-      run: conan build . -s build_type=Debug --build=missing -o test=True
+      run: conan build . -s build_type=Debug --build=missing
 
     - name: Test Package
       run: |

@@ -3,6 +3,7 @@ name: SonarCloud
 on:
   workflow_dispatch:
   push:
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -41,7 +42,7 @@ jobs:
       uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
 
     - name: Build
-      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o test=True -o coverage=True
+      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o coverage=True
     
     - name: Coverage
       run: |
