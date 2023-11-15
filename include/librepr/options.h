@@ -14,6 +14,11 @@ struct Options {
   std::size_t indent    = 0;
   std::size_t max_width = librepr::get_terminal_width();
 
-  [[nodiscard]] bool should_print_type(std::size_t level) const;
+  [[nodiscard]] bool should_print_type(std::size_t level) const {
+    if (level == 0) {
+      return print_type;
+    }
+    return explicit_types;
+  }
 };
 }  // namespace librepr

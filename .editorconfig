@@ -9,3 +9,9 @@ indent_style = space
 indent_size = 2
 charset = utf-8
 end_of_line = lf
+
+[*.py]
+indent_style = space
+indent_size = 4
+charset = utf-8
+end_of_line = lf

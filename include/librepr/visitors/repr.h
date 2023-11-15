@@ -20,8 +20,21 @@ private:
   std::size_t level = 0;
   Options options   = {};
 
-  void print_indent();
-  void print_separator();
+  void print_indent() {
+    if (options.indent != 0) {
+      result.append("\n");
+      result.append(std::string(options.indent * level, ' '));
+    }
+  }
+
+  void print_separator() {
+    if (separate) {
+      result.append(", ");
+    } else {
+      separate = true;
+    }
+    print_indent();
+  }
 
 public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
@@ -108,8 +121,17 @@ public:
     }
   }
 
-  void increase_nesting();
-  void decrease_nesting();
+  void increase_nesting() {
+    separate = false;
+    result += '{';
+    ++level;
+  }
+
+  void decrease_nesting() {
+    --level;
+    print_indent();
+    result += '}';
+  }
 };
 
 static_assert(Visitor::Hierarchical<ReprVisitor>, "Formatter isn't a valid hierarchical visitor.");

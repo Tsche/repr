@@ -17,10 +17,11 @@ requires (not std::same_as<T, char>) //TODO exclude other string literals
 struct Reflect<T[N]> {
   using type = T;
 
-  static void visit(Visitor::Values auto&& visitor, T const (&obj)[N]) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, T const (&obj)[N]) {
     ScopeGuard guard{visitor, std::type_identity<T[N]>{}};
     for (std::size_t idx = 0; idx < N; ++idx) {
-      Reflect<type>::visit(std::forward<decltype(visitor)>(visitor), obj[idx]);
+      Reflect<type>::visit(std::forward<V>(visitor), obj[idx]);
     }
   }
 
@@ -31,8 +32,9 @@ template <typename T>
 struct Reflect<T[]> {  // NOLINT
   using type = T;
 
-  static void visit(Visitor::Values auto&& visitor, T const& obj) {
-    ScopeGuard guard{visitor, std::type_identity<T[]>{}};
+  template <Visitor::Values V>
+  static void visit(V&& visitor, T const& /* obj */) {
+    ScopeGuard guard{std::forward<V>(visitor), std::type_identity<T[]>{}};
   }
 
   static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }

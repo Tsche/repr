@@ -18,7 +18,8 @@ template <typename T>
 struct Reflect<T> {
   using type = T;
 
-  static void visit(Visitor::Values auto&& visitor, type const& obj) {
+  template <Visitor::Values V>
+  static void visit(V&& visitor, type const& obj) {
     visitor(obj);
   }
 

@@ -7,7 +7,6 @@
 #include <tuple>
 #include <type_traits>
 
-#include <librepr/detail/visibility.h>
 #include <librepr/detail/default.h>
 #include <librepr/util/type_list.h>
 #include "ctti.h"
@@ -15,7 +14,7 @@
 
 namespace librepr {
 template <typename T>
-EXPORT std::string get_name();
+std::string get_name();
 
 namespace detail {
 
@@ -81,17 +80,14 @@ public:
 template <typename T>
 char const* get_mangled_name() {
 #if defined(_WIN32)
-  // This actually returns the mangled name of this function
-  // demangle(...) implements a dirty hack to work around that
-  return __FUNCDNAME__;
+  return typeid(T).raw_name();
 #else
-  // On Linux mangled names can only be retrieved using RTTI
   return typeid(T).name();
 #endif
 }
 
 template <typename T>
-EXPORT std::string get_name() {
+std::string get_name() {
   return librepr::detail::TemplateInfo<T>::name();
 }
 }  // namespace librepr
