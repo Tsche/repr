@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * Some of these functions are unused, 
+ * but I'm leaving them in so it's 
+ * easier to extend later.
+ */
+
 #include <cstddef>
 #include <cstring>
 #include <set>
@@ -59,12 +65,12 @@ struct SymBuffer {
     }
   }
 
-  void write(std::string_view sv) {
+  REPR_MINLINE void write(std::string_view sv) {
     auto* beg = sv.data();
     this->write(beg, beg + sv.size());
   }
 
-  void write(char c) {
+  REPR_MINLINE void write(char c) {
     buf.push_back(c);
   }
 
@@ -247,7 +253,7 @@ private:
     return buf->back();
   }
 
-  void handle_symbol(char c) {
+  REPR_MINLINE void handle_symbol(char c) {
     char lc = SymLexer::last_first();
     if(c == '>') {
       if(lc == '>')
@@ -260,7 +266,7 @@ private:
     }
   }
 
-  void handle_ident(SymToken) {
+  REPR_MINLINE void handle_ident(SymToken) {
     char lc = last_written();
     if(SymLexer::isIdent(lc)) {
       buf.write(' ');
@@ -295,7 +301,7 @@ private:
 }  // namespace msvc
 
 /// Formats undecorated symbols to match itanium's symbols
-[[nodiscard]] inline std::string denoise_name(std::string_view name) {
+[[nodiscard]] REPR_MINLINE std::string denoise_name(std::string_view name) {
   msvc::SymParser parser{name};
   parser.parse();
   return std::move(parser.extract());

@@ -15,7 +15,7 @@
   return ((b*)((char*)(__ptr) - offsetof(b, m))); }
 
 #ifndef REPR_HARD_CHECKS_
-#define REPR_HARD_CHECKS_ 0
+#define REPR_HARD_CHECKS_ OFF
 #endif
 
 namespace librepr::detail {
@@ -37,6 +37,7 @@ using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
 }
 
 inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
+  // This is fine.
   { [[maybe_unused]] static int _ = syminit_(); }
   static std::mutex mtx { };
   if constexpr (msvc::has_rawname) {
@@ -52,7 +53,7 @@ inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
       return denoised.size();
     }
   }
-#if REPR_HARD_CHECKS_
+#if USING(REPR_HARD_CHECKS_)
   REPR_MSC_ASSERT(*symdata == '?', 
     "Got '{}', expected '?'", *symdata);
 #endif

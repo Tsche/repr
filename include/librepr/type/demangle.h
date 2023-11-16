@@ -5,7 +5,7 @@
 #include <librepr/detail/platform.h>
 
 #if USING(REPR_MSVC)
-#define REPR_HARD_CHECKS_ 1
+#define REPR_HARD_CHECKS_ ON
 #include "detail/undecorate.h"
 #include "detail/denoise.h"
 #elif __has_include(<cxxabi.h>)
@@ -30,8 +30,6 @@ namespace librepr {
       std::string_view snip { buffer.data(), count };
       snip.RRemovePrefix("char const * librepr::get_mangled_name<");
       snip.RRemoveSuffix(">(void)");
-      // TODO: Remove this when we parse
-      if(snip.back() == ' ') snip.remove_suffix(1);
       return detail::denoise_name(snip);
     }
   }
