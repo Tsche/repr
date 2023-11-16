@@ -7,10 +7,11 @@
 
 #if USING(REPR_FORMAT_FMT)
 #include <fmt/format.h>
-#define REPR_FORMAT_NS ::fmt
+#define REPR_FORMAT_RNS fmt
 #else
 #include <format>
-#define REPR_FORMAT_NS ::std
+#define REPR_FORMAT_RNS std
 #endif
 
-#define REPR_FORMAT(...) REPR_FORMAT_NS::format(__VA_ARGS__)
+#define REPR_FORMAT_NS ::REPR_FORMAT_RNS
+#define REPR_FORMAT(...) ::REPR_FORMAT_RNS::format(__VA_ARGS__)

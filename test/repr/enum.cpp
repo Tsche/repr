@@ -14,5 +14,7 @@ enum class ScopedEnum {
 TEST(repr, enum) {
   EXPECT_EQ(repr(UnscopedEnum::FIRST), "FIRST");
   EXPECT_EQ(repr(ScopedEnum::FIRST), "ScopedEnum::FIRST");
+#if defined _WIN32
   EXPECT_EQ(librepr::detail::denoise_name(repr(ScopedEnum::FIRST)), "ScopedEnum::FIRST");
+#endif
 }

@@ -32,7 +32,7 @@ using StrFormatter = REPR_FORMAT_NS::formatter<std::string, CharT>;
 
 // REPR_FORMAT_NS::format support for librepr::TypeInfo<T>{} and typeinfo<T>
 template <class T, class CharT>
-struct REPR_FORMAT_NS::formatter<librepr::TypeInfo<T>, CharT> : librepr::StrFormatter<CharT> {  // NOLINT
+struct REPR_FORMAT_RNS::formatter<librepr::TypeInfo<T>, CharT> : librepr::StrFormatter<CharT> {  // NOLINT
   auto format(librepr::TypeInfo<T> const& obj, auto& ctx) const {
     return librepr::StrFormatter<CharT>::format(obj.name(), ctx);
   }
@@ -40,7 +40,7 @@ struct REPR_FORMAT_NS::formatter<librepr::TypeInfo<T>, CharT> : librepr::StrForm
 
 // REPR_FORMAT_NS::format support for librepr::TypeName<T>{} and nameof<T>
 template <class T, class CharT>
-struct REPR_FORMAT_NS::formatter<librepr::TypeName<T>, CharT> : librepr::StrFormatter<CharT> {  // NOLINT
+struct REPR_FORMAT_RNS::formatter<librepr::TypeName<T>, CharT> : librepr::StrFormatter<CharT> {  // NOLINT
   auto format(librepr::TypeName<T> const& obj, auto& ctx) const {
     return librepr::StrFormatter<CharT>::format(obj.to_string(), ctx);
   }
