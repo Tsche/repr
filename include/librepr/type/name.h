@@ -35,9 +35,9 @@ private:
   template <std::size_t... Idx>
   consteval static auto get_min_required(std::index_sequence<Idx...> seq) -> std::size_t {
     if constexpr (requires {
-                    typename U<typename arguments::template get<Idx>...>;
-                    requires std::same_as<U<Ts...>, U<typename arguments::template get<Idx>...>>;
-                  }) {
+      typename U<typename arguments::template get<Idx>...>;
+      requires std::same_as<U<Ts...>, U<typename arguments::template get<Idx>...>>;
+    }) {
       if constexpr (sizeof...(Idx) == 0) {
         return 0;
       } else {

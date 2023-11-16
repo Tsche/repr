@@ -16,10 +16,8 @@ template <typename T>
 struct Reflect;
 
 namespace detail {
-  /** 
-   * Stupid fucking bullshit hack to get Reflect to
-   * stop matching random ass types with Variant<...>
-   */
+  /// Stupid fucking bullshit hack to get Reflect to
+  /// stop matching random ass types with Variant<...>
   struct GenericVisitor {
     void operator()(auto&&) { }
     static auto X(auto&& v) // NOLINT
@@ -29,9 +27,8 @@ namespace detail {
   };
 
   template <typename T>
-  concept is_variant_like = 
-    requires(T t) { GenericVisitor::X(t); } &&
-    variant_like<T>;
+  concept is_variant_like = variant_like<T> &&
+    requires(T t) { GenericVisitor::X(t); };
 }  // namespace detail
 
 template <template <typename...> class Variant, typename... Ts>
