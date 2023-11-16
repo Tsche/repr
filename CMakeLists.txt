@@ -15,8 +15,16 @@ target_include_directories(repr INTERFACE
 find_package(magic_enum CONFIG REQUIRED)
 target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
+option(BUILD_TESTING "Enable tests" ON)
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
+option(ENABLE_FMTLIB "Use fmt::* instead of std::*" OFF)
+
+if(ENABLE_FMTLIB)
+  find_package(fmt CONFIG REQUIRED)
+  target_link_libraries(repr INTERFACE fmt::fmt)
+  target_compile_definitions(repr INTERFACE REPR_FORMAT_FMT=ON)
+endif()
 
 if(NOT BUILD_TESTING STREQUAL OFF)
   message(STATUS "Building unit tests")
@@ -28,7 +36,7 @@ if(NOT BUILD_TESTING STREQUAL OFF)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
-  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gmock)
+  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock)
 
   include(GoogleTest)
   gtest_discover_tests(repr_test)

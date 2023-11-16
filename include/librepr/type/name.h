@@ -1,6 +1,6 @@
 #pragma once
 
-#include <format>
+#include <concepts>
 #include <string>
 #include <string_view>
 #include <sstream>
@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include <librepr/detail/default.h>
+#include <librepr/detail/format.h>
 #include <librepr/util/type_list.h>
 #include "ctti.h"
 #include "rtti.h"
@@ -27,15 +28,17 @@ struct TemplateInfo {
 template <template <typename...> typename U, typename... Ts>
 struct TemplateInfo<U<Ts...>> {
   using type                         = U<Ts...>;
-  using arguments                   = TypeList<Ts...>;
+  using arguments                    = TypeList<Ts...>;
   static constexpr bool is_templated = true;
 
 private:
   template <std::size_t... Idx>
   consteval static auto get_min_required(std::index_sequence<Idx...> seq) -> std::size_t {
     if constexpr (requires {
-                    typename U<typename arguments::template get<Idx>...>;
-                    requires std::is_same_v<U<Ts...>, U<typename arguments::template get<Idx>...>>;
+                    U<typename arguments::template get<Idx>...>;
+                    requires requires {
+                      std::same_as<U<Ts...>, U<typename arguments::template get<Idx>...>>;
+                    };
                   }) {
       if constexpr (sizeof...(Idx) == 0) {
         return 0;
@@ -59,7 +62,7 @@ public:
       return full;
     }
 
-    return std::format("{}<{}>", std::string_view(full.data(), marker), format_template_arguments());
+    return REPR_FORMAT("{}<{}>", std::string_view(full.data(), marker), format_template_arguments());
   }
 
   static std::string format_template_arguments() {
@@ -79,8 +82,10 @@ public:
 
 template <typename T>
 char const* get_mangled_name() {
-#if defined(_WIN32)
-  return typeid(T).raw_name();
+#if USING(REPR_MSVC)
+  static auto& ty = typeid(T);
+  static volatile auto _ = ty.name();
+  return ty.raw_name();
 #else
   return typeid(T).name();
 #endif

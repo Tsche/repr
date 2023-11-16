@@ -14,4 +14,5 @@ enum class ScopedEnum {
 TEST(repr, enum) {
   EXPECT_EQ(repr(UnscopedEnum::FIRST), "FIRST");
   EXPECT_EQ(repr(ScopedEnum::FIRST), "ScopedEnum::FIRST");
+  EXPECT_EQ(librepr::detail::denoise_name(repr(ScopedEnum::FIRST)), "ScopedEnum::FIRST");
 }
