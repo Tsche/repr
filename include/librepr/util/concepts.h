@@ -22,9 +22,9 @@ template <typename T>
 concept is_scoped_enum = !std::is_convertible_v<T, std::underlying_type_t<T>>;
 
 template <typename T>
-concept variant_like = requires (T t){
-    std::visit([](auto){}, t);
-    {t.index()} -> std::same_as<std::size_t>;
+concept variant_like = requires (T t) {
+  std::visit([](auto&&){}, t);
+  {t.index()} -> std::same_as<std::size_t>;
 };
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <librepr/feature.h>
+#include <librepr/detail/platform.h>
 
 #if !defined(REPR_RTTI) && !defined(REPR_CTTI)
     #define REPR_RTTI ON

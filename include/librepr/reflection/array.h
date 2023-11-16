@@ -1,10 +1,10 @@
 #pragma once
-#include <format>
 #include <string>
 #include <sstream>
 #include <type_traits>
 #include <concepts>
 
+#include <librepr/detail/format.h>
 #include <librepr/type/name.h>
 #include <librepr/visitors/visitor.h>
 
@@ -25,7 +25,7 @@ struct Reflect<T[N]> {
     }
   }
 
-  static std::string layout() { return std::format("{}[{}]", Reflect<type>::layout(), N); }
+  static std::string layout() { return REPR_FORMAT("{}[{}]", Reflect<type>::layout(), N); }
 };
 
 template <typename T>
@@ -37,7 +37,7 @@ struct Reflect<T[]> {  // NOLINT
     ScopeGuard guard{std::forward<V>(visitor), std::type_identity<T[]>{}};
   }
 
-  static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }
+  static std::string layout() { return REPR_FORMAT("[{}]", Reflect<type>::layout()); }
 };
 
 }  // namespace librepr

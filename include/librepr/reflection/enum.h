@@ -2,9 +2,9 @@
 #include <string>
 #include <sstream>
 #include <type_traits>
-#include <format>
 
 #include <magic_enum.hpp>
+#include <librepr/detail/format.h>
 #include <librepr/type/name.h>
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>

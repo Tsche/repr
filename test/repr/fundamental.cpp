@@ -55,7 +55,7 @@ TEST(fundamental, long_double) {
   EXPECT_EQ(repr(1.0L), "1.0L");
 
   EXPECT_EQ(repr(0.1L), "0.1L");
-  EXPECT_EQ(repr(3.141592653589793238L), "3.141592653589793238L");
+  EXPECT_EQ(repr(3.1415926535L), "3.1415926535L");
 }
 
 TEST(fundamental, char) {

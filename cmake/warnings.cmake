@@ -62,6 +62,7 @@ function(enable_warnings _TARGET)
   if("${CLANG_WARNINGS}" STREQUAL "")
     set(CLANG_WARNINGS
       ${COMMON_WARNINGS}
+      -Wno-dollar-in-identifier-extension
       -Wno-unknown-attributes # ignore unknown attribute warning
     )
   endif()
