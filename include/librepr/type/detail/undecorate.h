@@ -6,36 +6,28 @@
 #include <DbgHelp.h>
 
 #include <array>
-#include <cassert>
 #include <mutex>
-#include <string>
-#include <string_view>
 #include <typeinfo>
-#include <librepr/util/strings.h>
+#include "denoise.h"
 
 // Awful!! But simplifies the _DecoratedName -> Symbol conversion
 #define M2B_CAST(b, m) [](auto* __ptr) { \
   return ((b*)((char*)(__ptr) - offsetof(b, m))); }
 
-namespace librepr {
+#ifndef REPR_HARD_CHECKS_
+#define REPR_HARD_CHECKS_ 0
+#endif
+
+namespace librepr::detail {
+namespace msvc {
 /// Checks if we need to use __FUNCDNAME__ or not.
 /// As far as I know, it should always exist, but we have this just in case
-inline constexpr bool msvc_rawname =
+inline constexpr bool has_rawname =
   requires(const std::type_info& ty) { ty.raw_name(); };
+}  // namespace msvc
 
-namespace detail {
 /// Wrapped buffer for demangling
 using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
-
-[[nodiscard]] inline std::string denoise_name(std::string_view name) {
-  auto ret = std::string{name.data()};
-  // TODO: Actually parse the undecorated symbols T-T
-  remove_all(ret, "struct ");
-  remove_all(ret, "class ");
-  remove_all(ret, "enum ");
-  return ret;
-}
-
 // TODO: Make this better ig
 [[nodiscard]] inline int syminit_() {
   SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS | SYMOPT_DEFERRED_LOADS);
@@ -47,7 +39,7 @@ using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
 inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
   { [[maybe_unused]] static int _ = syminit_(); }
   static std::mutex mtx { };
-  if constexpr (msvc_rawname) {
+  if constexpr (msvc::has_rawname) {
     // It should go without saying but...
     // DON'T pass random strings starting with `.`
     if (*symdata == '.') [[likely]] {
@@ -60,10 +52,12 @@ inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
       return denoised.size();
     }
   }
+#if REPR_HARD_CHECKS_
+  REPR_MSC_ASSERT(*symdata == '?', 
+    "Got '{}', expected '?'", *symdata);
+#endif
   std::scoped_lock lock { mtx };
   return std::size_t(::UnDecorateSymbolName(symdata, buf.data(),
     REPR_DEMANGLE_MAX, UNDNAME_NO_MS_KEYWORDS));
 }
-
-}  // namespace detail
-}  // namespace librepr
+}  // namespace librepr::detail

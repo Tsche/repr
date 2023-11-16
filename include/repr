@@ -16,8 +16,6 @@ struct ReprWrapper {
     return visitor.result;
   }
 };
-
-
 }  // namespace librepr
 
 

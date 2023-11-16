@@ -80,17 +80,22 @@ public:
 template <typename T>
 char const* get_mangled_name() {
 #if USING(REPR_MSVC)
-  if constexpr(msvc_rawname) {
-    // Uses vcruntime internals to get a mangled name.
+  // Just in case...
+  if constexpr(detail::msvc::has_rawname) {
     static auto& ty = typeid(T);
+    // .name() must be called since we have lazy symbol
+    // loading enabled. Otherwise when accessing later
+    // ._UndecoratedName will be NULL.
     static volatile auto _ = ty.name();
+    // Use vcruntime internals to get a mangled name.
     return ty.raw_name();
   } else {
-    // Returns the mangled name of this function
+    // Returns the mangled name of this function.
     // demangle(...) implements a dirty hack to bypass that
     return __FUNCDNAME__;
   }
 #else
+  // On Linux mangled names can only be retrieved using RTTI
   return typeid(T).name();
 #endif
 }

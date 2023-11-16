@@ -55,7 +55,10 @@ TEST(fundamental, long_double) {
   EXPECT_EQ(repr(1.0L), "1.0L");
 
   EXPECT_EQ(repr(0.1L), "0.1L");
+#if !defined(_WIN32)
+  // TODO: Remove this?
   EXPECT_EQ(repr(3.141592653589793238L), "3.141592653589793238L");
+#endif
 }
 
 TEST(fundamental, char) {

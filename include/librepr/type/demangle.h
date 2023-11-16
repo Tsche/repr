@@ -5,18 +5,15 @@
 #include <librepr/detail/platform.h>
 
 #if USING(REPR_MSVC)
+#define REPR_HARD_CHECKS_ 1
 #include "detail/undecorate.h"
+#include "detail/denoise.h"
 #elif __has_include(<cxxabi.h>)
 #include <cxxabi.h>
 #include <memory>
 #else
 #error No available demangling method!
 #endif
-
-// TODO: Move these somewhere else
-// They make the code look too sexy
-#define RRemovePrefix(str) remove_prefix(sizeof(str) - 1U)
-#define RRemoveSuffix(str) remove_suffix(sizeof(str) - 1U)
 
 namespace librepr {
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
@@ -27,7 +24,7 @@ namespace librepr {
     // Demangling failed...
     return mangled.data();
   }
-  if constexpr(!msvc_rawname) {
+  if constexpr(!detail::msvc::has_rawname) {
     // Check if the symbol was obtained with __FUNCDNAME__
     if(mangled.starts_with("??$get_mangled_name")) [[likely]] {
       std::string_view snip { buffer.data(), count };
