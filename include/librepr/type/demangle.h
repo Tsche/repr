@@ -5,90 +5,40 @@
 #include <librepr/detail/platform.h>
 
 #if USING(REPR_MSVC)
-#pragma comment(lib, "dbghelp.lib")
-#define WIN32_LEAN_AND_MEAN
-
-#include <Windows.h>
-#include <DbgHelp.h>
-#include <librepr/util/strings.h>
-#include <array>
-#include <cassert>
-#include <mutex>
-
-#define REPR_MSC_XASSERT(...) \
-  _assert((REPR_FORMAT(__VA_ARGS__).c_str()), (__FILE__), unsigned(__LINE__))
-// Awful!! But simplifies the _DecoratedName -> Symbol conversion
-#define M2B_CAST(b, m) [](auto* __ptr) { \
-  return ((b*)((char*)(__ptr) - offsetof(b, m))); }
-
-_CRT_BEGIN_C_HEADER
-  __declspec(dllimport) void 
-   __cdecl _assert( // NOLINT
-    char const* _Message,
-    char const* _File,
-    unsigned    _Line
-  );
-_CRT_END_C_HEADER
-
+#include "detail/undecorate.h"
 #elif __has_include(<cxxabi.h>)
 #include <cxxabi.h>
 #include <memory>
-
 #else
 #error No available demangling method!
 #endif
 
+// TODO: Move these somewhere else
+// They make the code look too sexy
+#define RRemovePrefix(str) remove_prefix(sizeof(str) - 1U)
+#define RRemoveSuffix(str) remove_suffix(sizeof(str) - 1U)
+
 namespace librepr {
-
-#if USING(REPR_MSVC)
-using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
-namespace detail {
-[[nodiscard]] inline std::string denoise_name(std::string_view name) {
-  auto ret = std::string{name.data()};
-  // TODO: Actually parse the undecorated symbols T-T
-  remove_all(ret, "struct ");
-  remove_all(ret, "class ");
-  remove_all(ret, "enum ");
-  return ret;
-}
-
-[[nodiscard]] inline int syminit_() {
-  SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS | SYMOPT_DEFERRED_LOADS);
-  bool did_initialize = !!SymInitialize(
-    GetCurrentProcess(), NULL, TRUE);
-  assert(did_initialize && "Failed to initialize the symbol handler!");
-  return true;
-}
-
-inline bool undecorate_name(const char* symdata, DemangleBuffer& buf) {
-  { [[maybe_unused]] static int _ = syminit_(); }
-  static std::mutex mtx { };
-  if (*symdata == '.') {
-    symdata = M2B_CAST(::__std_type_info_data, _DecoratedName)(
-      symdata)->_UndecoratedName;
-    if(!symdata) [[unlikely]] { return false; }
-    auto denoised = denoise_name({ symdata });
-    std::memcpy(buf.data(), denoised.data(), denoised.size());
-    return true;
-  } else if (*symdata != '?') [[unlikely]] {
-    // TODO: Remove this
-    REPR_MSC_XASSERT("Invalid symbol `{}'", symdata);
-  }
-  std::scoped_lock lock { mtx };
-  return (::UnDecorateSymbolName(symdata, buf.data(),
-    REPR_DEMANGLE_MAX, UNDNAME_NAME_ONLY | UNDNAME_NO_MS_KEYWORDS) > 0);
-}
-}  // namespace detail
-#endif
-
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
 #if USING(REPR_MSVC)
-  DemangleBuffer buffer{};
-  if (not detail::undecorate_name(mangled.data(), buffer)) {
-    // could not demangle
-    return std::string(mangled);
+  detail::DemangleBuffer buffer{};
+  auto count = detail::undecorate_name(mangled.data(), buffer);
+  if (count == 0) [[unlikely]] {
+    // Demangling failed...
+    return mangled.data();
   }
-  return std::string{buffer.data()};
+  if constexpr(!msvc_rawname) {
+    // Check if the symbol was obtained with __FUNCDNAME__
+    if(mangled.starts_with("??$get_mangled_name")) [[likely]] {
+      std::string_view snip { buffer.data(), count };
+      snip.RRemovePrefix("char const * librepr::get_mangled_name<");
+      snip.RRemoveSuffix(">(void)");
+      // TODO: Remove this when we parse
+      if(snip.back() == ' ') snip.remove_suffix(1);
+      return detail::denoise_name(snip);
+    }
+  }
+  return std::string(buffer.data(), count);
 #else
   struct FreeDeleter {
     void operator()(void* ptr) const { std::free(ptr); }
@@ -101,4 +51,7 @@ inline bool undecorate_name(const char* symdata, DemangleBuffer& buf) {
   return std::string{demangled ? demangled.get() : mangled};
 #endif
 }
-}
+}  // namespace librepr
+
+#undef RRemovePrefix
+#undef RRemoveSuffix

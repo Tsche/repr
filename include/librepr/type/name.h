@@ -75,15 +75,21 @@ public:
     }(std::make_index_sequence<argument_count>());
   }
 };
-
 }  // namespace detail
 
 template <typename T>
 char const* get_mangled_name() {
 #if USING(REPR_MSVC)
-  static auto& ty = typeid(T);
-  static volatile auto _ = ty.name();
-  return ty.raw_name();
+  if constexpr(msvc_rawname) {
+    // Uses vcruntime internals to get a mangled name.
+    static auto& ty = typeid(T);
+    static volatile auto _ = ty.name();
+    return ty.raw_name();
+  } else {
+    // Returns the mangled name of this function
+    // demangle(...) implements a dirty hack to bypass that
+    return __FUNCDNAME__;
+  }
 #else
   return typeid(T).name();
 #endif
