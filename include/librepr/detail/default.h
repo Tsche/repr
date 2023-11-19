@@ -26,16 +26,6 @@
     #define REPR_SOURCE_LOCATION OFF
 #endif
 
-#if !defined(REPR_NAMESPACE)
-    #define REPR_NAMESPACE OFF
-#endif
-
-#if USING(REPR_NAMESPACE)
-    #define REPR_INLINE
-#else 
-    #define REPR_INLINE inline
-#endif 
-
 #if !defined(REPR_DEFAULT_TEMPLATE_ARGUMENTS)
   #define REPR_DEFAULT_TEMPLATE_ARGUMENTS OFF
 #endif
@@ -43,3 +33,28 @@
 #if !defined(REPR_DEMANGLE_MAX)
   #define REPR_DEMANGLE_MAX 1024
 #endif
+
+#if !defined(REPR_MAGIC_ENUM)
+  #define REPR_MAGIC_ENUM OFF
+#endif
+
+#if !defined(REPR_ENUM_MIN_SIGNED)
+  #define REPR_ENUM_MIN_SIGNED -256
+#endif
+
+#if !defined(REPR_ENUM_MAX_SIGNED)
+  #define REPR_ENUM_MAX_SIGNED 256
+#endif
+
+#if !defined(REPR_ENUM_MIN_UNSIGNED)
+  #define REPR_ENUM_MIN_UNSIGNED 0
+#endif
+
+#if !defined(REPR_ENUM_MAX_UNSIGNED)
+  #define REPR_ENUM_MAX_UNSIGNED 512
+#endif
+
+#if !defined(REPR_ENUM_CHUNKSIZE)
+  #define REPR_ENUM_CHUNKSIZE 256
+#endif
+
