@@ -77,6 +77,16 @@ struct TypeList {
 
   template <typename Tuple>
   using from_tuple = decltype(do_from_tuple<Tuple>(std::make_index_sequence<std::tuple_size_v<Tuple>>{}));
+
+  template <typename F, typename... Args>
+  static constexpr auto invoke(F&& callable, Args&&... args) {
+    return callable.template operator()<Ts...>(std::forward<Args>(args)...);
+  }
+
+  template <typename F, typename... Args>
+  static constexpr void for_each(F&& callable, Args&&... args) {
+    (callable.template operator()<Ts>(std::forward<Args>(args)...), ...);
+  }
 };
 
 }  // namespace librepr

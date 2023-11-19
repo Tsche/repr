@@ -3,9 +3,14 @@
 #include <array>
 #include <utility>
 
-#include <librepr/util/strings.h>
-
 namespace librepr::ctvi {
+namespace detail {
+template <std::size_t... Idx>
+consteval auto sv_to_array(std::string_view str, std::index_sequence<Idx...>) noexcept
+    -> std::array<char, (sizeof...(Idx) + 1)> {
+  return {{str[Idx]..., '\0'}};
+}
+
 template <auto V>
 [[nodiscard]] constexpr auto get_ctvi() noexcept {
   // TODO Windows implementation using __FUNCSIG__
@@ -17,10 +22,11 @@ template <auto V>
   constexpr std::size_t end   = signature.find(suffix, start);
 
   constexpr auto value = signature.substr(start, end - start);
-  return detail::sv_to_array(value, std::make_index_sequence<value.size()>{});
+  return sv_to_array(value, std::make_index_sequence<value.size()>{});
 }
+}  // namespace detail
 
 template <auto V>
-constexpr inline auto value = get_ctvi<V>();
+constexpr inline auto value = detail::get_ctvi<V>();
 
-}
+}  // namespace librepr::ctvi

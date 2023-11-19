@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <librepr/enum/detail/search.h>
+#include <librepr/enum/search.h>
 
 namespace test_enums {
 

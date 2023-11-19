@@ -1,8 +1,9 @@
 #pragma once
-
+#include <librepr/detail/default.h>
+namespace librepr::
 #if USING(REPR_CTTI)
-  inline
+    inline
 #endif
-namespace librepr::ctti {
-  
-}
+    ctti {
+
+}  // namespace librepr::ctti

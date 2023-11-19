@@ -14,15 +14,14 @@
     #error "Configured to use magic_enum but could not find magic_enum"
   #endif
 #else
-  #include "detail/search.h"
-  #include "detail/util.h"
+  #include "search.h"
 #endif
 
 namespace librepr {
 
   template <typename T>
     requires std::is_enum_v<T> 
-  constexpr auto enum_names(){
+  [[nodiscard]] constexpr auto enum_names() noexcept{
 #if USING(REPR_MAGIC_ENUM)
     return magic_enum::enum_names<T>();
 #else
@@ -32,7 +31,7 @@ namespace librepr {
 
   template <typename T>
     requires std::is_enum_v<T>
-  constexpr auto enum_name(T value){
+  [[nodiscard]] constexpr auto enum_name(T value) noexcept{
 #if USING(REPR_MAGIC_ENUM)
     return magic_enum::enum_name(value);
 #else
@@ -42,7 +41,7 @@ namespace librepr {
 
   template <auto V>
     requires std::is_enum_v<decltype(V)>
-  constexpr std::string_view enum_name(){
+  [[nodiscard]] constexpr std::string_view enum_name() noexcept{
 #if USING(REPR_MAGIC_ENUM)
     return magic_enum::enum_name<V>();
 #else

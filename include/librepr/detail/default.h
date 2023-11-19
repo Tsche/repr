@@ -39,11 +39,11 @@
 #endif
 
 #if !defined(REPR_ENUM_MIN_SIGNED)
-  #define REPR_ENUM_MIN_SIGNED -256
+  #define REPR_ENUM_MIN_SIGNED -127
 #endif
 
 #if !defined(REPR_ENUM_MAX_SIGNED)
-  #define REPR_ENUM_MAX_SIGNED 256
+  #define REPR_ENUM_MAX_SIGNED 128
 #endif
 
 #if !defined(REPR_ENUM_MIN_UNSIGNED)
@@ -51,7 +51,7 @@
 #endif
 
 #if !defined(REPR_ENUM_MAX_UNSIGNED)
-  #define REPR_ENUM_MAX_UNSIGNED 512
+  #define REPR_ENUM_MAX_UNSIGNED 256
 #endif
 
 #if !defined(REPR_ENUM_CHUNKSIZE)

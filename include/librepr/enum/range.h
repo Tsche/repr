@@ -2,12 +2,12 @@
 #include <bit>
 
 namespace librepr::ctei {
-  template <auto First, auto Last = First>
+template <auto First, auto Last = First>
 struct Range {
   static_assert(Last >= First);
 
-  static constexpr auto size  = Last - First + 1;
-  static constexpr auto min = First;
+  static constexpr auto size = Last - First + 1;
+  static constexpr auto min  = First;
   static constexpr auto max  = Last;
 
   template <auto Idx>
@@ -15,7 +15,7 @@ struct Range {
 
   using expand = Range<First, max + 1>;
 
-  static constexpr bool is_binary_powers() {
+  [[nodiscard]] static constexpr bool is_binary_powers() noexcept{
     if constexpr (min >= 0 && min < 2) {
       // special case ranges containing only 0-2
       return max <= 2;
@@ -26,6 +26,8 @@ struct Range {
     return false;
   }
 
-  static bool contains(auto value) { return value >= min && value <= max; }
+  [[nodiscard]] static constexpr bool contains(auto value) noexcept { 
+    return value >= min && value <= max; 
+  }
 };
-}
+}  // namespace librepr::ctei
