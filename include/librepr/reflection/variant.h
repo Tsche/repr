@@ -7,6 +7,7 @@
 
 #include <librepr/util/concepts.h>
 #include <librepr/util/overload.h>
+#include <librepr/util/type_list.h>
 
 #include <librepr/visitors/visitor.h>
 
@@ -24,19 +25,21 @@ struct Reflect<Variant<Ts...>> {
   static void visit(V&& visitor, type const& obj) {
     ScopeGuard guard{visitor, std::type_identity<type>{}};
     std::visit(detail::Overload{[&visitor](Ts const& alternative) {
-                                    return Reflect<Ts>::visit(std::forward<decltype(visitor)>(visitor), alternative);
+                                    return Reflect<Ts>::visit(std::forward<V>(visitor), alternative);
                                   }...}, obj);
   }
 
   static std::string layout() {
-    std::ostringstream list{};
-    list << '<';
+    auto output = std::string("<");
+    TypeList<Ts...>::enumerate([&output]<typename Member>(std::size_t index) {
+      if (index != 0) {
+        output += " | ";
+      }
+      
+      output += Reflect<Member>::layout();
+    });
 
-    const char* sep = "";
-    (((list << sep << librepr::get_name<Ts>()), sep = " | "), ...);
-
-    list << '>';
-    return list.str();
+    return output + '>';
   }
 };
 }  // namespace librepr

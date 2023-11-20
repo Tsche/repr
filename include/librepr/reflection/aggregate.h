@@ -27,22 +27,22 @@ struct Reflect<T> {
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
     ScopeGuard guard{visitor, std::type_identity<T>{}};
-    
-    []<std::size_t... index>(std::index_sequence<index...>, Visitor::Values auto&& visitor_, auto const& tuple) {
-      (type::template get<index>::visit(std::forward<decltype(visitor_)>(visitor_), std::get<index>(tuple)), ...);
-    }(std::make_index_sequence<type::size>{}, std::forward<V>(visitor), members);
+    type::enumerate([&visitor, &members]<typename Member, std::size_t Index>() {
+      Member::visit(std::forward<decltype(visitor)>(visitor), std::get<Index>(members));
+    });
   }
 
   static std::string layout() {
-    return []<std::size_t... index>(std::index_sequence<index...>) {
-      std::ostringstream stream;
-      stream << '{';
-      [[maybe_unused]] const char* delimiter = "";
+    auto output = std::string("{");
+    type::enumerate([&output]<typename Member>(std::size_t index) {
+      if (index != 0) {
+        output += ", ";
+      }
 
-      (((stream << delimiter << type::template get<index>::layout()), delimiter = ", "), ...);
-      stream << '}';
-      return stream.str();
-    }(std::make_index_sequence<type::size>{});
+      output += Member::layout();
+    });
+
+    return output + '}';
   }
 };
 }  // namespace librepr

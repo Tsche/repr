@@ -1,5 +1,6 @@
 #pragma once
 #include <tuple>
+#include <utility>
 
 #include <librepr/detail/macros.h>
 
@@ -26,14 +27,14 @@ struct GetImpl<index, T, Ts...> {
 };
 #endif
 
-template<typename, template <typename...> class>
+template <typename, template <typename...> class>
 struct ReBoxImpl;
 
-template<template <typename...> class From, typename... Args, template <typename...> class To>
-struct ReBoxImpl<From<Args...>, To>{
-    using type = To<Args...>;
+template <template <typename...> class From, typename... Args, template <typename...> class To>
+struct ReBoxImpl<From<Args...>, To> {
+  using type = To<Args...>;
 };
-}
+}  // namespace detail
 
 template <typename T, template <typename...> class To>
 using rebox = typename detail::ReBoxImpl<T, To>::type;
@@ -55,7 +56,7 @@ struct TypeList {
   using prepend = TypeList<T, Ts...>;
 
   template <std::size_t index>
-  requires(sizeof...(Ts) > 0)
+    requires(sizeof...(Ts) > 0)
   using get = typename detail::GetImpl<index, Ts...>::type;
 
   template <std::size_t offset, std::size_t... indices>
@@ -86,6 +87,22 @@ struct TypeList {
   template <typename F, typename... Args>
   static constexpr void for_each(F&& callable, Args&&... args) {
     (callable.template operator()<Ts>(std::forward<Args>(args)...), ...);
+  }
+
+  template <typename F, typename... Args>
+  static constexpr void enumerate(F&& callable, Args&&... args) {
+    constexpr auto expects_index_arg = (requires {
+      { callable.template operator()<Ts>(std::size_t{}, std::forward<Args>(args)...) };
+    } && ...);
+
+    if constexpr (expects_index_arg) {
+      auto index = 0U;
+      (callable.template operator()<Ts>(index++, std::forward<Args>(args)...), ...);
+    } else {
+      [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
+        (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
+      }(std::index_sequence_for<Ts...>{});
+    }
   }
 };
 
