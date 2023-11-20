@@ -35,8 +35,7 @@ template <typename T, auto Value>
 
     // library UB does not need to be diagnosed
     // (https://eel.is/c++draft/expr.const#5.31) hence we can use std::bit_cast
-    // here to bypass the miscompile
-    // return __builtin_bit_cast(T, Value); //better debug output
+    // here to bypass the miscompile and possible warnings
     return std::bit_cast<T>(static_cast<underlying>(Value));
   }
 }
@@ -56,7 +55,7 @@ inline constexpr auto enum_name_raw = get_enum_name<T, Value>();
 }
 
 template <typename T, auto Value>
-inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>};
+inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>.data()};
 
 template <typename T, auto Value>
 [[nodiscard]] constexpr bool is_enum_value() {

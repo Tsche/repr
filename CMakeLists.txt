@@ -6,14 +6,15 @@ project(repr CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(repr INTERFACE)
 
-set_property(TARGET repr PROPERTY CXX_STANDARD 23)
+set_property(TARGET repr PROPERTY CXX_STANDARD 20)
 
 target_include_directories(repr INTERFACE 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-find_package(magic_enum CONFIG REQUIRED)
-target_link_libraries(repr INTERFACE magic_enum::magic_enum)
+# TODO
+#find_package(magic_enum CONFIG REQUIRED)
+#target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
@@ -47,8 +48,9 @@ if(NOT BUILD_TESTING STREQUAL OFF)
   endif()
 
   if(ENABLE_SANITIZERS)
-    target_compile_options(repr_test INTERFACE -fsanitize=address,undefined)
-    target_link_options(repr_test INTERFACE -fsanitize=address,undefined)
+    message(STATUS "Enabling sanitizers")
+    target_compile_options(repr_test PRIVATE -fsanitize=address,undefined)
+    target_link_options(repr_test PRIVATE -fsanitize=address,undefined)
   endif()
 endif()
 

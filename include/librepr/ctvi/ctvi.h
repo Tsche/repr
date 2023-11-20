@@ -30,6 +30,6 @@ constexpr inline auto raw_value = detail::get_ctvi<V>();
 }  // namespace detail
 
 template <auto V>
-constexpr inline auto value = std::string_view{detail::raw_value<V>};
+constexpr inline auto value = std::string_view{detail::raw_value<V>.data()};
 
 }  // namespace librepr::ctvi
