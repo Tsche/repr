@@ -24,9 +24,12 @@ template <auto V>
   constexpr auto value = signature.substr(start, end - start);
   return sv_to_array(value, std::make_index_sequence<value.size()>{});
 }
+
+template <auto V>
+constexpr inline auto raw_value = detail::get_ctvi<V>();
 }  // namespace detail
 
 template <auto V>
-constexpr inline auto value = detail::get_ctvi<V>();
+constexpr inline auto value = std::string_view{detail::raw_value<V>};
 
 }  // namespace librepr::ctvi

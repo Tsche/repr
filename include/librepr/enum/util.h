@@ -41,6 +41,7 @@ template <typename T, auto Value>
   }
 }
 
+namespace detail {
 template <typename T, auto Value>
 [[nodiscard]] constexpr auto get_enum_name() noexcept {
   constexpr auto name = ctvi::value<to_enum<T, Value>()>;
@@ -50,13 +51,17 @@ template <typename T, auto Value>
     return std::array{'\0'};
   }
 }
+template <typename T, auto Value>
+inline constexpr auto enum_name_raw = get_enum_name<T, Value>();
+}
 
 template <typename T, auto Value>
-inline constexpr auto enum_name = get_enum_name<T, Value>();
+inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>};
 
 template <typename T, auto Value>
 [[nodiscard]] constexpr bool is_enum_value() {
-  constexpr auto name = get_enum_name<T, Value>();
+  // accessing the underlying array here directly seems to perform slightly better
+  constexpr auto name = detail::enum_name_raw<T, Value>;
   return !name.empty() && name[0] != '\0';
 }
 

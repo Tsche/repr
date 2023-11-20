@@ -24,13 +24,12 @@ private:
       return std::array<std::string_view, 0>{};
     } else {
       auto constexpr full_size = structure::invoke([]<typename... Range>() { return ((Range::size) + ...); });
-      auto buffer = std::array<std::string_view, full_size>{};
+      auto buffer              = std::array<std::string_view, full_size>{};
 
       structure::for_each(
           [offset = 0U]<typename Range>(auto& output) mutable {
             constexpr auto range_names = []<std::size_t... SubIdx>(std::index_sequence<SubIdx...>) {
-              return std::array{
-                  std::string_view{enum_name<T, to_underlying<T, Kind>(Range::template get<SubIdx>)>.data()}...};
+              return std::array{enum_name<T, to_underlying<T, Kind>(Range::template get<SubIdx>)>.data()...};
             }(std::make_index_sequence<Range::size>{});
 
             std::copy(std::begin(range_names), std::end(range_names), std::next(std::begin(output), offset));
