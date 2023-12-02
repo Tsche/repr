@@ -1,10 +1,12 @@
 #pragma once
 #include <array>
+#include <cstddef>
 #include <limits>
 #include <string_view>
 #include <type_traits>
 #include <algorithm>
 
+#include <bits/utility.h>
 #include <librepr/customization.h>
 #include <librepr/detail/default.h>
 
@@ -14,9 +16,75 @@
 #include "accessor.h"
 
 namespace librepr::ctei {
+
+consteval auto first_true(bool const* array, std::size_t max, std::size_t offset) {
+  for (auto idx = offset; idx < max; ++idx) {
+    if (array[idx]) {
+      return idx;
+    }
+  }
+  return max + 1;
+}
+
+consteval auto first_false(bool const* array, std::size_t max, std::size_t offset) {
+  for (auto idx = offset; idx < max; ++idx) {
+    if (!array[idx]) {
+      return idx;
+    }
+  }
+  return max + 1;
+}
+
 template <typename T>
   requires std::is_enum_v<T>
 struct Search {
+  using underlying = std::underlying_type_t<T>;
+
+  template <auto Offset, auto Max>
+  static constexpr auto search_chunk() {
+      return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+        return std::array{
+            dump_quick<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)>()[0] != '(' ...
+            // is_enum_value<T, Offset + Idx>()...
+        };
+      }(std::make_index_sequence<Max - Offset>{});
+  }
+
+  template <auto Offset, auto Max>
+  static constexpr auto search_chunk_multi() {
+      auto array = std::array<bool, Max - Offset>{};
+
+      auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+        return dump_list<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)...>();
+        ;
+      }(std::make_index_sequence<Max - Offset>{});
+
+      array[0]            = list[0] != '(';
+      std::size_t out_idx = 1;
+
+      for (std::size_t idx = 0; idx < list.length(); ++idx) {
+        if (list[idx] == ',') {
+          // TODO check if all compilers insert a space after the comma
+          array[out_idx++] = list[idx + 2] != '(';
+        }
+      }
+      return array;
+  }
+
+  template <auto array, underlying Offset, typename Acc, std::size_t ArrayOffset = 0>
+  static consteval auto rangify() {
+    constexpr auto first = first_true(array.data(), array.size(), ArrayOffset);
+    if constexpr (first == array.size() + 1) {
+      return Acc{};
+    } else {
+      constexpr auto last = first_false(array.data(), array.size(), first);
+      return rangify<array, Offset,
+                     typename Acc::template append<
+                         Range<Offset + static_cast<underlying>(first), Offset + static_cast<underlying>(last - 1)>>,
+                     last>();
+    }
+  }
+
   template <auto Offset, auto Max, typename Acc = RangeList<>, auto N = 0>
   static consteval auto search_range() {
     if constexpr (N == Max) {
@@ -27,6 +95,16 @@ struct Search {
     }
   }
 
+  template <underlying Offset, underlying Max, typename Acc = RangeList<>>
+  using do_search =
+#if USING(REPR_ENUM_RECURSIVE_SEARCH)
+      decltype(search_range<Offset, Max, Acc>());
+#elif USING(REPR_ENUM_FAST_SEARCH)
+      decltype(rangify<search_chunk_multi<Offset, Offset + Max>(), Offset, Acc>());
+#else
+      decltype(rangify<search_chunk<Offset, Offset + Max>(), Offset, Acc>());
+#endif
+
   template <auto Offset, auto Max, auto ChunkSize = REPR_ENUM_CHUNKSIZE, typename Acc = RangeList<>, auto N = 0>
   static consteval auto search_ranges() {
     constexpr auto offset = Offset + N * ChunkSize;
@@ -34,13 +112,11 @@ struct Search {
     if constexpr (offset >= Max) {
       return Acc{};
     } else if constexpr (offset + ChunkSize > Max) {
-      return search_range<offset, Max - offset, Acc>();
+      return do_search<offset, Max - offset, Acc>{};
     } else {
-      return search_ranges<Offset, Max, ChunkSize, decltype(search_range<offset, ChunkSize, Acc>()), N + 1>();
+      return search_ranges<Offset, Max, ChunkSize, do_search<offset, ChunkSize, Acc>, N + 1>();
     }
   }
-
-  using underlying = std::underlying_type_t<T>;
 
   static consteval auto clamp(underlying value) {
     constexpr auto min = std::numeric_limits<underlying>::min();

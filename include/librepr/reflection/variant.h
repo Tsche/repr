@@ -1,11 +1,10 @@
 #pragma once
 #include <sstream>
 #include <string>
-#include <type_traits>
+#include <concepts>
 
 #include <librepr/type/name.h>
 
-#include <librepr/util/concepts.h>
 #include <librepr/util/overload.h>
 #include <librepr/util/type_list.h>
 
@@ -17,12 +16,12 @@ template <typename T>
 struct Reflect;
 
 template <template <typename...> class Variant, typename... Ts>
-  requires detail::variant_like<Variant<Ts...>>
+  requires std::derived_from<Variant<Ts...>, std::variant<Ts...>>
 struct Reflect<Variant<Ts...>> {
   using type = Variant<Ts...>;
 
   template <Visitor::Values V>
-  static void visit(V&& visitor, type const& obj) {
+  static void visit(V&& visitor, auto const& obj) {
     ScopeGuard guard{visitor, std::type_identity<type>{}};
     std::visit(detail::Overload{[&visitor](Ts const& alternative) {
                                     return Reflect<Ts>::visit(std::forward<V>(visitor), alternative);

@@ -52,16 +52,58 @@ template <typename T, auto Value>
 }
 template <typename T, auto Value>
 inline constexpr auto enum_name_raw = get_enum_name<T, Value>();
-}
+}  // namespace detail
 
 template <typename T, auto Value>
 inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>.data()};
 
+template <auto V>
+[[nodiscard]] consteval auto dump_quick() noexcept {
+#if defined(_MSC_VER)
+  constexpr auto signature = std::string_view{__FUNCSIG__};
+  // TODO find prefix for MSVC
+  constexpr std::size_t start = sizeof("TODO") - 1;
+#else
+  constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
+#if defined(__clang__)
+  //
+  constexpr std::size_t start = sizeof("auto librepr::ctei::dump_quick() [V = ") - 1;
+#elif defined(__GNUC__)
+  //
+  constexpr std::size_t start = sizeof("consteval auto librepr::ctei::dump_quick() [with auto V = ") - 1;
+#elif defined(_MSC_VER)
+#endif
+#endif
+  constexpr std::size_t end = signature.length() - 1;
+
+  return signature.substr(start, end - start);
+}
+
+template <auto... V>
+[[nodiscard]] consteval auto dump_list() noexcept {
+#if defined(_MSC_VER)
+  constexpr auto signature = std::string_view{__FUNCSIG__};
+  // TODO find prefix for MSVC
+  constexpr std::size_t start = sizeof("TODO") - 1;
+#else
+  constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
+#if defined(__clang__)
+  constexpr std::size_t start = sizeof("auto librepr::ctei::dump_list() [V = <") - 1;
+#elif defined(__GNUC__)
+  constexpr std::size_t start = sizeof("consteval auto librepr::ctei::dump_list() [with auto ...V = {") - 1;
+#endif
+#endif
+  constexpr std::size_t end = signature.length() - 2;
+
+  return signature.substr(start, end - start);
+}
+
 template <typename T, auto Value>
 [[nodiscard]] constexpr bool is_enum_value() {
   // accessing the underlying array here directly seems to perform slightly better
-  constexpr auto name = detail::enum_name_raw<T, Value>;
-  return !name.empty() && name[0] != '\0';
+  // constexpr auto name = detail::enum_name_raw<T, Value>;
+  constexpr auto name = dump_quick<std::bit_cast<T>(static_cast<std::underlying_type_t<T>>(Value))>();
+  return !name.empty() && name[0] != '(';
 }
 
 }  // namespace librepr::ctei

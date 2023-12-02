@@ -1,7 +1,6 @@
 #pragma once
 #include <concepts>
 #include <type_traits>
-#include <variant>
 #include <string>
 
 namespace librepr::detail {
@@ -20,11 +19,4 @@ concept has_repr_member = requires(T const& obj) {
 
 template <typename T>
 concept is_scoped_enum = !std::is_convertible_v<T, std::underlying_type_t<T>>;
-
-template <typename T>
-concept variant_like = requires (T t){
-    std::visit([](auto){}, t);
-    {t.index()} -> std::same_as<std::size_t>;
-};
-
 }

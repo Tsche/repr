@@ -18,6 +18,9 @@ struct RangeList<> {
   template <auto Index>
   using add = RangeList<Range<Index>>;
 
+  template <typename T>
+  using append = RangeList<T>;
+
   template <typename T, auto V, auto Idx = V>
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;
 
@@ -36,6 +39,9 @@ struct RangeList {
       next_index == Idx,
       rebox<typename list::template slice<0, list::size - 1>::template append<typename last::expand>, RangeList>,
       RangeList<Ranges..., Range<Idx>>>;
+
+  template <typename T>
+  using append = rebox<typename list::template append<T>, RangeList>;
 
   template <typename T, auto V, auto Idx = V>
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;
