@@ -41,7 +41,7 @@ struct RangeList {
       RangeList<Ranges..., Range<Idx>>>;
 
   template <typename T>
-  using append = rebox<typename list::template append<T>, RangeList>;
+  using append = RangeList<Ranges..., T>;
 
   template <typename T, auto V, auto Idx = V>
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;

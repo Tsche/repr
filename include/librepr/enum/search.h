@@ -1,12 +1,11 @@
 #pragma once
 #include <array>
-#include <cstddef>
 #include <limits>
 #include <string_view>
 #include <type_traits>
 #include <algorithm>
+#include <utility>
 
-#include <bits/utility.h>
 #include <librepr/customization.h>
 #include <librepr/detail/default.h>
 
@@ -17,22 +16,44 @@
 
 namespace librepr::ctei {
 
-consteval auto first_true(bool const* array, std::size_t max, std::size_t offset) {
-  for (auto idx = offset; idx < max; ++idx) {
-    if (array[idx]) {
+constexpr std::size_t find_first(bool const* array, std::size_t min, std::size_t max, bool value) {
+  for (auto idx = min; idx < max; ++idx) {
+    if (array[idx] == value) {
       return idx;
     }
   }
-  return max + 1;
+  return max;
 }
 
-consteval auto first_false(bool const* array, std::size_t max, std::size_t offset) {
-  for (auto idx = offset; idx < max; ++idx) {
-    if (!array[idx]) {
-      return idx;
+template <auto array, auto Offset, typename Acc, auto ArrayOffset = 0>
+static consteval auto rangify() {
+  using underlying = decltype(Offset);
+  if constexpr (array.empty()) {
+    return Acc{};
+  }
+  else {
+    constexpr auto first = find_first(array.data(), ArrayOffset, array.size(), true);
+    if constexpr (first == array.size()) {
+        return Acc{};
+    } else {
+        constexpr auto last      = find_first(array.data(), first, array.size(), false);
+        return rangify<array, Offset,
+                    typename Acc::template append<
+                        Range<Offset + static_cast<underlying>(first),
+                              Offset + static_cast<underlying>(last - 1)>>,
+                    last>();
     }
   }
-  return max + 1;
+}
+
+template <typename T>
+constexpr T clamp(auto value) {
+  constexpr auto min = std::numeric_limits<T>::min();
+  constexpr auto max = std::numeric_limits<T>::max();
+  if (std::cmp_less(value, min)) {
+    return min;
+  }
+  return std::cmp_less(max, value) ? max : static_cast<T>(value);
 }
 
 template <typename T>
@@ -40,52 +61,37 @@ template <typename T>
 struct Search {
   using underlying = std::underlying_type_t<T>;
 
-  template <auto Offset, auto Max>
+  template <underlying Offset, underlying Max>
   static constexpr auto search_chunk() {
-      return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
-        return std::array{
-            dump_quick<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)>()[0] != '(' ...
-            // is_enum_value<T, Offset + Idx>()...
-        };
-      }(std::make_index_sequence<Max - Offset>{});
+    return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+      return std::array{
+          dump_quick<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)>()[0] != '(' ...
+          // is_enum_value<T, Offset + Idx>()...
+      };
+    }(std::make_index_sequence<Max - Offset>{});
   }
 
-  template <auto Offset, auto Max>
+  template <underlying Offset, underlying Max>
   static constexpr auto search_chunk_multi() {
-      auto array = std::array<bool, Max - Offset>{};
+    auto array = std::array<bool, Max - Offset>{};
 
-      auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
-        return dump_list<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)...>();
-        ;
-      }(std::make_index_sequence<Max - Offset>{});
+    auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+      return dump_list<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)...>();
+    }(std::make_index_sequence<Max - Offset>{});
 
-      array[0]            = list[0] != '(';
-      std::size_t out_idx = 1;
+    array[0]            = list[0] != '(';
+    std::size_t out_idx = 1;
 
-      for (std::size_t idx = 0; idx < list.length(); ++idx) {
-        if (list[idx] == ',') {
-          // TODO check if all compilers insert a space after the comma
-          array[out_idx++] = list[idx + 2] != '(';
-        }
+    for (std::size_t idx = 0; idx < list.length(); ++idx) {
+      if (list[idx] == ',') {
+        // TODO check if all compilers insert a space after the comma
+        array[out_idx++] = list[idx + 2] != '(';
       }
-      return array;
-  }
-
-  template <auto array, underlying Offset, typename Acc, std::size_t ArrayOffset = 0>
-  static consteval auto rangify() {
-    constexpr auto first = first_true(array.data(), array.size(), ArrayOffset);
-    if constexpr (first == array.size() + 1) {
-      return Acc{};
-    } else {
-      constexpr auto last = first_false(array.data(), array.size(), first);
-      return rangify<array, Offset,
-                     typename Acc::template append<
-                         Range<Offset + static_cast<underlying>(first), Offset + static_cast<underlying>(last - 1)>>,
-                     last>();
     }
+    return array;
   }
 
-  template <auto Offset, auto Max, typename Acc = RangeList<>, auto N = 0>
+  template <underlying Offset, underlying Max, typename Acc = RangeList<>, underlying N = 0>
   static consteval auto search_range() {
     if constexpr (N == Max) {
       return Acc{};
@@ -118,39 +124,28 @@ struct Search {
     }
   }
 
-  static consteval auto clamp(underlying value) {
-    constexpr auto min = std::numeric_limits<underlying>::min();
-    constexpr auto max = std::numeric_limits<underlying>::max();
-
-    return value < min ? min : value > max ? max : value;
-  }
-
   static consteval auto reflected_min() {
+    if constexpr (has_search_range<T>) {
+      return clamp<underlying>(EnumSettings<T>::search_range::min);
+    }
+
     if constexpr (std::is_signed_v<underlying>) {
-      return clamp(REPR_ENUM_MIN_SIGNED);
+      return clamp<underlying>(REPR_ENUM_MIN_SIGNED);
     } else {
-      return clamp(REPR_ENUM_MIN_UNSIGNED);
+      return clamp<underlying>(REPR_ENUM_MIN_UNSIGNED);
     }
   }
 
   static consteval auto reflected_max() {
-    if constexpr (std::is_signed_v<underlying>) {
-      return clamp(REPR_ENUM_MAX_SIGNED);
-    } else {
-      return clamp(REPR_ENUM_MAX_UNSIGNED);
+    if constexpr (has_search_range<T>) {
+      return clamp<underlying>(EnumSettings<T>::search_range::max);
     }
-  }
 
-  static consteval auto reflected_min()
-    requires has_search_range<T>
-  {
-    return EnumSettings<T>::search_range::min;
-  }
-
-  static consteval auto reflected_max()
-    requires has_search_range<T>
-  {
-    return EnumSettings<T>::search_range::max;
+    if constexpr (std::is_signed_v<underlying>) {
+      return clamp<underlying>(REPR_ENUM_MAX_SIGNED);
+    } else {
+      return clamp<underlying>(REPR_ENUM_MAX_UNSIGNED);
+    }
   }
 
   template <auto N = std::numeric_limits<underlying>::digits - 1>
@@ -171,12 +166,13 @@ struct Search {
   }
 
   static consteval auto search() {
+    using enum EnumKind;
     constexpr auto min  = reflected_min();
     constexpr auto max  = reflected_max();
     using linear_search = decltype(search_ranges<min, max>());
 
     if constexpr (linear_search::size == 0) {
-      return Accessor<T, EnumKind::Empty>{};
+      return Accessor<T, Empty>{};
     } else {
       if constexpr (std::is_unsigned_v<underlying> && linear_search::is_binary_powers()) {
         // all found values were flag-like so far, try all bits
@@ -184,12 +180,12 @@ struct Search {
         if constexpr (flag_max == -1) {
           // something went terribly wrong - none of the powers of 2 are valid values
           // assume the range was empty to begin with
-          return Accessor<T, EnumKind::Empty>{};
+          return Accessor<T, Empty>{};
         } else {
-          return Accessor<T, EnumKind::Flags, TypeList<Range<0, flag_max>>>{};
+          return Accessor<T, Flags, TypeList<Range<0, flag_max>>>{};
         }
       } else {
-        return Accessor<T, EnumKind::Linear, typename linear_search::list>{};
+        return Accessor<T, Linear, typename linear_search::list>{};
       }
     }
   }
