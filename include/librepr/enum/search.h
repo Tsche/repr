@@ -102,13 +102,22 @@ struct Search {
   }
 
   template <underlying Offset, underlying Max, typename Acc = RangeList<>>
+  using search_recursive = decltype(search_range<Offset, Max, Acc>());
+  
+  template <underlying Offset, underlying Max, typename Acc = RangeList<>>
+  using search_chunked = decltype(rangify<search_chunk_multi<Offset, Offset + Max>(), Offset, Acc>());
+  
+  template <underlying Offset, underlying Max, typename Acc = RangeList<>>
+  using search_fast = decltype(rangify<search_chunk<Offset, Offset + Max>(), Offset, Acc>());
+
+  template <underlying Offset, underlying Max, typename Acc = RangeList<>>
   using do_search =
 #if USING(REPR_ENUM_RECURSIVE_SEARCH)
-      decltype(search_range<Offset, Max, Acc>());
+      search_recursive<Offset, Max, Acc>;
 #elif USING(REPR_ENUM_FAST_SEARCH)
-      decltype(rangify<search_chunk_multi<Offset, Offset + Max>(), Offset, Acc>());
+      search_fast<Offset, Max, Acc>;
 #else
-      decltype(rangify<search_chunk<Offset, Offset + Max>(), Offset, Acc>());
+      search_chunked<Offset, Max, Acc>;
 #endif
 
   template <auto Offset, auto Max, auto ChunkSize = REPR_ENUM_CHUNKSIZE, typename Acc = RangeList<>, auto N = 0>

@@ -11,6 +11,7 @@
 
 namespace test_enums {
 REPR_TEST_GEN_ENUM(Empty, : unsigned, )
+REPR_TEST_GEN_ENUM(Zero, : unsigned, Z_A = 0)
 REPR_TEST_GEN_ENUM(NoUnderlying, , NU_A, NU_B, NU_C, NU_D, NU_E)
 
 REPR_TEST_GEN_ENUM(Flags, : unsigned, F_A = 0, F_B = 1U << 0U, F_C = 1U << 1U, F_D = 1U << 10U, F_E = 1U << 11U)

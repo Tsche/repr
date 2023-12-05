@@ -27,11 +27,17 @@ TEST(enum_range, sign_mismatch) {
 }
 
 TEST(enum_range, largest_flag) {
+  EXPECT_EQ(Search<test_enums::unscoped::Empty>::largest_flag(), -1);
+  EXPECT_EQ(Search<test_enums::unscoped::Zero>::largest_flag(), 0);
+
   EXPECT_EQ(Search<test_enums::unscoped::UnsignedChar>::largest_flag(), 2);
   EXPECT_EQ(Search<test_enums::unscoped::UnsignedShort>::largest_flag(), 2);
   EXPECT_EQ(Search<test_enums::unscoped::Unsigned>::largest_flag(), 2);
   EXPECT_EQ(Search<test_enums::unscoped::UnsignedLong>::largest_flag(), 2);
   EXPECT_EQ(Search<test_enums::unscoped::UnsignedLongLong>::largest_flag(), 2);
+
+  EXPECT_EQ(Search<test_enums::scoped::Empty>::largest_flag(), -1);
+  EXPECT_EQ(Search<test_enums::scoped::Zero>::largest_flag(), 0);
 
   EXPECT_EQ(Search<test_enums::scoped::UnsignedChar>::largest_flag(), 2);
   EXPECT_EQ(Search<test_enums::scoped::UnsignedShort>::largest_flag(), 2);

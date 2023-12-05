@@ -11,6 +11,7 @@ struct Range {
   static constexpr auto max  = Last;
 
   template <auto Idx>
+  requires (Idx <= size)
   static constexpr auto get = Idx + First;
 
   using expand = Range<First, max + 1>;
