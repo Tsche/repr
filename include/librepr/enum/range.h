@@ -1,5 +1,9 @@
 #pragma once
+#include <array>
+#include <utility>
 #include <bit>
+#include "util.h"
+
 
 namespace librepr::ctei {
 template <auto First, auto Last = First>
@@ -14,7 +18,18 @@ struct Range {
   requires (Idx <= size)
   static constexpr auto get = Idx + First;
 
-  using expand = Range<First, max + 1>;
+  template <std::size_t amount = 1>
+  using expand = Range<First, max + amount>;
+
+private:
+  template <typename T, EnumKind Kind, std::size_t... Idx>
+  static consteval auto get_enum_names(std::index_sequence<Idx...>){
+    return std::array{enum_name<T, to_underlying<T, Kind>(Range::template get<Idx>)>.data()...};
+  }
+
+public:
+  template <typename T, EnumKind Kind>
+  static constexpr auto enum_names = get_enum_names<T, Kind>(std::make_index_sequence<size>{});
 
   [[nodiscard]] static constexpr bool is_binary_powers() noexcept{
     if constexpr (min >= 0 && min < 2) {

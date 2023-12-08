@@ -6,7 +6,7 @@
 #include <librepr/type/name.h>
 
 #include <librepr/util/overload.h>
-#include <librepr/util/type_list.h>
+#include <librepr/util/list.h>
 
 #include <librepr/visitors/visitor.h>
 

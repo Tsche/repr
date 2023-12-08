@@ -5,7 +5,7 @@
 #include <string_view>
 #include <algorithm>
 
-#include <librepr/util/type_list.h>
+#include <librepr/util/list.h>
 
 #include "util.h"
 
@@ -28,12 +28,11 @@ private:
 
       structure::for_each(
           [offset = 0U]<typename Range>(auto& output) mutable {
-            constexpr auto range_names = []<std::size_t... SubIdx>(std::index_sequence<SubIdx...>) {
-              return std::array{enum_name<T, to_underlying<T, Kind>(Range::template get<SubIdx>)>.data()...};
-            }(std::make_index_sequence<Range::size>{});
+            constexpr auto range_names = Range::template enum_names<T, Kind>;
 
-            std::copy(std::begin(range_names), std::end(range_names), std::next(std::begin(output), offset));
+            // populate array in reverse
             offset += Range::size;
+            std::copy(std::begin(range_names), std::end(range_names), std::next(std::begin(output), full_size - offset));
           },
           buffer);
 
@@ -53,7 +52,7 @@ public:
     if (range::contains(value)) {
       auto offset = value - range::min;
       // TODO assert offset is >= 0
-      return names[std::size_t(offset)];
+      return range::template enum_names<T, Kind>[std::size_t(offset)];
     }
 
     if constexpr (Idx + 1 < structure::size) {
@@ -68,6 +67,7 @@ public:
   static std::string_view search_name(underlying value)
     requires(Kind == EnumKind::Flags)
   {
+    static_assert(structure::size == 1, "Flag-like enum structure should only consist of one contiguous subrange");
     using range = structure::template get<0>;
 
     if (value == 0) {

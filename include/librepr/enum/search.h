@@ -30,18 +30,16 @@ static consteval auto rangify() {
   using underlying = decltype(Offset);
   if constexpr (array.empty()) {
     return Acc{};
-  }
-  else {
+  } else {
     constexpr auto first = find_first(array.data(), ArrayOffset, array.size(), true);
     if constexpr (first == array.size()) {
-        return Acc{};
+      return Acc{};
     } else {
-        constexpr auto last      = find_first(array.data(), first, array.size(), false);
-        return rangify<array, Offset,
-                    typename Acc::template append<
-                        Range<Offset + static_cast<underlying>(first),
-                              Offset + static_cast<underlying>(last - 1)>>,
-                    last>();
+      constexpr auto last = find_first(array.data(), first, array.size(), false);
+      return rangify<array, Offset,
+                     typename Acc::template add_range<
+                         Range<Offset + static_cast<underlying>(first), Offset + static_cast<underlying>(last - 1)>>,
+                     last>();
     }
   }
 }
@@ -103,12 +101,12 @@ struct Search {
 
   template <underlying Offset, underlying Max, typename Acc = RangeList<>>
   using search_recursive = decltype(search_range<Offset, Max, Acc>());
-  
+
   template <underlying Offset, underlying Max, typename Acc = RangeList<>>
-  using search_chunked = decltype(rangify<search_chunk_multi<Offset, Offset + Max>(), Offset, Acc>());
-  
+  using search_chunked = decltype(rangify<search_chunk<Offset, Offset + Max>(), Offset, Acc>());
+
   template <underlying Offset, underlying Max, typename Acc = RangeList<>>
-  using search_fast = decltype(rangify<search_chunk<Offset, Offset + Max>(), Offset, Acc>());
+  using search_fast = decltype(rangify<search_chunk_multi<Offset, Offset + Max>(), Offset, Acc>());
 
   template <underlying Offset, underlying Max, typename Acc = RangeList<>>
   using do_search =
@@ -191,10 +189,10 @@ struct Search {
           // assume the range was empty to begin with
           return Accessor<T, Empty>{};
         } else {
-          return Accessor<T, Flags, TypeList<Range<0, flag_max>>>{};
+          return Accessor<T, Flags, RangeList<Range<0, flag_max>>>{};
         }
       } else {
-        return Accessor<T, Linear, typename linear_search::list>{};
+        return Accessor<T, Linear, linear_search>{};
       }
     }
   }

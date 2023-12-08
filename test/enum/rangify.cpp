@@ -49,7 +49,7 @@ TEST(enum, rangify_one_range) {
 }
 
 TEST(enum, rangify_two_ranges) {
-  EXPECT_TRUE((std::same_as<decltype(rangify<two_ranges, 0, RangeList<>>()), RangeList<Range<0, 1>, Range<3, 4>>>));
-  EXPECT_TRUE((std::same_as<decltype(rangify<two_ranges, 10, RangeList<>>()), RangeList<Range<10, 11>, Range<13, 14>>>));
+  EXPECT_TRUE((std::same_as<decltype(rangify<two_ranges, 0, RangeList<>>()), RangeList<Range<3, 4>, Range<0, 1>>>));
+  EXPECT_TRUE((std::same_as<decltype(rangify<two_ranges, 10, RangeList<>>()), RangeList<Range<13, 14>, Range<10, 11>>>));
 }
 }

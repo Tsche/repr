@@ -5,7 +5,7 @@
 #include <tuple>
 
 #include <librepr/visitors/visitor.h>
-#include <librepr/util/type_list.h>
+#include <librepr/util/list.h>
 #include <librepr/util/concepts.h>
 
 #include <librepr/reflection/detail/to_tuple.h>
@@ -19,7 +19,7 @@ template <typename T>
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>);
-  using type = rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
+  using type = pack::rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
 
   template <Visitor::Values V>
   static void visit(V&& visitor, T const& obj) {
