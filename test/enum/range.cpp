@@ -32,8 +32,10 @@ TEST(range, is_binary_powers) {
 }
 
 TEST(range, expand) {
-  EXPECT_TRUE((std::same_as<Range<0>::expand, Range<0, 1>>));
-  EXPECT_TRUE((std::same_as<Range<0, 5>::expand, Range<0, 6>>));
+  EXPECT_TRUE((std::same_as<Range<0>::template expand<>, Range<0, 1>>));
+  EXPECT_TRUE((std::same_as<Range<0, 5>::template expand<>, Range<0, 6>>));
+  EXPECT_TRUE((std::same_as<Range<0>::template expand<10>, Range<0, 10>>));
+  EXPECT_TRUE((std::same_as<Range<0, 5>::template expand<10>, Range<0, 15>>));
 }
 
 TEST(range, get) {

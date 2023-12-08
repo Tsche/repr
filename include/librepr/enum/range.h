@@ -19,7 +19,7 @@ struct Range {
   static constexpr auto get = Idx + First;
 
   template <std::size_t amount = 1>
-  using expand = Range<First, max + amount>;
+  using expand = Range<First, max + static_cast<decltype(max)>(amount)>;
 
 private:
   template <typename T, EnumKind Kind, std::size_t... Idx>
