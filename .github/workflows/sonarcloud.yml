@@ -47,9 +47,7 @@ jobs:
     - name: Coverage
       run: |
         ./build/Debug/repr_test
-        ls /usr/bin -la
-        gcovr --verbose --gcov-executable gcov-13 --sonarqube coverage.xml
-        cat coverage.xml
+        gcovr --verbose --gcov-executable gcov-13 --sonarqube coverage.xml --decisions -b --exclude-unreachable-branches
 
     - name: Run sonar-scanner
       env:

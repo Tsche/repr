@@ -26,20 +26,55 @@
     #define REPR_SOURCE_LOCATION OFF
 #endif
 
-#if !defined(REPR_NAMESPACE)
-    #define REPR_NAMESPACE OFF
-#endif
-
-#if USING(REPR_NAMESPACE)
-    #define REPR_INLINE
-#else 
-    #define REPR_INLINE inline
-#endif 
-
 #if !defined(REPR_DEFAULT_TEMPLATE_ARGUMENTS)
   #define REPR_DEFAULT_TEMPLATE_ARGUMENTS OFF
 #endif
 
 #if !defined(REPR_DEMANGLE_MAX)
   #define REPR_DEMANGLE_MAX 1024
+#endif
+
+#if !defined(REPR_MAGIC_ENUM)
+  #define REPR_MAGIC_ENUM OFF
+#endif
+
+#if !defined(REPR_ENUM_MIN_SIGNED)
+  #define REPR_ENUM_MIN_SIGNED -128
+#endif
+
+#if !defined(REPR_ENUM_MAX_SIGNED)
+  #define REPR_ENUM_MAX_SIGNED 127
+#endif
+
+#if !defined(REPR_ENUM_MIN_UNSIGNED)
+  #define REPR_ENUM_MIN_UNSIGNED 0
+#endif
+
+#if !defined(REPR_ENUM_MAX_UNSIGNED)
+  #define REPR_ENUM_MAX_UNSIGNED 255
+#endif
+
+#if !defined(REPR_ENUM_CHUNKSIZE)
+  #define REPR_ENUM_CHUNKSIZE 255
+#endif
+
+#if !defined(REPR_ENUM_FAST_SEARCH)
+#if defined(__clang__)
+#if __clang_major__ >= 16
+  // https://github.com/llvm/llvm-project/issues/68489
+  #define REPR_ENUM_FAST_SEARCH OFF
+#else
+  //TODO verify this works with clang <= 15
+  #define REPR_ENUM_FAST_SEARCH ON
+#endif
+#elif defined(__GNUC__)
+  #define REPR_ENUM_FAST_SEARCH ON
+#elif defined(_MSC_VER)
+  //TODO
+  #define REPR_ENUM_FAST_SEARCH OFF
+#endif
+#endif
+
+#if !defined(REPR_ENUM_RECURSIVE_SEARCH)
+#define REPR_ENUM_RECURSIVE_SEARCH OFF
 #endif

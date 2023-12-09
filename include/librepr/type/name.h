@@ -8,7 +8,7 @@
 #include <type_traits>
 
 #include <librepr/detail/default.h>
-#include <librepr/util/type_list.h>
+#include <librepr/util/list.h>
 #include "ctti.h"
 #include "rtti.h"
 
@@ -34,7 +34,7 @@ private:
   template <std::size_t... Idx>
   consteval static auto get_min_required(std::index_sequence<Idx...> seq) -> std::size_t {
     if constexpr (requires {
-                    typename U<typename arguments::template get<Idx>...>;
+                    typename U<typename arguments::template get<Idx>...>; //pack::rebox<arguments::head<Idx>, U>
                     requires std::is_same_v<U<Ts...>, U<typename arguments::template get<Idx>...>>;
                   }) {
       if constexpr (sizeof...(Idx) == 0) {
@@ -48,8 +48,8 @@ private:
   constexpr static auto required_amount = get_min_required(std::make_index_sequence<sizeof...(Ts)>());
 
 public:
-  using required  = arguments::template slice<0, required_amount>;
-  using defaulted = arguments::template slice<required_amount>;
+  using required  = arguments::template head<required_amount>;
+  using defaulted = arguments::template tail<required_amount>;
 
   static std::string name() {
     auto full = librepr::get_name_raw<type>();

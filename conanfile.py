@@ -48,4 +48,3 @@ class ReprRecipe(ConanFile):
 
     def package_id(self):
         self.info.clear()
-
