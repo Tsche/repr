@@ -25,7 +25,8 @@ def generate_trace(file, output, defines: dict[str, Any]):
     standard = ['-std=c++20']
     profile_flags = ['-ftime-trace', '-c']
 
-    call = ["clang++", str(file), '-o', str(output), *
+    taskset_prefix = ["taskset", "--cpu-list", "23"]
+    call = [*taskset_prefix, "clang++", str(file), '-o', str(output), *
             defines, *includes, *standard, *profile_flags]
 
     output.parent.mkdir(exist_ok=True, parents=True)

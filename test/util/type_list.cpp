@@ -3,8 +3,6 @@
 #include <gtest/gtest.h>
 #include <librepr/util/list.h>
 
-#define COMP_ASSERT(expr) EXPECT_TRUE(( requires {requires (expr);}))
-
 namespace librepr::test {
 
 
@@ -16,39 +14,46 @@ using big_list = TypeList<int, char, float, double, int, int, int, int,
                            int, char, float, double, int, int, int, int>;
 // NOLINTEND
 
-TEST(type_list, map){ }
+TEST(type_list, map){
+  EXPECT_TRUE((std::same_as<TypeList<>::map<std::type_identity>, TypeList<>>));
+  EXPECT_TRUE((std::same_as<TypeList<int, char>::map<std::type_identity>,
+                            TypeList<std::type_identity<int>, std::type_identity<char>>>));
+
+  EXPECT_TRUE((std::same_as<TypeList<>::map_t<std::type_identity>, TypeList<>>));
+  EXPECT_TRUE((std::same_as<TypeList<int, char>::map_t<std::type_identity>, TypeList<int, char>>));
+}
 
 TEST(type_list, get){
-  COMP_ASSERT((std::same_as<small_list::get<0>, int>));
-  COMP_ASSERT((std::same_as<small_list::get<1>, char>));
-  COMP_ASSERT((std::same_as<small_list::get<2>, float>));
-  COMP_ASSERT((std::same_as<small_list::get<3>, double>));
+  EXPECT_TRUE((std::same_as<small_list::get<0>, int>));
+  EXPECT_TRUE((std::same_as<small_list::get<1>, char>));
+  EXPECT_TRUE((std::same_as<small_list::get<2>, float>));
+  EXPECT_TRUE((std::same_as<small_list::get<3>, double>));
 
-  COMP_ASSERT((std::same_as<big_list::get<0>, int>));
-  COMP_ASSERT((std::same_as<big_list::get<4>, int>));
-  COMP_ASSERT((std::same_as<big_list::get<15>, int>));
-  COMP_ASSERT((std::same_as<big_list::get<16>, int>));
-  COMP_ASSERT((std::same_as<big_list::get<17>, char>));
-  COMP_ASSERT((std::same_as<big_list::get<31>, int>));
+  EXPECT_TRUE((std::same_as<big_list::get<0>, int>));
+  EXPECT_TRUE((std::same_as<big_list::get<4>, int>));
+  EXPECT_TRUE((std::same_as<big_list::get<15>, int>));
+  EXPECT_TRUE((std::same_as<big_list::get<16>, int>));
+  EXPECT_TRUE((std::same_as<big_list::get<17>, char>));
+  EXPECT_TRUE((std::same_as<big_list::get<31>, int>));
 }
 
 TEST(type_list, head){
-  COMP_ASSERT((std::same_as<small_list::head<1>, TypeList<int, char>>));
-  COMP_ASSERT((std::same_as<small_list::head<0>, TypeList<int>>));
-  COMP_ASSERT((std::same_as<small_list::head<3>, TypeList<int, char, float, double>>));
+  EXPECT_TRUE((std::same_as<small_list::head<1>, TypeList<int, char>>));
+  EXPECT_TRUE((std::same_as<small_list::head<0>, TypeList<int>>));
+  EXPECT_TRUE((std::same_as<small_list::head<3>, TypeList<int, char, float, double>>));
 
-  COMP_ASSERT((std::same_as<big_list::head<3>, TypeList<int, char, float, double>>));
-  COMP_ASSERT((std::same_as<big_list::head<15>, TypeList<int, char, float, double, int, int, int, int, 
+  EXPECT_TRUE((std::same_as<big_list::head<3>, TypeList<int, char, float, double>>));
+  EXPECT_TRUE((std::same_as<big_list::head<15>, TypeList<int, char, float, double, int, int, int, int, 
                                                           int, char, float, double, int, int, int, int>>));
 }
 
 TEST(type_list, tail){
-  COMP_ASSERT((std::same_as<small_list::tail<1>, TypeList<float, double>>));
-  COMP_ASSERT((std::same_as<small_list::tail<0>, TypeList<char, float, double>>));
-  COMP_ASSERT((std::same_as<small_list::tail<3>, TypeList<>>));
+  EXPECT_TRUE((std::same_as<small_list::tail<1>, TypeList<float, double>>));
+  EXPECT_TRUE((std::same_as<small_list::tail<0>, TypeList<char, float, double>>));
+  EXPECT_TRUE((std::same_as<small_list::tail<3>, TypeList<>>));
 
-  COMP_ASSERT((std::same_as<big_list::tail<29>, TypeList<int, int>>));
-  COMP_ASSERT((std::same_as<big_list::tail<15>, TypeList<int, char, float, double, int, int, int, int,
+  EXPECT_TRUE((std::same_as<big_list::tail<29>, TypeList<int, int>>));
+  EXPECT_TRUE((std::same_as<big_list::tail<15>, TypeList<int, char, float, double, int, int, int, int,
                                                           int, char, float, double, int, int, int, int>>));
 }
 
@@ -99,68 +104,44 @@ TEST(type_list, for_each){
   EXPECT_EQ(count_small, 4);
   EXPECT_EQ(count_big, 32);
 }
-TEST(type_list, enumerate){ 
+
+TEST(type_list, enumerate_argument){ 
   auto count_small = 0;
   auto count_big = 0;
+  
   small_list::enumerate([&count_small]<typename>(std::size_t index){
     EXPECT_EQ(count_small, index);
     ++count_small;
   });
+  
   big_list::enumerate([&count_big]<typename>(std::size_t index){
     EXPECT_EQ(count_big, index);
     ++count_big;
   });
+
   EXPECT_EQ(count_small, 4);
   EXPECT_EQ(count_big, 32);
+}
 
-  count_small = 0;
-  count_big = 0;
+TEST(type_list, enumerate_nttp){ 
+  auto count_small = 0;
+  auto count_big = 0;
+  auto count_empty = 0;
+
   small_list::enumerate([&count_small]<typename, std::size_t index>(){
     EXPECT_EQ(count_small, index);
     ++count_small;
   });
+
   big_list::enumerate([&count_big]<typename, std::size_t index>(){
     EXPECT_EQ(count_big, index);
     ++count_big;
   });
+
+  TypeList<>::enumerate([&count_empty]<typename, std::size_t index>(){ ++count_empty; });
+
   EXPECT_EQ(count_small, 4);
   EXPECT_EQ(count_big, 32);
+  EXPECT_EQ(count_empty, 0);
 }
-/*
-static_assert(std::same_as<TypeList<>::map<std::type_identity>, TypeList<>>);
-static_assert(std::same_as<TypeList<int, char>::map<std::type_identity>,
-                           TypeList<std::type_identity<int>, std::type_identity<char>>>);
-
-static_assert(std::same_as<TypeList<>::map_t<std::type_identity>, TypeList<>>);
-static_assert(std::same_as<TypeList<int, char>::map_t<std::type_identity>, TypeList<int, char>>);
-
-static_assert(std::same_as<TypeList<int, char, float>::get<0>, int>);
-static_assert(std::same_as<TypeList<int, char, float>::get<1>, char>);
-static_assert(std::same_as<TypeList<int, char, float>::get<2>, float>);
-
-/*static_assert(std::same_as<TypeList<int, char, float>::slice<0, 1>, TypeList<int>>);
-static_assert(std::same_as<TypeList<int, char, float>::slice<1>, TypeList<char, float>>);
-static_assert(std::same_as<TypeList<int, char, float>::slice<1, 2>, TypeList<char>>);
-static_assert(std::same_as<TypeList<int, char, float>::slice<1, 1>, TypeList<>>);* /
-
-static_assert(std::same_as<TypeList<int, char, float>::split<3>, TypeList<TypeList<int, char, float>, TypeList<>>>);
-static_assert(std::same_as<TypeList<int, char, float>::split<1>, TypeList<TypeList<int>, TypeList<char, float>>>);
-static_assert(std::same_as<TypeList<int, char, float>::split<2>, TypeList<TypeList<int, char>, TypeList<float>>>);
-static_assert(std::same_as<TypeList<int, char, float>::split<0>, TypeList<TypeList<>, TypeList<int, char, float>>>);
-
-static_assert(std::same_as<TypeList<>::append<float>, TypeList<float>>);
-static_assert(std::same_as<TypeList<>::prepend<float>, TypeList<float>>);
-static_assert(std::same_as<TypeList<int, char>::append<float>, TypeList<int, char, float>>);
-static_assert(std::same_as<TypeList<int, char>::prepend<float>, TypeList<float, int, char>>);
-
-static_assert(std::same_as<TypeList<>::from_tuple<std::tuple<>>, TypeList<>>);
-static_assert(std::same_as<TypeList<>::from_tuple<std::tuple<int, char, float>>, TypeList<int, char, float>>);
-static_assert(std::same_as<TypeList<>::to<std::tuple>, std::tuple<>>);
-static_assert(std::same_as<TypeList<int, char, float>::to<std::tuple>, std::tuple<int, char, float>>);
-
-static_assert(std::same_as<TypeList<int, char>::map<std::type_identity>,
-                           TypeList<std::type_identity<int>, std::type_identity<char>>>);
-
-static_assert(std::same_as<TypeList<int, char>::map_t<std::type_identity>, TypeList<int, char>>);
-*/
 }  // namespace librepr

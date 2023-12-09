@@ -9,7 +9,6 @@ namespace librepr::ctei {
 template <typename... Ranges>
 struct RangeList : TypeListBase<RangeList, Ranges...>{
   using last                       = typename RangeList::template get<0>;
-  //static constexpr auto next_index = ((Ranges::max + 1), ...);
   static constexpr auto next_index = last::max + 1;
 
   template <auto Idx>
@@ -47,6 +46,9 @@ struct RangeList<> : TypeListBase<RangeList> {
   template <typename T, auto V, auto Idx = V>
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;
 
-  constexpr static bool is_flag_like = true;
+  constexpr static bool is_binary_powers(){
+    // special case empty range list to detect higher value flags 
+    return true;
+  }
 };
 }  // namespace librepr::ctei

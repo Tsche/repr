@@ -32,9 +32,9 @@ public:
   static constexpr auto enum_names = get_enum_names<T, Kind>(std::make_index_sequence<size>{});
 
   [[nodiscard]] static constexpr bool is_binary_powers() noexcept{
-    if constexpr (min >= 0 && min < 2) {
+    if constexpr (min >= 0 && max <= 2) {
       // special case ranges containing only 0-2
-      return max <= 2;
+      return true;
     } else if constexpr (std::has_single_bit(static_cast<std::size_t>(min))) {
       // offset is power of 2 - range must contain element at (offset + 0)
       return size == 1;

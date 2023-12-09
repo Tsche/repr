@@ -7,11 +7,12 @@
 namespace librepr::ctei::test {
 
 TEST(range, contains) {
-  EXPECT_TRUE((Range<0, 2>::contains(0)));
-  EXPECT_TRUE((Range<0, 2>::contains(1)));
-  EXPECT_TRUE((Range<0, 2>::contains(2)));
-  EXPECT_FALSE((Range<0, 2>::contains(-1)));  // out of range
-  EXPECT_FALSE((Range<0, 2>::contains(3)));   // out of range
+  EXPECT_FALSE((Range<1, 3>::contains(-1)));  // out of range
+  EXPECT_FALSE((Range<1, 3>::contains(0))); // out of range
+  EXPECT_TRUE((Range<1, 3>::contains(1)));
+  EXPECT_TRUE((Range<1, 3>::contains(2)));
+  EXPECT_TRUE((Range<1, 3>::contains(3)));
+  EXPECT_FALSE((Range<1, 3>::contains(4))); // out of range
 
   EXPECT_TRUE((Range<0U, 1U>::contains(0U)));
   EXPECT_TRUE((Range<0U, 1U>::contains(1U)));
