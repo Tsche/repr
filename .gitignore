@@ -1,6 +1,7 @@
 **/build/
 .vscode/
 .vsconan/
+.vs/
 .cache/
 **/.idea
 **/CMakeUserPresets.json

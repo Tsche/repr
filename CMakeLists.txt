@@ -31,6 +31,10 @@ if(NOT BUILD_TESTING STREQUAL OFF)
   target_link_libraries(repr_test PRIVATE repr)
   target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gmock)
 
+  if (WIN32)
+    target_compile_options(repr_test PRIVATE "/Zc:preprocessor")
+  endif()
+
   include(GoogleTest)
   gtest_discover_tests(repr_test)
   
