@@ -20,9 +20,9 @@ template <typename T>
 struct Reflect<T> {
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, type const& obj) {
-    visitor(obj);
+    Visit::value(visitor, obj);
   }
 
   static std::string layout() {

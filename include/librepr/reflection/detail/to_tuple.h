@@ -9,10 +9,10 @@ namespace librepr::detail {
 //NOLINTBEGIN
 template <typename T>
 requires (std::is_aggregate_v<T> && !std::is_array_v<T>)
-auto to_tuple(T const& object) {
+constexpr auto to_tuple(T const& object) {
   // TODO generate this using cursed macros
 
-  constexpr static int member_count = arity<std::remove_cv_t<T>>;
+  constexpr auto member_count = arity<std::remove_cv_t<T>>;
   if constexpr (member_count == 0) {
     return std::tie();
   } else if constexpr (member_count == 1) {

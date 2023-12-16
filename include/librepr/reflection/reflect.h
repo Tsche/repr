@@ -10,6 +10,7 @@
 #include "init_list.h"
 #include "pair.h"
 #include "variant.h"
+#include "custom.h"
 
 namespace librepr {
 
@@ -17,9 +18,9 @@ template <typename T>
 struct Reflect {
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, type const& obj) {
-    visitor(obj);
+    Visit::value(visitor, obj);
   }
 
   static std::string layout() { return librepr::get_name<T>(); }
@@ -27,12 +28,16 @@ struct Reflect {
 
 template <>
 struct Reflect<char const*> {
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, char const* obj) {
-    visitor(obj);
+    Visit::value(visitor, obj);
   }
 
   static std::string layout() { return "str"; }
 };
+
+template <typename T>
+// TODO check Settings -> ADL -> member function -> builtin
+using reflect = Reflect<T>;
 
 }  // namespace librepr

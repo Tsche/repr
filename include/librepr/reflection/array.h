@@ -17,7 +17,7 @@ requires (not std::same_as<T, char>) //TODO exclude other string literals
 struct Reflect<T[N]> {
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const (&obj)[N]) {
     ScopeGuard guard{visitor, std::type_identity<T[N]>{}};
     for (std::size_t idx = 0; idx < N; ++idx) {
@@ -32,7 +32,7 @@ template <typename T>
 struct Reflect<T[]> {  // NOLINT
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const& /* obj */) {
     ScopeGuard guard{std::forward<V>(visitor), std::type_identity<T[]>{}};
   }

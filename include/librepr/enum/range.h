@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <utility>
+#include <string_view>
 #include <bit>
 #include "util.h"
 
@@ -24,7 +25,7 @@ struct Range {
 private:
   template <typename T, EnumKind Kind, std::size_t... Idx>
   static consteval auto get_enum_names(std::index_sequence<Idx...>){
-    return std::array{enum_name<T, to_underlying<T, Kind>(Range::template get<Idx>)>.data()...};
+    return std::array{std::string_view{enum_name<T, to_underlying<T, Kind>(Range::template get<Idx>)>}...};
   }
 
 public:

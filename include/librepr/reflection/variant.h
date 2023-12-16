@@ -20,7 +20,7 @@ template <template <typename...> class Variant, typename... Ts>
 struct Reflect<Variant<Ts...>> {
   using type = Variant<Ts...>;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, auto const& obj) {
     ScopeGuard guard{visitor, std::type_identity<type>{}};
     std::visit(detail::Overload{[&visitor](Ts const& alternative) {

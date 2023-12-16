@@ -72,7 +72,7 @@ template <typename... Ts>
 struct TypeList : TypeListBase<TypeList, Ts...> {};
 
 template <template <auto...> class List, auto... Vs>
-struct ValueList {
+struct ValueListBase {
   static constexpr std::size_t size = sizeof...(Vs);
 
   template <template <typename...> class T = TypeList>
@@ -130,5 +130,8 @@ struct ValueList {
     }
   }
 };
+
+template <auto... Vs>
+struct ValueList : ValueListBase<ValueList, Vs...> {};
 
 }  // namespace librepr

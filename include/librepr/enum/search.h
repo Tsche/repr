@@ -133,7 +133,7 @@ struct Search {
 
   static consteval auto reflected_min() {
     if constexpr (has_search_range<T>) {
-      return clamp<underlying>(EnumSettings<T>::search_range::min);
+      return clamp<underlying>(Settings<T>::search_range::min);
     }
 
     if constexpr (std::is_signed_v<underlying>) {
@@ -145,7 +145,7 @@ struct Search {
 
   static consteval auto reflected_max() {
     if constexpr (has_search_range<T>) {
-      return clamp<underlying>(EnumSettings<T>::search_range::max);
+      return clamp<underlying>(Settings<T>::search_range::max);
     }
 
     if constexpr (std::is_signed_v<underlying>) {

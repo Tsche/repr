@@ -40,39 +40,60 @@ public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
   std::string result{};
 
-  template <typename T>
-  void operator()() {
-    emit_type<T>();
+  void nesting(bool increase) {
+    if (increase) {
+      separate = false;
+      result += '{';
+      ++level;
+    }
+    else {
+      --level;
+      print_indent();
+      result += '}';
+    }
+  }
+  
+  void member_name(std::string_view name){
+    print_separator();
+    result += '.';
+    result += name;
+    result += '=';
+    separate = false;
   }
 
   template <typename T>
-  void operator()(T const& obj) {
-    emit_value(obj);
+  void type() {
+    print_separator();
+    if constexpr (!librepr::is_literal_v<T>) {
+      if (options.should_print_type(level)) {
+        result.append(librepr::get_name<T>());
+      }
+    }
   }
 
   template <typename T>
-  void emit_value(T const& obj) {
-    emit_type<T>();
+  void value(T const& obj) {
+    type<T>();
     result += librepr::repr(obj);
   }
 
   template <typename T>
     requires detail::has_repr_member<T>
-  void emit_value(T const& obj) {
+  void value(T const& obj) {
     if constexpr (!librepr::is_literal_v<T>) {
-      emit_type<T>();
-      increase_nesting();
+      type<T>();
+      nesting(true);
     }
 
     result += obj.repr();
 
     if constexpr (!librepr::is_literal_v<T>) {
-      decrease_nesting();
+      nesting(false);
     }
   }
 
   // special case string literals
-  void emit_value(char const* obj) {
+  void value(char const* obj) {
     // TODO template this for wide string literals
     //  don't print a type, only print the separator if needed
     print_separator();
@@ -81,7 +102,7 @@ public:
 
   template <typename T>
     requires std::is_pointer_v<T>
-  void emit_value(T const& obj) {
+  void value(T const& obj) {
     // don't print a type, only print the separator if needed
     print_separator();
     using underlying_type = std::remove_pointer_t<T>;
@@ -92,38 +113,16 @@ public:
 
       if (obj) {  // don't attempt to dereference nullptr
         result += "new " + librepr::get_name<underlying_type>();
-        increase_nesting();
+        nesting(true);
         librepr::Reflect<underlying_type>::visit(*this, *obj);
-        decrease_nesting();
+        nesting(false);
         return;
       }
     }
     result += '(' + librepr::get_name<T>() + ')' + librepr::repr(static_cast<const void*>(obj));
   }
-
-  template <typename T>
-  void emit_type() {
-    print_separator();
-    if constexpr (!librepr::is_literal_v<T>) {
-      if (options.should_print_type(level)) {
-        result.append(librepr::get_name<T>());
-      }
-    }
-  }
-
-  void increase_nesting() {
-    separate = false;
-    result += '{';
-    ++level;
-  }
-
-  void decrease_nesting() {
-    --level;
-    print_indent();
-    result += '}';
-  }
 };
 
-static_assert(Visitor::Hierarchical<ReprVisitor>, "Formatter isn't a valid hierarchical visitor.");
+//static_assert(Visitor::Hierarchical<ReprVisitor>, "Formatter isn't a valid hierarchical visitor.");
 
 }  // namespace librepr

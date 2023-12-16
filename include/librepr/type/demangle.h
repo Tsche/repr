@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <string_view>
-
+#include <librepr/util/strings.h>
 
 #if defined _WIN32
 #pragma comment(lib, "dbghelp.lib")
@@ -9,7 +9,6 @@
 
 #include <Windows.h>
 #include <DbgHelp.h>
-#include <librepr/util/strings.h>
 #include <array>
 
 #else

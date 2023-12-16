@@ -1,9 +1,11 @@
 #pragma once
 
 #include <concepts>
+#include <string_view>
+#include <librepr/detail/macros.h>
 
 namespace librepr {
-
+/*
 namespace Visitor {
 template <typename V>
 concept Values = requires(V visitor) {
@@ -14,7 +16,7 @@ concept Values = requires(V visitor) {
 template <typename V>
 concept Types = requires(V visitor) {
   // type visitation
-  { visitor.template operator()<int>() }; 
+  { visitor.template operator()<int>() };
 };
 
 template <typename V>
@@ -25,12 +27,60 @@ concept Hierarchical = requires(V visitor) {
 } && Values<V> && Types<V>;
 
 }  // namespace Visitor
+*/
+
+enum class VisitEvent { type, value, nesting, member_name };
+
+template <VisitEvent E>
+struct Visitor {
+  constexpr static auto value = E;
+};
+
+#define LIBREPR_GENERATE_DISPATCH_BRANCH(variant) \
+  if constexpr (requires {                        \
+                  { visitor variant };            \
+                }) {                              \
+    visitor variant;                              \
+  }
+
+#define LIBREPR_GENERATE_DISPATCH(name, args, member, ...)       \
+  static auto name(auto&& visitor LIBREPR_MAYBE_COMMA(args)) {   \
+    LIBREPR_GENERATE_DISPATCH_BRANCH(member)                     \
+    FOR_EACH(else LIBREPR_GENERATE_DISPATCH_BRANCH, __VA_ARGS__) \
+  }
+
+struct Visit {
+  template <typename T>
+  LIBREPR_GENERATE_DISPATCH(value, T const& value, 
+      .value(value),
+      .template operator()<T>(value)
+  )
+
+  template <typename T>
+  LIBREPR_GENERATE_DISPATCH(type,, 
+      .template type<T>(),
+      .template operator()<T>()
+  )
+
+  LIBREPR_GENERATE_DISPATCH(nesting, bool increase, 
+      .nesting(increase),
+      (Visitor<VisitEvent::nesting>{}, increase)
+  )
+
+  LIBREPR_GENERATE_DISPATCH(member_name, std::string_view name, 
+      .member_name(name),
+      (Visitor<VisitEvent::member_name>{}, name)
+  )
+};
+
+#undef LIBREPR_GENERATE_DISPATCH_BRANCH
+#undef LIBREPR_GENERATE_DISPATCH
 
 template <template <typename> class Tag, typename T>
 concept TagType = std::same_as<typename Tag<T>::type, T>;
 
 template <typename V, typename T>
-struct ScopeGuard {
+struct [[nodiscard]] ScopeGuard {
   ScopeGuard(const ScopeGuard&)            = delete;
   ScopeGuard(ScopeGuard&&)                 = delete;
   ScopeGuard& operator=(const ScopeGuard&) = delete;
@@ -41,22 +91,13 @@ struct ScopeGuard {
   ScopeGuard(V& visitor_, Tag<T>) : ScopeGuard(visitor_) {}
 
   explicit ScopeGuard(V& visitor_) : visitor(visitor_) {
-    if constexpr (Visitor::Types<V>) {
-      visitor.template operator()<T>();
-    }
-
-    if constexpr (Visitor::Hierarchical<V>){
-      visitor.increase_nesting();
-    }
+    Visit::type<T>(visitor);
+    Visit::nesting(visitor, true);
   }
 
-  ~ScopeGuard()
-    requires Visitor::Hierarchical<V>
-  {
-    visitor.decrease_nesting();
+  ~ScopeGuard() {
+    Visit::nesting(visitor, false);
   }
-
-  ~ScopeGuard() = default;
 
   V& visitor;
 };

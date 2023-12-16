@@ -17,7 +17,7 @@ template <std::ranges::range T>
 struct Reflect<T> {
   using type = typename T::value_type;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const& obj) {
     ScopeGuard guard{visitor, std::type_identity<T>{}};
     for (auto const& element : obj) {

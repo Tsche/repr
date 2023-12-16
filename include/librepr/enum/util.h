@@ -47,15 +47,13 @@ template <typename T, auto Value>
   if constexpr (!name.empty() && name[0] != '(') {
     return name;
   } else {
-    return std::array{'\0'};
+    return const_string<0>{};
   }
 }
-template <typename T, auto Value>
-inline constexpr auto enum_name_raw = get_enum_name<T, Value>();
 }  // namespace detail
 
 template <typename T, auto Value>
-inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>.data()};
+inline constexpr auto enum_name = detail::get_enum_name<T, Value>();
 
 template <auto V>
 [[nodiscard]] consteval auto dump_quick() noexcept {
