@@ -3,6 +3,7 @@
 namespace librepr {
 
 enum class Platform : unsigned { Unknown, Linux, UNIX, Windows, macOS };
+enum class Compiler : unsigned { Unknown, Clang, GCC, MSVC };
 
 #if defined(_WIN32)
 #define LIBREPR_PLATFORM_WINDOWS
@@ -21,10 +22,9 @@ constexpr inline auto platform = Platform::macOS;
 constexpr inline auto platform = Platform::UNIX;
 
 #else
-#error "Unsupported platform"
+#warning "Unsupported platform"
+constexpr inline auto compiler = Platform::Unknown;
 #endif
-
-enum class Compiler : unsigned { Clang, GCC, MSVC };
 
 #if defined(__clang__)
 #define LIBREPR_COMPILER_CLANG
@@ -39,7 +39,8 @@ constexpr inline auto compiler = Compiler::GCC;
 constexpr inline auto compiler = Compiler::MSVC;
 
 #else
-#error "Unsupported compiler"
+#warning "Unsupported compiler"
+constexpr inline auto compiler = Compiler::Unknown;
 #endif
 
 #if defined(LIBREPR_COMPILER_MSVC)

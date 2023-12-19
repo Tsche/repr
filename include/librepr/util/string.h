@@ -32,12 +32,4 @@ struct [[nodiscard]] const_string {
 
 template <std::size_t N>
 const_string(char const (&)[N]) -> const_string<N - 1>;
-
-namespace detail {
-inline void remove_all(std::string& text, std::string_view from) {
-  for (auto at = text.find(from, 0); at != std::string::npos; at = text.find(from, at)) {
-    text.erase(at, from.length());
-  }
-}
-}
 }  // namespace librepr::detail

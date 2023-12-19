@@ -4,7 +4,7 @@
 #include <concepts>
 
 #include <librepr/ctvi/ctvi.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string.h>
 
 namespace librepr::ctei {
 enum class EnumKind { Linear, Flags, Empty };
@@ -60,7 +60,7 @@ template <auto V>
 #if defined(_MSC_VER)
   constexpr auto signature = std::string_view{__FUNCSIG__};
   // TODO find prefix for MSVC
-  constexpr std::size_t start = sizeof("TODO") - 1;
+  constexpr std::size_t start = sizeof("__cdecl librepr::ctei::dump_quick<") - 1;
 #else
   constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
 #if defined(__clang__)
@@ -82,7 +82,7 @@ template <auto... V>
 #if defined(_MSC_VER)
   constexpr auto signature = std::string_view{__FUNCSIG__};
   // TODO find prefix for MSVC
-  constexpr std::size_t start = sizeof("TODO") - 1;
+  constexpr std::size_t start = sizeof("__cdecl librepr::ctei::dump_list<") - 1;
 #else
   constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
 #if defined(__clang__)

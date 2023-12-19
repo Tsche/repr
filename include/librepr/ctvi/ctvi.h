@@ -3,7 +3,7 @@
 #include <array>
 #include <utility>
 #include <librepr/detail/platform.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string.h>
 
 namespace librepr::ctvi {
 

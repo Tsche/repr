@@ -48,8 +48,8 @@ struct Reflect<T> {
 
   static std::string layout() {
     auto output = std::string("{");
-    type::enumerate([&output]<typename Member>(std::size_t index) {
-      if (index != 0) {
+    type::enumerate([&output]<typename Member, std::size_t Index>() {
+      if (Index != 0) {
         output += ", ";
       }
 

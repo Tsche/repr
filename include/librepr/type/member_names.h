@@ -3,12 +3,13 @@
 #include <string_view>
 #include <utility>
 #include <array>
-#include "librepr/customization/reflection.h"
+#include <librepr/detail/warning.h>
+#include <librepr/customization/reflection.h>
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/customization/members.h>
 
 #include <librepr/util/fake_obj.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string.h>
 
 #include <librepr/reflection/detail/arity.h>
 #include <librepr/reflection/detail/to_tuple.h>
@@ -63,8 +64,8 @@ struct MemberName<info> {
   constexpr static auto value = member_name();
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundefined-var-template"
+LIBREPR_WARNING_PUSH
+LIBREPR_WARNING_DISABLE(CLANG, -Wundefined-var-template)
 
 // This technique has been described by @schaumb
 // For explanations see
@@ -81,7 +82,7 @@ template <typename T, std::size_t Idx>
 inline constexpr auto raw_member_name =
     librepr::ctvi::detail::name_from_subobject<T, LIBREPR_SUBOBJECT_PTR(member_ptr<Idx>(fake_obj<T>.value))>();
 
-#pragma clang diagnostic pop
+LIBREPR_WARNING_POP
 
 template <typename T>
   requires(std::is_aggregate_v<T> && !std::is_array_v<T>)

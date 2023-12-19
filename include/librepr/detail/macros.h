@@ -4,6 +4,8 @@
 #define __has_builtin(x) 0
 #endif
 
+#define LIBREPR_PRAGMA(...) _Pragma(#__VA_ARGS__)
+
 
 #if defined(_MSVC_TRADITIONAL) && _MSVC_TRADITIONAL
 #error "A standard compliant preprocessor is required. Add /Zc:preprocessor to your compiler invocation."

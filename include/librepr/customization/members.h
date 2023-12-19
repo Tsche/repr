@@ -7,7 +7,7 @@
 #include <librepr/type/member_names.h>
 #include <librepr/util/list.h>
 #include <librepr/ctvi/ctvi.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string.h>
 
 namespace librepr {
   

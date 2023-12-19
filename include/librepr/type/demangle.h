@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <string_view>
-#include <librepr/util/strings.h>
+#include <librepr/util/string.h>
 
 #if defined _WIN32
 #pragma comment(lib, "dbghelp.lib")
 #define WIN32_LEAN_AND_MEAN
-
+#define NOMINMAX
 #include <Windows.h>
 #include <DbgHelp.h>
 #include <array>
@@ -17,17 +17,6 @@
 #endif
 
 namespace librepr {
-
-#if defined(_WIN32)
-namespace detail {
-[[nodiscard]] inline std::string denoise_name(std::string_view name) {
-  auto ret = std::string{name.data()};
-  remove_all(ret, "struct ");
-  remove_all(ret, "class ");
-  return ret;
-}
-}
-#endif
 
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
 #if defined _WIN32

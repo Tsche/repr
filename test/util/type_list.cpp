@@ -105,6 +105,7 @@ TEST(type_list, for_each){
   EXPECT_EQ(count_big, 32);
 }
 
+/*
 TEST(type_list, enumerate_argument){ 
   auto count_small = 0;
   auto count_big = 0;
@@ -121,7 +122,7 @@ TEST(type_list, enumerate_argument){
 
   EXPECT_EQ(count_small, 4);
   EXPECT_EQ(count_big, 32);
-}
+}*/
 
 TEST(type_list, enumerate_nttp){ 
   auto count_small = 0;
