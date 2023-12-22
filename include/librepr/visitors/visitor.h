@@ -1,11 +1,13 @@
 #pragma once
 
 #include <concepts>
-#include <string_view>
 #include <librepr/macro/util.h>
+#include <librepr/util/wrap.h>
+#include <string_view>
 
 namespace librepr {
 /*
+// TODO
 namespace Visitor {
 template <typename V>
 concept Values = requires(V visitor) {
@@ -36,70 +38,49 @@ struct Visitor {
   constexpr static auto value = E;
 };
 
-#define LIBREPR_GENERATE_DISPATCH_BRANCH(variant) \
-  if constexpr (requires {                        \
-                  { visitor variant };            \
-                }) {                              \
-    visitor variant;                              \
-  }
-
-#define LIBREPR_GENERATE_DISPATCH(name, args, member, ...)       \
-  static auto name(auto&& visitor LIBREPR_MAYBE_COMMA(args)) {   \
-    LIBREPR_GENERATE_DISPATCH_BRANCH(member)                     \
-    FOR_EACH(else LIBREPR_GENERATE_DISPATCH_BRANCH, __VA_ARGS__) \
-  }
-
 struct Visit {
   template <typename T>
-  LIBREPR_GENERATE_DISPATCH(value, T const& value, 
-      .value(value),
-      .template operator()<T>(value)
-  )
+  static auto value(auto&& visitor, T const& obj) {
+    LIBREPR_MAYBE_DO(visitor.value(obj))
+    else LIBREPR_MAYBE_DO(visitor.template operator()<T>(obj))
+  }
 
   template <typename T>
-  LIBREPR_GENERATE_DISPATCH(type,, 
-      .template type<T>(),
-      .template operator()<T>()
-  )
+  static auto type(auto&& visitor) {
+    LIBREPR_MAYBE_DO(visitor.template type<T>())
+    else LIBREPR_MAYBE_DO(visitor.template operator()<T>())
+  }
 
-  LIBREPR_GENERATE_DISPATCH(nesting, bool increase, 
-      .nesting(increase),
-      (Visitor<VisitEvent::nesting>{}, increase)
-  )
-
-  LIBREPR_GENERATE_DISPATCH(member_name, std::string_view name, 
-      .member_name(name),
-      (Visitor<VisitEvent::member_name>{}, name)
-  )
+  static auto nesting(auto&& visitor, bool increase) {
+    LIBREPR_MAYBE_DO(visitor.nesting(increase))
+    else LIBREPR_MAYBE_DO(visitor(constant<VisitEvent::nesting>, increase))
+  }
+  static auto member_name(auto&& visitor, std::string_view name) {
+    LIBREPR_MAYBE_DO(visitor.member_name(name))
+    else LIBREPR_MAYBE_DO(visitor(constant<VisitEvent::member_name>, name))
+  }
 };
-
-#undef LIBREPR_GENERATE_DISPATCH_BRANCH
-#undef LIBREPR_GENERATE_DISPATCH
 
 template <template <typename> class Tag, typename T>
 concept TagType = std::same_as<typename Tag<T>::type, T>;
 
-template <typename V, typename T>
+template <typename V>
 struct [[nodiscard]] ScopeGuard {
   ScopeGuard(const ScopeGuard&)            = delete;
   ScopeGuard(ScopeGuard&&)                 = delete;
   ScopeGuard& operator=(const ScopeGuard&) = delete;
   ScopeGuard& operator=(ScopeGuard&&)      = delete;
 
-  template <template <typename> class Tag>
-    requires TagType<Tag, T>
-  ScopeGuard(V& visitor_, Tag<T>) : ScopeGuard(visitor_) {}
-
-  explicit ScopeGuard(V& visitor_) : visitor(visitor_) {
-    Visit::type<T>(visitor);
+  explicit ScopeGuard(V& visitor_) : visitor(visitor_) { 
     Visit::nesting(visitor, true);
   }
 
-  ~ScopeGuard() {
-    Visit::nesting(visitor, false);
-  }
+  ~ScopeGuard() { Visit::nesting(visitor, false); }
 
-  V& visitor;
+  // ScopeGuard is not moveable or copyable. Clang-tidy should not diagnose
+  // cppcoreguidelines-avoid-const-or-ref-data-members here but does anyway..
+  // wtf?
+  V& visitor;  // NOLINT
 };
 
 }  // namespace librepr

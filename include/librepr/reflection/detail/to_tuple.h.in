@@ -19,12 +19,13 @@ constexpr auto to_tuple(T const& object) {
   constexpr auto member_count = arity<std::remove_cv_t<T>>;
   if constexpr (member_count == 0) {
     return std::tie();
-  }@
-  @[for N in range(__max__)]
+  }
+  @[for N in range(__max__)]@
   else if constexpr (member_count == @(N + 1)) {
     auto const& [@member_list(N)] = object;
     return std::tie(@member_list(N));
-  } @[end for]
+  } 
+  @[end for]
 }
 //NOLINTEND
 }

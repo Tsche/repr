@@ -19,9 +19,10 @@ struct Reflect<T[N]> {
 
   template <typename V>
   static void visit(V&& visitor, T const (&obj)[N]) {
-    ScopeGuard guard{visitor, std::type_identity<T[N]>{}};
+    Visit::type<T[N]>(visitor);
+    ScopeGuard guard{visitor};
     for (std::size_t idx = 0; idx < N; ++idx) {
-      Reflect<type>::visit(std::forward<V>(visitor), obj[idx]);
+      Reflect<type>::visit(visitor, obj[idx]);
     }
   }
 
@@ -34,7 +35,8 @@ struct Reflect<T[]> {  // NOLINT
 
   template <typename V>
   static void visit(V&& visitor, T const& /* obj */) {
-    ScopeGuard guard{std::forward<V>(visitor), std::type_identity<T[]>{}};
+    Visit::type<T[]>(visitor);
+    ScopeGuard guard{visitor};
   }
 
   static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }

@@ -19,7 +19,7 @@ struct Split<@N, List<@type_list(N), Ts...>> {
   using head = List<@type_list(N)>;
   using tail = List<Ts...>;
 };
-@[end for]@
+@[end for]
 
 constexpr inline auto MAX_SPEC = @(__max__ - 1)U;
 

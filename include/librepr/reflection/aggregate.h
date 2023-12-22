@@ -35,14 +35,15 @@ struct Reflect<T> {
     auto members = librepr::detail::to_tuple(obj);
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
-    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
 
     type::enumerate([&visitor, &members]<typename Member, std::size_t Index>() {
       if constexpr (reflect_names<T>) {
         Visit::member_name(visitor, std::string_view{librepr::member_name<T, Index>});
       }
 
-      Member::visit(std::forward<decltype(visitor)>(visitor), std::get<Index>(members));
+      Member::visit(visitor, std::get<Index>(members));
     });
   }
 

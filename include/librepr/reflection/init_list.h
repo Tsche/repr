@@ -19,7 +19,9 @@ struct Reflect<T> {
 
   template <typename V>
   static void visit(V&& visitor, T const& obj) {
-    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+
     for (auto const& element : obj) {
       Reflect<type>::visit(std::forward<V>(visitor), element);
     }

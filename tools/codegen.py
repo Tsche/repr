@@ -25,7 +25,7 @@ class Codegen(Extension):
                 logging.debug("Running clang-format")
                 assert clang_format_path is not None, "Configured to run clang-format but couldn't find clang-format"
                 
-                result = subprocess.run([clang_format_path], input=preprocessed, text=True, capture_output=True)
+                result = subprocess.run([clang_format_path, "--Wno-error=unknown"], input=preprocessed, text=True, capture_output=True)
                 assert result.returncode == 0, f"clang-format returned {result.returncode}"
                 
                 preprocessed = result.stdout

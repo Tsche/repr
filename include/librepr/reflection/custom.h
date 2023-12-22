@@ -23,7 +23,8 @@ struct Reflect<T> {
 
   template <typename V>
   static void visit(V&& visitor, T const& obj) {
-    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
 
     members::for_each([&visitor, &obj]<Member member> {
       constexpr static auto name = detail::custom_member_name<member>();
