@@ -8,7 +8,7 @@
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>
 
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 #include <librepr/enum/reflect.h>
 
 namespace librepr {
@@ -32,7 +32,7 @@ struct Reflect<T> {
       if (&element != &*std::begin(values)) {
         list << " | ";
       }
-      #if USING(REPR_MAGIC_ENUM)
+      #if USING(REPR_USE_MAGIC_ENUM)
       if constexpr (detail::is_scoped_enum<T>) {
         list << librepr::get_name<T>();
         list << "::";

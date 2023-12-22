@@ -2,7 +2,7 @@
 #include <string_view>
 #include <array>
 #include <utility>
-#include <librepr/detail/platform.h>
+#include <librepr/macro/platform.h>
 #include <librepr/util/string.h>
 
 namespace librepr::ctvi {

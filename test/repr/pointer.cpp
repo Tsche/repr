@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <repr>
-#include <librepr/detail/warning.h>
+#include <librepr/macro/warning.h>
 
 TEST(pointer, nullptr) {
   EXPECT_EQ(repr(nullptr), "nullptr");

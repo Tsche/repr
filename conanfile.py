@@ -9,23 +9,24 @@ class ReprRecipe(ConanFile):
     package_type = "header-library"
 
     # Optional metadata
-    license = "<Put the package license here>"
-    author = "<Put your name here> <And your email here>"
+    license = "MIT"
+    author = "Tsche che@palliate.io"
     url = "<Package recipe repository url here, for issues about the package>"
     description = "<Description of repr package here>"
     topics = ("<Put some tag here>", "<here>", "<and here>")
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"sanitizers": [True, False], "coverage": [True, False]}
-    default_options = {"sanitizers": False, "coverage": False}
+    options = {"sanitizers": [True, False], "coverage": [True, False], "magic_enum": [True, False]}
+    default_options = {"sanitizers": False, "coverage": False, "magic_enum": False}
     generators = "CMakeToolchain", "CMakeDeps"
 
     exports_sources = "CMakeLists.txt", "include/*"
 
 
     def requirements(self):
-        self.requires("magic_enum/0.9.3", transitive_headers=True)
+        if self.options.magic_enum:
+            self.requires("magic_enum/0.9.3", transitive_headers=True)
         self.test_requires("gtest/1.14.0")
 
     def layout(self):
@@ -35,7 +36,8 @@ class ReprRecipe(ConanFile):
         if not self.conf.get("tools.build:skip_test", default=False):
             cmake = CMake(self)
             cmake.configure(variables={'ENABLE_SANITIZERS': self.options.sanitizers, 
-                                       'ENABLE_COVERAGE': self.options.coverage})
+                                       'ENABLE_COVERAGE': self.options.coverage,
+                                       'ENABLE_MAGIC_ENUM': self.options.magic_enum})
             cmake.build()
 
     def package(self):

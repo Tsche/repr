@@ -5,18 +5,18 @@ source = "names.cpp"
 "librepr::enum_name<Foo>" = "traceEvents[?name=='InstantiateFunction' && args.detail=='librepr::enum_name<Foo>'].dur"
 
 [profile.recursive]
-REPR_MAGIC_ENUM=false
+REPR_USE_MAGIC_ENUM=false
 REPR_ENUM_RECURSIVE_SEARCH=true
 
 [profile.chunked]
-REPR_MAGIC_ENUM=false
+REPR_USE_MAGIC_ENUM=false
 REPR_ENUM_RECURSIVE_SEARCH=false
 REPR_ENUM_FAST_SEARCH=false
 
 [profile.chunked_pack]
-REPR_MAGIC_ENUM=false
+REPR_USE_MAGIC_ENUM=false
 REPR_ENUM_RECURSIVE_SEARCH=false
 REPR_ENUM_FAST_SEARCH=true
 
 [profile.magic_enum]
-REPR_MAGIC_ENUM=true
+REPR_USE_MAGIC_ENUM=true

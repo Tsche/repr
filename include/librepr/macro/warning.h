@@ -1,5 +1,5 @@
 #pragma once
-#include "macros.h"
+#include "util.h"
 #include "platform.h"
 
 #if defined(LIBREPR_COMPILER_MSVC)

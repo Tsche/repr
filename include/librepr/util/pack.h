@@ -1,6 +1,8 @@
 #pragma once
 #include <tuple>
-#include <librepr/detail/macros.h>
+#include <librepr/macro/util.h>
+#include "pack_generated.h"
+
 
 namespace librepr::pack {
 
@@ -22,38 +24,10 @@ struct Split<Idx, List<Ts...>> {
   using tail = List<>;
 };
 
-#define MAKE_TYPE(index) T##index,
-#define SPECIALIZE_SKIP(index, ...)                                                                         \
-  template <template <typename...> class List, FOR_EACH(typename MAKE_TYPE, __VA_ARGS__) typename T##index, \
-            typename... Ts>                                                                                 \
-  struct Split<index, List<FOR_EACH(MAKE_TYPE, __VA_ARGS__) T##index, Ts...>> {                             \
-    using type = T##index;                                                                                  \
-    using head = List<FOR_EACH(MAKE_TYPE, __VA_ARGS__) T##index>;                                           \
-    using tail = List<Ts...>;                                                                               \
-  };
-
-SPECIALIZE_SKIP(0)
-SPECIALIZE_SKIP(1, 0)
-SPECIALIZE_SKIP(2, 0, 1)
-SPECIALIZE_SKIP(3, 0, 1, 2)
-SPECIALIZE_SKIP(4, 0, 1, 2, 3)
-SPECIALIZE_SKIP(5, 0, 1, 2, 3, 4)
-SPECIALIZE_SKIP(6, 0, 1, 2, 3, 4, 5)
-SPECIALIZE_SKIP(7, 0, 1, 2, 3, 4, 5, 6)
-SPECIALIZE_SKIP(8, 0, 1, 2, 3, 4, 5, 6, 7)
-SPECIALIZE_SKIP(9, 0, 1, 2, 3, 4, 5, 6, 7, 8)
-SPECIALIZE_SKIP(10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-SPECIALIZE_SKIP(11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-SPECIALIZE_SKIP(12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-SPECIALIZE_SKIP(13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-SPECIALIZE_SKIP(14, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
-SPECIALIZE_SKIP(15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
-constexpr inline auto MAX_SPEC = 15U;
-
 template <std::size_t Idx, template <typename...> class List, typename... Ts>
   requires(Idx > MAX_SPEC)
 struct Split<Idx, List<Ts...>> {
-#if __has_builtin(__type_pack_element)
+#if LIBREPR_HAS_BUILTIN(__type_pack_element)
   using type = __type_pack_element<Idx, Ts...>;
 
   template <std::size_t offset, std::size_t... indices>

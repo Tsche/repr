@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <librepr/enum/search.h>
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 
 #include "test_enums.h"
 

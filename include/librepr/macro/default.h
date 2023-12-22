@@ -34,8 +34,8 @@
   #define REPR_DEMANGLE_MAX 1024
 #endif
 
-#if !defined(REPR_MAGIC_ENUM)
-  #define REPR_MAGIC_ENUM OFF
+#if !defined(REPR_USE_MAGIC_ENUM)
+  #define REPR_USE_MAGIC_ENUM OFF
 #endif
 
 #if !defined(REPR_ENUM_MIN_SIGNED)

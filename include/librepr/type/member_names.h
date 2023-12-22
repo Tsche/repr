@@ -3,7 +3,7 @@
 #include <string_view>
 #include <utility>
 #include <array>
-#include <librepr/detail/warning.h>
+#include <librepr/macro/warning.h>
 #include <librepr/customization/reflection.h>
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/customization/members.h>
@@ -13,7 +13,7 @@
 
 #include <librepr/reflection/detail/arity.h>
 #include <librepr/reflection/detail/to_tuple.h>
-#include <librepr/detail/platform.h>
+#include <librepr/macro/platform.h>
 
 namespace librepr {
 namespace detail {

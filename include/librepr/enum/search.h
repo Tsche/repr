@@ -7,7 +7,7 @@
 #include <utility>
 
 #include <librepr/customization.h>
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 
 #include "range.h"
 #include "util.h"

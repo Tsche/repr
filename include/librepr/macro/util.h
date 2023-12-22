@@ -1,8 +1,11 @@
 #pragma once
 
 #ifndef __has_builtin
-#define __has_builtin(x) 0
+#define LIBREPR_HAS_BUILTIN(BUILTIN) 0
+#else
+#define LIBREPR_HAS_BUILTIN(BUILTIN) __has_builtin(BUILTIN)
 #endif
+
 
 #define LIBREPR_PRAGMA(...) _Pragma(#__VA_ARGS__)
 

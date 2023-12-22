@@ -1,7 +1,7 @@
 #pragma once
 #include <typeinfo>
 
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 #include "demangle.h"
 
 namespace librepr::

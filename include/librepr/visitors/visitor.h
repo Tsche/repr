@@ -2,7 +2,7 @@
 
 #include <concepts>
 #include <string_view>
-#include <librepr/detail/macros.h>
+#include <librepr/macro/util.h>
 
 namespace librepr {
 /*

@@ -1,5 +1,5 @@
 #pragma once
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 namespace librepr::
 #if USING(REPR_CTTI)
     inline
