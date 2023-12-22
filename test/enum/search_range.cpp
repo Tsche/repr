@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <librepr/enum/search.h>
+#include <librepr/macro/default.h>
 
-#include "librepr/detail/default.h"
 #include "test_enums.h"
 
 namespace librepr::ctei::test {

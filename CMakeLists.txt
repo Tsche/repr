@@ -12,12 +12,25 @@ target_include_directories(repr INTERFACE
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-# TODO
-#find_package(magic_enum CONFIG REQUIRED)
-#target_link_libraries(repr INTERFACE magic_enum::magic_enum)
-
+option(BUILD_TESTING "Enable tests" ON)
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
+option(ENABLE_MAGIC_ENUM "Use magic_enum instead of librepr::ctei" OFF)
+
+
+if (ENABLE_MAGIC_ENUM)
+  message(STATUS "Using magic_enum")
+
+  find_package(magic_enum CONFIG REQUIRED)
+  target_link_libraries(repr INTERFACE magic_enum::magic_enum)
+  target_compile_definitions(repr INTERFACE REPR_USE_MAGIC_ENUM=ON)
+endif()
+
+if (MSVC)
+  # TODO see if we can work without a standards compliant preprocessor
+  target_compile_options(repr INTERFACE "/Zc:preprocessor")
+endif()
+
 
 if(NOT BUILD_TESTING STREQUAL OFF)
   message(STATUS "Building unit tests")

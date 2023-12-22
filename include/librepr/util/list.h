@@ -1,5 +1,5 @@
 #pragma once
-#include <bits/utility.h>
+#include <utility>
 #include "pack.h"
 
 namespace librepr {
@@ -53,18 +53,18 @@ public:
 
   template <typename F, typename... Args>
   static constexpr void enumerate(F&& callable, Args&&... args) {
-    constexpr auto expects_index_arg = (requires {
+    /*constexpr auto expects_index_arg = (requires {
       { callable.template operator()<Ts>(std::size_t{}, std::forward<Args>(args)...) };
     } && ...);
 
     if constexpr (expects_index_arg) {
       auto index = 0U;
       (callable.template operator()<Ts>(index++, std::forward<Args>(args)...), ...);
-    } else {
+    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::index_sequence_for<Ts...>{});
-    }
+    //}
   }
 };
 
@@ -72,7 +72,7 @@ template <typename... Ts>
 struct TypeList : TypeListBase<TypeList, Ts...> {};
 
 template <template <auto...> class List, auto... Vs>
-struct ValueList {
+struct ValueListBase {
   static constexpr std::size_t size = sizeof...(Vs);
 
   template <template <typename...> class T = TypeList>
@@ -116,19 +116,23 @@ struct ValueList {
 
   template <typename F, typename... Args>
   static constexpr void enumerate(F&& callable, Args&&... args) {
-    constexpr auto expects_index_arg = (requires {
+    //TODO MSVC hard fails on this. Consider extracting this or using Constant<V> instead
+    /*constexpr auto expects_index_arg = (requires {
       { callable.template operator()<Vs>(std::size_t{}, std::forward<Args>(args)...) };
     } && ...);
 
     if constexpr (expects_index_arg) {
       auto index = 0U;
       (callable.template operator()<Vs>(index++, std::forward<Args>(args)...), ...);
-    } else {
+    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::make_index_sequence<sizeof...(Vs)>{});
-    }
+    //}
   }
 };
+
+template <auto... Vs>
+struct ValueList : ValueListBase<ValueList, Vs...> {};
 
 }  // namespace librepr

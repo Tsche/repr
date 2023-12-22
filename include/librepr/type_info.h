@@ -2,7 +2,7 @@
 #include <string>
 
 #include <librepr/reflection/reflect.h>
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 namespace librepr {
 template <typename T>
 struct TypeInfo : Reflect<T>, librepr::detail::TemplateInfo<T> {

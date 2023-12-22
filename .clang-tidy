@@ -15,7 +15,9 @@ Checks: "*,
         -misc-non-private-member-variables-in-classes,
         -hicpp-named-parameter,
         -clang-diagnostic-unknown-attributes,
-        -readability-named-parameter
+        -readability-named-parameter,
+        -*-avoid-c-arrays,
+        -*-magic-numbers
 "
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <concepts>
 
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 
 namespace librepr {
@@ -17,11 +17,12 @@ requires (not std::same_as<T, char>) //TODO exclude other string literals
 struct Reflect<T[N]> {
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const (&obj)[N]) {
-    ScopeGuard guard{visitor, std::type_identity<T[N]>{}};
+    Visit::type<T[N]>(visitor);
+    ScopeGuard guard{visitor};
     for (std::size_t idx = 0; idx < N; ++idx) {
-      Reflect<type>::visit(std::forward<V>(visitor), obj[idx]);
+      Reflect<type>::visit(visitor, obj[idx]);
     }
   }
 
@@ -32,9 +33,10 @@ template <typename T>
 struct Reflect<T[]> {  // NOLINT
   using type = T;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const& /* obj */) {
-    ScopeGuard guard{std::forward<V>(visitor), std::type_identity<T[]>{}};
+    Visit::type<T[]>(visitor);
+    ScopeGuard guard{visitor};
   }
 
   static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }

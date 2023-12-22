@@ -5,7 +5,7 @@
 #include <ranges>
 #include <type_traits>
 
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 
 namespace librepr {
@@ -17,9 +17,11 @@ template <std::ranges::range T>
 struct Reflect<T> {
   using type = typename T::value_type;
 
-  template <Visitor::Values V>
+  template <typename V>
   static void visit(V&& visitor, T const& obj) {
-    ScopeGuard guard{visitor, std::type_identity<T>{}};
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+
     for (auto const& element : obj) {
       Reflect<type>::visit(std::forward<V>(visitor), element);
     }

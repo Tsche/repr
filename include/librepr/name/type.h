@@ -7,7 +7,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <librepr/detail/default.h>
+#include <librepr/macro/default.h>
 #include <librepr/util/list.h>
 #include "ctti.h"
 #include "rtti.h"

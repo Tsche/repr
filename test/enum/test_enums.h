@@ -44,7 +44,7 @@ REPR_TEST_GEN_ENUM(CustomFlag, : unsigned long long, CF_A = 1ULL << 8U, CF_B = 1
 }  // namespace test_enums
 
 template <>
-struct librepr::EnumSettings<test_enums::scoped::Custom>{ 
+struct librepr::Settings<test_enums::scoped::Custom>{ 
   struct search_range {
     static constexpr auto min = -10;
     static constexpr auto max = 10;
@@ -52,7 +52,7 @@ struct librepr::EnumSettings<test_enums::scoped::Custom>{
 };
 
 template <>
-struct librepr::EnumSettings<test_enums::unscoped::Custom>{ 
+struct librepr::Settings<test_enums::unscoped::Custom>{ 
   struct search_range {
     static constexpr auto min = -10;
     static constexpr auto max = 10;
@@ -60,11 +60,11 @@ struct librepr::EnumSettings<test_enums::unscoped::Custom>{
 };
 
 template <>
-struct librepr::EnumSettings<test_enums::scoped::CustomFlag>{ 
+struct librepr::Settings<test_enums::scoped::CustomFlag>{ 
   constexpr static bool is_flag = true;
 };
 
 template <>
-struct librepr::EnumSettings<test_enums::unscoped::CustomFlag>{ 
+struct librepr::Settings<test_enums::unscoped::CustomFlag>{ 
   constexpr static bool is_flag = true;
 };

@@ -9,13 +9,13 @@ namespace librepr::Testing {
 
 TEST(ReprVisitorTest, VisitInt) {
   auto visitor = ReprVisitor(Options{});
-  visitor(42);
+  visitor.value(42);
   ASSERT_EQ(visitor.result, "42");
 }
 
 TEST(ReprVisitorTest, VisitStringLiteral) {
   auto visitor = ReprVisitor(Options{});
-  visitor("Hello, World!");
+  visitor.value("Hello, World!");
   ASSERT_EQ(visitor.result, "\"Hello, World!\"");
 }
 
@@ -24,7 +24,7 @@ TEST(ReprVisitorTest, VisitPointer) {
   int* testValue = &testInt;
   auto visitor   = ReprVisitor(Options{});
 
-  visitor(testValue);
+  visitor.value(testValue);
   ASSERT_EQ(visitor.result, "new int{42}");
 }
 
@@ -32,7 +32,7 @@ TEST(ReprVisitorTest, VisitNullPointer) {
   int* testValue = nullptr;
   auto visitor   = ReprVisitor(Options{});
 
-  visitor(testValue);
+  visitor.value(testValue);
   ASSERT_EQ(visitor.result, "(int*)0x0");
 }
 
@@ -41,7 +41,7 @@ TEST(ReprVisitorTest, VisitEnum) {
   TestEnum testValue = TestEnum::Value1;
   auto visitor       = ReprVisitor(Options{});
 
-  visitor(testValue);
+  visitor.value(testValue);
 
   ASSERT_THAT(visitor.result, testing::HasSubstr("TestEnum::Value1"));
 }
@@ -53,7 +53,7 @@ TEST(ReprVisitorTest, VisitCustomTypeWithReprMember) {
   CustomType testValue;
   auto visitor = ReprVisitor(Options{});
 
-  visitor(testValue);
+  visitor.value(testValue);
 
   ASSERT_THAT(visitor.result, testing::HasSubstr("CustomType{CustomTypeRepr}"));
 }
@@ -63,23 +63,23 @@ TEST(ReprVisitorTest, VisitCustomTypeWithoutReprMember) {
   CustomType testValue;
   auto visitor = ReprVisitor(Options{});
 
-  visitor(testValue);
+  visitor.value(testValue);
   ASSERT_THAT(visitor.result, testing::HasSubstr("CustomType"));
 }
 
 TEST(ReprVisitorTest, Nesting) {
   auto visitor = ReprVisitor(Options{});
-  visitor.increase_nesting();
+  visitor.nesting(true);
   ASSERT_EQ(visitor.result, "{");
-  visitor.decrease_nesting();
+  visitor.nesting(false);
   ASSERT_EQ(visitor.result, "{}");
 }
 
 TEST(ReprVisitorTest, Types) {
   auto visitor = ReprVisitor(Options{});
-  visitor.operator()<std::type_identity<int>>();
+  visitor.type<std::type_identity<int>>();
   ASSERT_EQ(visitor.result, "std::type_identity<int>");
-  visitor.operator()<std::vector<int>>();
+  visitor.type<std::vector<int>>();
   ASSERT_EQ(visitor.result, "std::type_identity<int>, std::vector<int>");
 }
 
