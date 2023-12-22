@@ -2,7 +2,7 @@
 #include <string>
 
 #include <librepr/visitors/visitor.h>
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 
 #include "aggregate.h"
 #include "array.h"

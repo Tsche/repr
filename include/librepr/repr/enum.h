@@ -4,7 +4,7 @@
 #include <librepr/macro/default.h>
 
 #if USING(REPR_USE_MAGIC_ENUM)
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #endif
 
 

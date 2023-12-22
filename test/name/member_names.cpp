@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <librepr/type/member_names.h>
+#include <librepr/name/member.h>
 
 struct NameTestAggregate {
   char a;

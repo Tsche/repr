@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <concepts>
 
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 
 namespace librepr {

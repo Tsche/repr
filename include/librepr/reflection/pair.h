@@ -5,7 +5,7 @@
 
 #include <librepr/options.h>
 #include <librepr/util/concepts.h>
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 
 namespace librepr {

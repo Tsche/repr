@@ -8,7 +8,7 @@
 #include <librepr/util/concepts.h>
 
 #include <librepr/repr/all.h>
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 #include <librepr/reflection/reflect.h>
 #include <librepr/literal.h>
 #include <librepr/options.h>

@@ -3,7 +3,7 @@
 #include <string>
 #include <concepts>
 
-#include <librepr/type/name.h>
+#include <librepr/name/type.h>
 
 #include <librepr/util/overload.h>
 #include <librepr/util/list.h>

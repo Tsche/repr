@@ -47,7 +47,7 @@ struct RangeList<> : TypeListBase<RangeList> {
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;
 
   constexpr static bool is_binary_powers(){
-    // special case empty range list to detect higher value flags 
+    // special case empty range list to detect flags outside of initial search range
     return true;
   }
 };

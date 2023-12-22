@@ -9,7 +9,7 @@
 #include <librepr/util/concepts.h>
 
 #include <librepr/reflection/detail/to_tuple.h>
-#include <librepr/type/member_names.h>
+#include <librepr/name/member.h>
 
 // TODO
 #include <librepr/customization.h>

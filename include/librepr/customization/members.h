@@ -4,7 +4,7 @@
 #include <concepts>
 #include <utility>
 
-#include <librepr/type/member_names.h>
+#include <librepr/name/member.h>
 #include <librepr/util/list.h>
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/util/string.h>
