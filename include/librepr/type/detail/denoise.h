@@ -7,13 +7,9 @@
  */
 
 #include <cstddef>
-#include <cstring>
 #include <set>
-#include <string>
-#include <string_view>
 #include <type_traits>
-#include <librepr/detail/macros.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string_buffer.h>
 
 namespace librepr::detail {
 namespace msvc {
@@ -23,46 +19,7 @@ using uhalfptr_t =
     std::uint32_t, std::uint16_t>;
 // Extended into the signed world
 using ihalfptr_t = std::make_signed_t<uhalfptr_t>;
-
-// Wrapper around std::string.
-struct SymBuffer {
-  SymBuffer(std::string_view in) {
-    // We can hopefully avoid reallocations
-    // by doing this ahead of time.
-    buffer.reserve(in.size() * 2);
-  }
-
-  void write(const char* beg, const char* end) {
-    LIBREPR_ASSERT(end >= beg, "Invalid write. (end < beg)");
-    if(auto len = (end - beg); len > 0) {
-      auto lpos = buffer.size();
-      buffer.resize(lpos + len);
-      std::memcpy(buffer.data() + lpos, beg, len);
-    }
-  }
-
-  LIBREPR_HINT_INLINE void write(std::string_view sv) {
-    auto* beg = sv.data();
-    this->write(beg, beg + sv.size());
-  }
-
-  LIBREPR_HINT_INLINE void write(char c) {
-    buffer.push_back(c);
-  }
-
-  std::string&& extract() {
-    // buf.shrink_to_fit();
-    return std::move(buffer);
-  }
-
-  LIBREPR_HINT_INLINE const std::string* 
-   operator->() const {
-    return &buffer;
-  }
-
-private:
-  std::string buffer;
-};
+using SymBuffer = StringBuffer;
 
 struct SymToken {
   ihalfptr_t loc = -1;
@@ -76,7 +33,7 @@ struct SymLexer {
 protected:
   SymLexer(std::string_view sym) 
    : begin(sym.data()), cursor(begin),
-   buf(sym), nest_depth(), lcurr(), llast() {
+   buf(sym), nest_depth(), current_lexeme(), last_lexeme() {
     this->end = begin + sym.size();
   }
 
@@ -91,42 +48,42 @@ protected:
   }
 
   SymToken next() noexcept {
-    llast = lcurr;
-    cursor += llast.length;
+    last_lexeme = current_lexeme;
+    cursor += last_lexeme.length;
     auto pos = advance();
     if(this->cursor == end) [[unlikely]] {
       return {};
     } else if(isWord(*cursor)) {
       auto epos = find_nonword();
       auto len = uhalfptr_t(epos - pos);
-      this->lcurr = SymToken{pos, len};
+      this->current_lexeme = SymToken{pos, len};
     } else {
-      this->lcurr = SymToken{pos, 1};
+      this->current_lexeme = SymToken{pos, 1};
     }
-    return this->lcurr;
+    return this->current_lexeme;
   }
 
   LIBREPR_HINT_INLINE SymToken current() const noexcept {
-    return this->lcurr;
+    return this->current_lexeme;
   }
 
   LIBREPR_HINT_INLINE SymToken last() const noexcept {
-    return this->llast;
+    return this->last_lexeme;
   }
 
   LIBREPR_HINT_INLINE char current_first() const noexcept {
-    return this->begin[lcurr.loc];
+    return this->begin[current_lexeme.loc];
   }
 
   LIBREPR_HINT_INLINE char last_first() const noexcept {
-    if(llast.loc < 0) [[unlikely]] {
+    if(last_lexeme.loc < 0) [[unlikely]] {
       return '\0';
     }
-    return this->begin[llast.loc];
+    return this->begin[last_lexeme.loc];
   }
 
   char peek_first() const noexcept {
-    auto pos = find_next(cursor + lcurr.length);
+    auto pos = find_next(cursor + current_lexeme.length);
     if(pos == -1) [[unlikely]] {
       return '\0';
     }
@@ -186,8 +143,8 @@ private:
   const char* begin;
   const char* cursor;
   const char* end;
-  SymToken lcurr;
-  SymToken llast;
+  SymToken current_lexeme;
+  SymToken last_lexeme;
 
 protected:
   SymBuffer buf;
