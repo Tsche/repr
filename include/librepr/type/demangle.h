@@ -5,7 +5,6 @@
 #include <librepr/detail/platform.h>
 
 #if USING(REPR_MSVC)
-#define REPR_HARD_CHECKS_ ON
 #include "detail/undecorate.h"
 #include "detail/denoise.h"
 #elif __has_include(<cxxabi.h>)
@@ -27,10 +26,11 @@ namespace librepr {
   if constexpr(!detail::msvc::has_rawname) {
     // Check if the symbol was obtained with __FUNCDNAME__
     if(mangled.starts_with("??$get_mangled_name")) [[likely]] {
+      using namespace detail;
       std::string_view snip { buffer.data(), count };
-      snip.RRemovePrefix("char const * librepr::get_mangled_name<");
-      snip.RRemoveSuffix(">(void)");
-      return detail::denoise_name(snip);
+      snip.remove_prefix(strsize("char const * librepr::get_mangled_name<"));
+      snip.remove_suffix(strsize(">(void)"));
+      return denoise_name(snip);
     }
   }
   return std::string(buffer.data(), count);
@@ -47,6 +47,3 @@ namespace librepr {
 #endif
 }
 }  // namespace librepr
-
-#undef RRemovePrefix
-#undef RRemoveSuffix

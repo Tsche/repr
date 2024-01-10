@@ -9,25 +9,16 @@
 #include <mutex>
 #include <typeinfo>
 #include "denoise.h"
-
-// Awful!! But simplifies the _DecoratedName -> Symbol conversion
-#define M2B_CAST(b, m) [](auto* __ptr) { \
-  return ((b*)((char*)(__ptr) - offsetof(b, m))); }
-
-#ifndef REPR_HARD_CHECKS_
-#define REPR_HARD_CHECKS_ OFF
-#endif
+#include "undname.h"
 
 namespace librepr::detail {
 namespace msvc {
-/// Checks if we need to use __FUNCDNAME__ or not.
-/// As far as I know, it should always exist, but we have this just in case
-inline constexpr bool has_rawname =
-  requires(const std::type_info& ty) { ty.raw_name(); };
+  /// Checks if we need to use __FUNCDNAME__ or not.
+  /// As far as I know, it should always exist, but we have this just in case
+  inline constexpr bool has_rawname =
+    requires(const std::type_info& ty) { ty.raw_name(); };
 }  // namespace msvc
 
-/// Wrapped buffer for demangling
-using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
 // TODO: Make this better ig
 [[nodiscard]] inline int syminit_() {
   SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS | SYMOPT_DEFERRED_LOADS);
@@ -37,26 +28,21 @@ using DemangleBuffer = std::array<char, REPR_DEMANGLE_MAX>;
 }
 
 inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
-  // This is fine.
-  { [[maybe_unused]] static int _ = syminit_(); }
+  { [[maybe_unused]] static int sym = syminit_(); }
   static std::mutex mtx { };
+  if(!symdata) [[unlikely]] { return 0; }
   if constexpr (msvc::has_rawname) {
-    // It should go without saying but...
-    // DON'T pass random strings starting with `.`
     if (*symdata == '.') [[likely]] {
-      using uname_type = ::__std_type_info_data;
-      symdata = M2B_CAST(uname_type, _DecoratedName)(
-        symdata)->_UndecoratedName;
-      if(!symdata) [[unlikely]] { return false; }
-      auto denoised = denoise_name({ symdata });
+      static constexpr auto flags =
+        UndStrategy::Decode32Bit | UndStrategy::TypeOnly;
+      msvc::unDName((symdata + 1), buf, UndStrategy::Type(flags));
+      auto denoised = denoise_name({ buf.data() });
       std::memcpy(buf.data(), denoised.data(), denoised.size());
       return denoised.size();
     }
   }
-#if USING(REPR_HARD_CHECKS_)
-  REPR_MSC_ASSERT(*symdata == '?', 
+  LIBREPR_SOFT_ASSERT(*symdata == '?', 
     "Got '{}', expected '?'", *symdata);
-#endif
   std::scoped_lock lock { mtx };
   return std::size_t(::UnDecorateSymbolName(symdata, buf.data(),
     REPR_DEMANGLE_MAX, UNDNAME_NO_MS_KEYWORDS));

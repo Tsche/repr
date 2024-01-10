@@ -3,6 +3,7 @@
 
 #include <librepr/detail/default.h>
 #include "demangle.h"
+#include <memory>
 
 namespace librepr {
 

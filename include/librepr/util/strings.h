@@ -3,8 +3,6 @@
 #include <concepts>
 #include <string>
 
-#define REPR_STRSIZE(...) ::librepr::detail::strsize(__VA_ARGS__)
-
 namespace librepr::detail {
 template <typename T>
 concept string_like = requires(T& t) {
