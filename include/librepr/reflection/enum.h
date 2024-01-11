@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include <type_traits>
-#include <format>
 
 #include <librepr/type/name.h>
 #include <librepr/visitors/visitor.h>

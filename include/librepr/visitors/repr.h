@@ -1,12 +1,12 @@
 #pragma once
 
 #include <string>
-#include <format>
 #include <type_traits>
 
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>
 
+#include <librepr/detail/format.h>
 #include <librepr/repr/all.h>
 #include <librepr/type/name.h>
 #include <librepr/reflection/reflect.h>
@@ -76,7 +76,7 @@ public:
     // TODO template this for wide string literals
     //  don't print a type, only print the separator if needed
     print_separator();
-    result.append(std::format("\"{}\"", obj));
+    result.append(REPR_FORMAT("\"{}\"", obj));
   }
 
   template <typename T>

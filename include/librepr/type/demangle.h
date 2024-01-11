@@ -1,46 +1,39 @@
 #pragma once
 #include <string>
 #include <string_view>
+#include <librepr/detail/macros.h>
+#include <librepr/detail/platform.h>
 
-
-#if defined _WIN32
-#pragma comment(lib, "dbghelp.lib")
-#define WIN32_LEAN_AND_MEAN
-
-#include <Windows.h>
-#include <DbgHelp.h>
-#include <librepr/util/strings.h>
-#include <array>
-
-#else
+#if USING(REPR_MSVC)
+#include "detail/undecorate.h"
+#include "detail/denoise.h"
+#elif __has_include(<cxxabi.h>)
 #include <cxxabi.h>
 #include <memory>
+#else
+#error No available demangling method!
 #endif
 
 namespace librepr {
-
-#if defined(_WIN32)
-namespace detail {
-[[nodiscard]] inline std::string denoise_name(std::string_view name) {
-  auto ret = std::string{name.data()};
-  remove_all(ret, "struct ");
-  remove_all(ret, "class ");
-  return ret;
-}
-}
-#endif
-
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
-#if defined _WIN32
-  auto buffer = std::array<char, REPR_DEMANGLE_MAX>{};
-  auto result = ::UnDecorateSymbolName(mangled.data(), buffer.data(), REPR_DEMANGLE_MAX,
-                                       UNDNAME_NAME_ONLY | UNDNAME_NO_MS_KEYWORDS);
-  if (not result) {
-    // could not demangle
+#if USING(REPR_MSVC)
+  detail::DemangleBuffer buffer{};
+  auto count = detail::undecorate_name(mangled.data(), buffer);
+  if (count == 0) [[unlikely]] {
+    // Demangling failed...
     return mangled.data();
   }
-
-  return std::string{buffer.data()};
+  if constexpr(!detail::msvc::has_rawname) {
+    // Check if the symbol was obtained with __FUNCDNAME__
+    if(mangled.starts_with("??$get_mangled_name")) [[likely]] {
+      using namespace detail;
+      std::string_view snip { buffer.data(), count };
+      snip.remove_prefix(strsize("char const * librepr::get_mangled_name<"));
+      snip.remove_suffix(strsize(">(void)"));
+      return denoise_name(snip);
+    }
+  }
+  return std::string(buffer.data(), count);
 #else
   struct FreeDeleter {
     void operator()(void* ptr) const { std::free(ptr); }
@@ -53,4 +46,4 @@ namespace detail {
   return std::string{demangled ? demangled.get() : mangled};
 #endif
 }
-}
+}  // namespace librepr

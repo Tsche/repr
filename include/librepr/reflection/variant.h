@@ -1,7 +1,10 @@
 #pragma once
 #include <sstream>
 #include <string>
+#include <type_traits>
+#include <variant>
 #include <concepts>
+
 
 #include <librepr/type/name.h>
 
@@ -10,10 +13,10 @@
 
 #include <librepr/visitors/visitor.h>
 
-
 namespace librepr {
 template <typename T>
 struct Reflect;
+
 
 template <template <typename...> class Variant, typename... Ts>
   requires std::derived_from<Variant<Ts...>, std::variant<Ts...>>

@@ -16,8 +16,16 @@ target_include_directories(repr INTERFACE
 #find_package(magic_enum CONFIG REQUIRED)
 #target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
+option(BUILD_TESTING "Enable tests" ON)
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
+option(ENABLE_FMTLIB "Use fmt::* instead of std::*" OFF)
+
+if(ENABLE_FMTLIB)
+  find_package(fmt CONFIG REQUIRED)
+  target_link_libraries(repr INTERFACE fmt::fmt)
+  target_compile_definitions(repr INTERFACE REPR_FORMAT_FMT=ON)
+endif()
 
 if(NOT BUILD_TESTING STREQUAL OFF)
   message(STATUS "Building unit tests")
@@ -29,28 +37,33 @@ if(NOT BUILD_TESTING STREQUAL OFF)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
-  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gmock)
+  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock)
 
   include(GoogleTest)
   gtest_discover_tests(repr_test)
   
   add_subdirectory(test)
 
-  if (ENABLE_COVERAGE)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(ENABLE_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       target_compile_options(repr_test PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage -fprofile-abs-path)
       target_link_libraries(repr_test PRIVATE gcov)
       message(STATUS "Instrumenting for coverage")
     else()
       message(FATAL_ERROR "Currently only GCC is supported for coverage instrumentation.")
     endif()
-
   endif()
 
-  if(ENABLE_SANITIZERS)
+  if(ENABLE_SANITIZERS AND WIN32)
     message(STATUS "Enabling sanitizers")
-    target_compile_options(repr_test PRIVATE -fsanitize=address,undefined)
-    target_link_options(repr_test PRIVATE -fsanitize=address,undefined)
+    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+      target_compile_options(repr_test INTERFACE -fsanitize=address)
+      target_link_options(repr_test INTERFACE -fsanitize=address)
+    endif()
+  elseif(ENABLE_SANITIZERS)
+    message(STATUS "Enabling sanitizers")
+    target_compile_options(repr_test INTERFACE -fsanitize=address,undefined)
+    target_link_options(repr_test INTERFACE -fsanitize=address,undefined)
   endif()
 endif()
 

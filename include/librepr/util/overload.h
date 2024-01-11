@@ -7,7 +7,7 @@ struct Overload : Fs... {
   using Fs::operator()...;
 };
 
-template <class... Ts>
-Overload(Ts...) -> Overload<Ts...>;
+template <typename... Fs>
+Overload(Fs...) -> Overload<Fs...>;
 
 }  // namespace librepr::detail

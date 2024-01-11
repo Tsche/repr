@@ -23,7 +23,6 @@ concept Hierarchical = requires(V visitor) {
   { visitor.increase_nesting() };
   { visitor.decrease_nesting() };
 } && Values<V> && Types<V>;
-
 }  // namespace Visitor
 
 template <template <typename> class Tag, typename T>
@@ -50,6 +49,7 @@ struct ScopeGuard {
     }
   }
 
+#if !defined(_MSC_VER)
   ~ScopeGuard()
     requires Visitor::Hierarchical<V>
   {
@@ -57,6 +57,14 @@ struct ScopeGuard {
   }
 
   ~ScopeGuard() = default;
+#else
+  // MSVC sucks so we gotta do this!!
+  __forceinline ~ScopeGuard() {
+    if constexpr (Visitor::Hierarchical<V>) {
+      visitor.decrease_nesting();
+    }
+  }
+#endif
 
   V& visitor;
 };
