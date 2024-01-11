@@ -7,6 +7,7 @@
 #include <tuple>
 #include <type_traits>
 
+#include <librepr/detail/format.h>
 #include <librepr/detail/default.h>
 #include <librepr/util/list.h>
 
