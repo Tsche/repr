@@ -111,16 +111,6 @@ public:
     }
   }
 
-  template <typename T>
-    requires std::is_enum_v<T>
-  void emit_type() {
-    print_separator();
-    if constexpr (detail::is_scoped_enum<T>) {
-      result.append(librepr::get_name<T>());
-      result.append("::");
-    }
-  }
-
   void increase_nesting() {
     separate = false;
     result += '{';

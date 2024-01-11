@@ -6,3 +6,8 @@
 **/CMakeUserPresets.json
 compile_commands.json
 **.pyc
+benchmark/output
+benchmark/**/*.json
+**.o
+**.out
+**/scratchpad.*

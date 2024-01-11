@@ -5,7 +5,7 @@
 #include <tuple>
 
 #include <librepr/visitors/visitor.h>
-#include <librepr/util/type_list.h>
+#include <librepr/util/list.h>
 #include <librepr/util/concepts.h>
 
 #include <librepr/reflection/detail/to_tuple.h>
@@ -19,7 +19,7 @@ template <typename T>
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>);
-  using type = rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
+  using type = pack::rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
 
   template <Visitor::Values V>
   static void visit(V&& visitor, T const& obj) {
@@ -27,22 +27,22 @@ struct Reflect<T> {
     static_assert(type::size == std::tuple_size_v<decltype(members)>);
 
     ScopeGuard guard{visitor, std::type_identity<T>{}};
-    
-    []<std::size_t... index>(std::index_sequence<index...>, Visitor::Values auto&& visitor_, auto const& tuple) {
-      (type::template get<index>::visit(std::forward<decltype(visitor_)>(visitor_), std::get<index>(tuple)), ...);
-    }(std::make_index_sequence<type::size>{}, std::forward<V>(visitor), members);
+    type::enumerate([&visitor, &members]<typename Member, std::size_t Index>() {
+      Member::visit(std::forward<decltype(visitor)>(visitor), std::get<Index>(members));
+    });
   }
 
   static std::string layout() {
-    return []<std::size_t... index>(std::index_sequence<index...>) {
-      std::ostringstream stream;
-      stream << '{';
-      [[maybe_unused]] const char* delimiter = "";
+    auto output = std::string("{");
+    type::enumerate([&output]<typename Member>(std::size_t index) {
+      if (index != 0) {
+        output += ", ";
+      }
 
-      (((stream << delimiter << type::template get<index>::layout()), delimiter = ", "), ...);
-      stream << '}';
-      return stream.str();
-    }(std::make_index_sequence<type::size>{});
+      output += Member::layout();
+    });
+
+    return output + '}';
   }
 };
 }  // namespace librepr

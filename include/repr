@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include <librepr/customization.h>
 #include <librepr/type_info.h>
 #include <librepr/visitors/repr.h>
 #include <type_traits>

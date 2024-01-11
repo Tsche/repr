@@ -82,7 +82,7 @@ class Header:
 
 
 class Amalgamate(Extension):
-    ingest = Sources >> Suffix(".hpp", ".h") >> Absolute
+    ingest = Sources / 'include' >> Suffix(".hpp", ".h") >> Absolute
 
     class Settings(Model):
         root: Path
@@ -100,9 +100,11 @@ class Amalgamate(Extension):
         header = Header(self.find_root(), self.project.name)
         system_includes = '\n'.join(header.system_includes)
         amalgamated = f"""\
-#pragma once
+#ifndef REPR_INCLUDED
+#define REPR_INCLUDED
 {system_includes}
 {header.amalgamated}
+#endif
 """
         for file in data:
             if file not in header.seen:

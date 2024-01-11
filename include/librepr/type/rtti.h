@@ -5,12 +5,12 @@
 #include "demangle.h"
 #include <memory>
 
-namespace librepr {
+namespace librepr::
 
 #if USING(REPR_RTTI)
-inline
+    inline
 #endif
-namespace rtti {
+    rtti {
 
 template <typename T>
 std::string get_name_raw() {
@@ -22,5 +22,4 @@ std::string get_name_raw() {
 #endif
 }
 
-}  // namespace rtti
-}  // namespace librepr
+}  // namespace librepr::rtti

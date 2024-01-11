@@ -8,8 +8,16 @@ inline = false
 [project]
 name = "librepr"
 version = "0.1"
-sources = ["include"]
+sources = ["include", "benchmark"]
 
 [amalgamate]
 root = "repr"
 filename = "amalgamated.h"
+
+[benchmark]
+output = "benchmark/output"
+repeat_each = 5
+
+[graphs]
+benchmark_output="benchmark/output"
+summary_path="../repr.wiki/"

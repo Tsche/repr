@@ -1,19 +1,20 @@
 cmake_minimum_required(VERSION 3.15)
-include(cmake/warnings.cmake)
+#include(cmake/warnings.cmake)
 
 project(repr CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(repr INTERFACE)
 
-set_property(TARGET repr PROPERTY CXX_STANDARD 23)
+set_property(TARGET repr PROPERTY CXX_STANDARD 20)
 
 target_include_directories(repr INTERFACE 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-find_package(magic_enum CONFIG REQUIRED)
-target_link_libraries(repr INTERFACE magic_enum::magic_enum)
+# TODO
+#find_package(magic_enum CONFIG REQUIRED)
+#target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
 option(BUILD_TESTING "Enable tests" ON)
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
@@ -32,7 +33,7 @@ if(NOT BUILD_TESTING STREQUAL OFF)
   enable_testing()
   add_executable(repr_test "")
   
-  enable_warnings(repr_test)
+  #enable_warnings(repr_test)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
@@ -54,11 +55,13 @@ if(NOT BUILD_TESTING STREQUAL OFF)
   endif()
 
   if(ENABLE_SANITIZERS AND WIN32)
+    message(STATUS "Enabling sanitizers")
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
       target_compile_options(repr_test INTERFACE -fsanitize=address)
       target_link_options(repr_test INTERFACE -fsanitize=address)
     endif()
   elseif(ENABLE_SANITIZERS)
+    message(STATUS "Enabling sanitizers")
     target_compile_options(repr_test INTERFACE -fsanitize=address,undefined)
     target_link_options(repr_test INTERFACE -fsanitize=address,undefined)
   endif()
