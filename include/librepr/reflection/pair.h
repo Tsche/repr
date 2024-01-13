@@ -1,8 +1,8 @@
 #pragma once
-#include <format>
 #include <string>
 #include <type_traits>
 
+#include <librepr/detail/format.h>
 #include <librepr/options.h>
 #include <librepr/util/concepts.h>
 #include <librepr/name/type.h>
@@ -28,7 +28,7 @@ struct Reflect<T> {
   }
 
   static std::string layout() {
-    return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
+    return REPR_FORMAT("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
   }
 };
 

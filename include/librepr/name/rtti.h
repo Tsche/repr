@@ -15,8 +15,7 @@ template <typename T>
 std::string get_name_raw() {
 #if defined(_WIN32)
   auto name = typeid(T).name();
-  //TODO to be fixed, see feature/windows-support branch
-  return name;
+  return librepr::detail::undecorate_name(name);
 #else
   return librepr::demangle(typeid(T).name());
 #endif

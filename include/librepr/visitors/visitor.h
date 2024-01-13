@@ -27,7 +27,6 @@ concept Hierarchical = requires(V visitor) {
   { visitor.increase_nesting() };
   { visitor.decrease_nesting() };
 } && Values<V> && Types<V>;
-
 }  // namespace Visitor
 */
 

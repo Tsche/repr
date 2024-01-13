@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <format>
+#include <librepr/detail/format.h>
 
 
 namespace librepr {
@@ -9,11 +9,11 @@ inline std::string repr(std::nullptr_t) {
 }
 
 inline std::string repr(char const* obj) {
-  return std::format("\"{}\"", obj);
+  return REPR_FORMAT("\"{}\"", obj);
 }
 
 inline std::string repr(void const* obj){
-  return std::format("{}", obj);
+  return REPR_FORMAT("{}", obj);
 }
 
 }  // namespace librepr

@@ -24,18 +24,23 @@ struct TypeName {
 };
 }  // namespace librepr
 
-// std::format support for librepr::TypeInfo<T>{} and typeinfo<T>
+namespace librepr::detail {
+template <class CharT>
+using StrFormatter = REPR_FORMAT_NS::formatter<std::string, CharT>;
+}  // namespace librepr
+
+// REPR_FORMAT_NS::format support for librepr::TypeInfo<T>{} and typeinfo<T>
 template <class T, class CharT>
-struct std::formatter<librepr::TypeInfo<T>, CharT> : std::formatter<std::string, CharT> {  // NOLINT
+struct REPR_FORMAT_RNS::formatter<librepr::TypeInfo<T>, CharT> : librepr::detail::StrFormatter<CharT> {  // NOLINT
   auto format(librepr::TypeInfo<T> const& obj, auto& ctx) const {
-    return std::formatter<std::string, CharT>::format(obj.name(), ctx);
+    return librepr::detail::StrFormatter<CharT>::format(obj.name(), ctx);
   }
 };
 
-// std::format support for librepr::TypeName<T>{} and nameof<T>
+// REPR_FORMAT_NS::format support for librepr::TypeName<T>{} and nameof<T>
 template <class T, class CharT>
-struct std::formatter<librepr::TypeName<T>, CharT> : std::formatter<std::string, CharT> {  // NOLINT
+struct REPR_FORMAT_RNS::formatter<librepr::TypeName<T>, CharT> : librepr::detail::StrFormatter<CharT> {  // NOLINT
   auto format(librepr::TypeName<T> const& obj, auto& ctx) const {
-    return std::formatter<std::string, CharT>::format(obj.to_string(), ctx);
+    return librepr::detail::StrFormatter<CharT>::format(obj.to_string(), ctx);
   }
 };

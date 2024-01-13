@@ -1,10 +1,10 @@
 #pragma once
-#include <format>
 #include <string>
 #include <initializer_list>
 #include <ranges>
 #include <type_traits>
 
+#include <librepr/detail/format.h>
 #include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 
@@ -27,6 +27,6 @@ struct Reflect<T> {
     }
   }
 
-  static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }
+  static std::string layout() { return REPR_FORMAT("[{}]", Reflect<type>::layout()); }
 };
 }  // namespace librepr
