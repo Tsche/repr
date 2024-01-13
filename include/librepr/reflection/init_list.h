@@ -27,6 +27,13 @@ struct Reflect<T> {
     }
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+    Visit::type<type>(visitor);
+  }
+
   static std::string layout() { return std::format("[{}]", Reflect<type>::layout()); }
 };
 }  // namespace librepr

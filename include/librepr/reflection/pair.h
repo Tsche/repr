@@ -27,6 +27,15 @@ struct Reflect<T> {
     Reflect<second_type>::visit(visitor, obj.second);
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+
+    Reflect<first_type>::visit(visitor);
+    Reflect<second_type>::visit(visitor);
+  }
+
   static std::string layout() {
     return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
   }

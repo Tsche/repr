@@ -25,6 +25,17 @@ struct Reflect<T> {
     Visit::value(visitor, obj);
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+
+    auto values = librepr::enum_names<T>();
+    for (auto const& element : values) {
+      Visit::member_name(visitor, element);
+    }
+  }
+
   static std::string layout() {
     std::ostringstream list{};
     auto values = librepr::enum_names<T>();

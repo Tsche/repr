@@ -23,6 +23,11 @@ struct Reflect {
     Visit::value(visitor, obj);
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+  }
+
   static std::string layout() { return librepr::get_name<T>(); }
 };
 
@@ -33,6 +38,11 @@ struct Reflect<char const*> {
     Visit::value(visitor, obj);
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<char const*>(visitor);
+  }
+
   static std::string layout() { return "str"; }
 };
 
@@ -40,4 +50,14 @@ template <typename T>
 // TODO check Settings -> ADL -> member function -> builtin
 using reflect = Reflect<T>;
 
+
+template <typename T, typename V>
+void visit(V&& visitor, T const& obj) {
+    Reflect<T>::visit(visitor, obj);
+}
+
+template <typename T, typename V>
+void visit(V&& visitor) {
+    Reflect<T>::visit(visitor);
+}
 }  // namespace librepr

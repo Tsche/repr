@@ -27,7 +27,8 @@ template <typename T>
   requires(std::is_aggregate_v<T> && !(std::is_array_v<T> || has_custom_members<T> || detail::has_repr_member<T>))
 struct Reflect<T> {
   using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
-  static_assert(!std::is_same_v<member_tuple, void>);
+  static_assert(!std::is_same_v<member_tuple, void>, "Aggregate reflection failed");
+
   using type = pack::rebox<member_tuple, TypeList>::template map<std::remove_cvref_t>::template map<librepr::Reflect>;
 
   template <typename V>
@@ -44,6 +45,19 @@ struct Reflect<T> {
       }
 
       Member::visit(visitor, std::get<Index>(members));
+    });
+  }
+
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+    ScopeGuard guard{visitor};
+    
+    type::enumerate([&visitor]<typename Member, std::size_t Index>() {
+      // if constexpr (reflect_names<T>) {
+        Visit::member_name(visitor, std::string_view{librepr::member_name<T, Index>});
+      // }
+      Member::visit(visitor);
     });
   }
 

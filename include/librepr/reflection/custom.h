@@ -35,6 +35,11 @@ struct Reflect<T> {
     });
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<T>(visitor);
+  }
+
   static std::string layout() {
     //return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
     return "";

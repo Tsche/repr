@@ -28,6 +28,13 @@ struct Reflect<Variant<Ts...>> {
                obj);
   }
 
+  template <typename V>
+  static void visit(V&& visitor) {
+    Visit::type<type>(visitor);
+    ScopeGuard guard{visitor};
+    (Visit::type<Ts>(visitor), ...);
+  }
+
   static std::string layout() {
     auto output = std::string("<");
     TypeList<Ts...>::enumerate([&output]<typename Member>(std::size_t index) {

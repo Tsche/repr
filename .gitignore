@@ -12,3 +12,4 @@ benchmark/**/*.json
 **.o
 **.out
 **/scratchpad.*
+.venv/
