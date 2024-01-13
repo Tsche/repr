@@ -6,7 +6,7 @@
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>
 
-#include <librepr/detail/format.h>
+#include <librepr/macro/format.h>
 #include <librepr/repr/all.h>
 #include <librepr/name/type.h>
 #include <librepr/reflection/reflect.h>

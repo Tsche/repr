@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 #include <string_view>
-#include <librepr/detail/macros.h>
-#include <librepr/detail/platform.h>
+#include <librepr/macro/util.h>
+#include <librepr/macro/platform.h>
 
-#if USING(REPR_MSVC)
+#if USING(LIBREPR_COMPILER_MSVC)
 #include "detail/undecorate.h"
 #include "detail/denoise.h"
 #elif __has_include(<cxxabi.h>)
@@ -16,7 +16,7 @@
 
 namespace librepr {
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
-#if USING(REPR_MSVC)
+#if USING(LIBREPR_COMPILER_MSVC)
   detail::DemangleBuffer buffer{};
   auto count = detail::undecorate_name(mangled.data(), buffer);
   if (count == 0) [[unlikely]] {

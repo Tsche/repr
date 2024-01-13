@@ -1,6 +1,16 @@
 #pragma once
 #include <librepr/feature.h>
-#include <librepr/detail/platform.h>
+#include <librepr/macro/platform.h>
+
+#ifndef REPR_HARD_CHECKS
+# define REPR_HARD_CHECKS OFF
+#else
+# undef REPR_HARD_CHECKS
+// Redefining so it matches the conventions.
+// This avoids cases where the user may do something
+// like `-DREPR_HARD_CHECKS=1` failing.
+# define REPR_HARD_CHECKS ON
+#endif
 
 #if !defined(REPR_RTTI) && !defined(REPR_CTTI)
     #define REPR_RTTI ON

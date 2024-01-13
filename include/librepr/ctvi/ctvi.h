@@ -10,7 +10,7 @@ namespace librepr::ctvi {
 namespace detail {
 template <auto V>
 [[nodiscard]] constexpr auto get_ctvi() noexcept {
-#if defined(LIBREPR_COMPILER_MSVC)
+#if USING(LIBREPR_COMPILER_MSVC)
   constexpr auto prefix = std::string_view{"get_ctvi<"};
   constexpr auto suffix = std::string_view{">(void)"};
 #else
@@ -30,10 +30,10 @@ template <typename T, auto M>
 constexpr auto name_from_subobject() {
   constexpr auto raw = std::string_view {LIBREPR_FUNCTION_NAME};
 
-#if defined(__clang__)
+#if USING(LIBREPR_COMPILER_CLANG)
   constexpr auto start_marker = std::string_view{"."};
   constexpr auto end_marker   = std::string_view{"}]"};
-#elif defined(_WIN32)
+#elif USING(LIBREPR_COMPILER_MSVC)
   constexpr auto start_marker = std::string_view{"->"};
   constexpr auto end_marker   = std::string_view{">(void)"};
 #else
@@ -47,7 +47,7 @@ constexpr auto name_from_subobject() {
 }
 
 
-#if !defined(LIBREPR_COMPILER_MSVC)
+#if !USING(LIBREPR_COMPILER_MSVC)
 template <auto P>
 consteval auto name_from_member_ptr() {
     constexpr auto raw = std::string_view{__PRETTY_FUNCTION__};

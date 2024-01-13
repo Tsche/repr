@@ -4,7 +4,7 @@
 #include <ranges>
 #include <type_traits>
 
-#include <librepr/detail/format.h>
+#include <librepr/macro/format.h>
 #include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
 

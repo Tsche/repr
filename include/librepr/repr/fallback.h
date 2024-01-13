@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <librepr/detail/format.h>
+#include <librepr/macro/format.h>
 
 namespace librepr {
 

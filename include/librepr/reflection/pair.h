@@ -2,7 +2,7 @@
 #include <string>
 #include <type_traits>
 
-#include <librepr/detail/format.h>
+#include <librepr/macro/format.h>
 #include <librepr/options.h>
 #include <librepr/util/concepts.h>
 #include <librepr/name/type.h>

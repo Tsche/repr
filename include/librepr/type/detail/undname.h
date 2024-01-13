@@ -2,7 +2,8 @@
 #include <array>
 #include <cstdlib>
 #include <memory>
-#include <librepr/detail/macros.h>
+#include <librepr/macro/util.h>
+#include <librepr/macro/assert.h>
 
 // Reference: https://github.com/nihilus/IDA_ClassInformer
 

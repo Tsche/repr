@@ -18,7 +18,7 @@
 namespace librepr {
 namespace detail {
 
-#if defined(LIBREPR_COMPILER_CLANG)
+#if USING(LIBREPR_COMPILER_CLANG)
 // clang-format off
 #define LIBREPR_SUBOBJECT_PTR(...) Wrap{__VA_ARGS__}
 // clang-format on
@@ -34,7 +34,7 @@ struct MemberName<ptr> {
   using type = C;
 
   constexpr static auto value =
-#if defined(LIBREPR_COMPILER_MSVC)
+#if USING(LIBREPR_COMPILER_MSVC)
 
 // MSVC unfortunately returns pointer to member template arguments into offsets
 // like `pointer-to-member(0x0)`. Using the aggregate member name reflection trick yields

@@ -9,6 +9,8 @@
 #include <cstddef>
 #include <set>
 #include <type_traits>
+#include <librepr/macro/assert.h>
+#include <librepr/macro/util.h>
 #include <librepr/util/string_buffer.h>
 
 namespace librepr::detail {

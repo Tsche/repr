@@ -3,7 +3,8 @@
 #include <cstring>
 #include <string>
 #include <string_view>
-#include <librepr/detail/macros.h>
+#include <librepr/macro/assert.h>
+#include <librepr/macro/util.h>
 #include <librepr/util/strings.h>
 
 namespace librepr::detail {

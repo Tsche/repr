@@ -2,6 +2,7 @@
 #include <typeinfo>
 
 #include <librepr/macro/default.h>
+#include <librepr/macro/platform.h>
 #include "demangle.h"
 
 namespace librepr::
@@ -13,7 +14,7 @@ namespace librepr::
 
 template <typename T>
 std::string get_name_raw() {
-#if defined(_WIN32)
+#if USING(LIBREPR_PLATFORM_WINDOWS)
   auto name = typeid(T).name();
   return librepr::detail::undecorate_name(name);
 #else

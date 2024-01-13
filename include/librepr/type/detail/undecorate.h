@@ -8,6 +8,9 @@
 #include <array>
 #include <mutex>
 #include <typeinfo>
+
+#include <librepr/macro/assert.h>
+
 #include "denoise.h"
 #include "undname.h"
 
