@@ -11,13 +11,13 @@ template <auto First, auto Last = First>
 struct Range {
   static_assert(Last >= First);
 
-  static constexpr auto size = Last - First + 1;
-  static constexpr auto min  = First;
-  static constexpr auto max  = Last;
+  constexpr static auto size = Last - First + 1;
+  constexpr static auto min  = First;
+  constexpr static auto max  = Last;
 
   template <auto Idx>
   requires (Idx <= size)
-  static constexpr auto get = Idx + First;
+  constexpr static auto get = Idx + First;
 
   template <std::size_t amount = 1>
   using expand = Range<First, max + static_cast<decltype(max)>(amount)>;
@@ -30,9 +30,9 @@ private:
 
 public:
   template <typename T, EnumKind Kind>
-  static constexpr auto enum_names = get_enum_names<T, Kind>(std::make_index_sequence<size>{});
+  constexpr static auto enum_names = get_enum_names<T, Kind>(std::make_index_sequence<size>{});
 
-  [[nodiscard]] static constexpr bool is_binary_powers() noexcept{
+  [[nodiscard]] constexpr static bool is_binary_powers() noexcept{
     if constexpr (min >= 0 && max <= 2) {
       // special case ranges containing only 0-2
       return true;
@@ -43,7 +43,7 @@ public:
     return false;
   }
 
-  [[nodiscard]] static constexpr bool contains(auto value) noexcept { 
+  [[nodiscard]] constexpr static bool contains(auto value) noexcept { 
     return value >= min && value <= max; 
   }
 };

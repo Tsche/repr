@@ -9,7 +9,7 @@ namespace librepr::ctei {
 template <typename... Ranges>
 struct RangeList : TypeListBase<RangeList, Ranges...>{
   using last                       = typename RangeList::template get<0>;
-  static constexpr auto next_index = last::max + 1;
+  constexpr static auto next_index = last::max + 1;
 
   template <auto Idx>
   using add = std::conditional_t<
@@ -35,7 +35,7 @@ struct RangeList : TypeListBase<RangeList, Ranges...>{
 
 template <>
 struct RangeList<> : TypeListBase<RangeList> {
-  static constexpr auto full_size = 0;
+  constexpr static auto full_size = 0;
 
   template <auto Index>
   using add = RangeList<Range<Index>>;

@@ -60,7 +60,7 @@ struct Search {
   using underlying = std::underlying_type_t<T>;
 
   template <underlying Offset, underlying Max>
-  static constexpr auto search_chunk() {
+  constexpr static auto search_chunk() {
     return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
       return std::array{
           dump_quick<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)>()[0] != '(' ...
@@ -70,7 +70,7 @@ struct Search {
   }
 
   template <underlying Offset, underlying Max>
-  static constexpr auto search_chunk_multi() {
+  constexpr static auto search_chunk_multi() {
     auto array = std::array<bool, Max - Offset>{};
 
     auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {

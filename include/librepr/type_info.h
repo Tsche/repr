@@ -1,19 +1,26 @@
 #pragma once
 #include <string>
-
-#include <librepr/reflection/reflect.h>
+#include <librepr/util/string_buffer.h>
+#include <librepr/macro/format.h>
 #include <librepr/name/type.h>
 namespace librepr {
-template <typename T>
-struct TypeInfo : Reflect<T>, librepr::detail::TemplateInfo<T> {
-  using type = T;
-  using Reflect<T>::visit;
-  using Reflect<T>::layout;
-  friend std::ostream& operator<<(std::ostream& ctx, TypeInfo<T> const& obj) { return ctx << obj.name(); }
-};
 
 template <typename T>
 struct TypeName {
+  std::string raw_name;
+  std::string_view namespace_{};
+  std::string_view stem;
+
+  constexpr TypeName() : raw_name(librepr::get_name<T>()) {
+    auto name = std::string_view{raw_name};
+    if (auto pos = name.rfind("::"); pos != std::string_view::npos) {
+      namespace_ = name.substr(0, pos);
+      stem       = name.substr(pos + 2);
+    } else {
+      stem = name;
+    }
+  }
+
   static std::string to_string() noexcept { return librepr::get_name<T>(); }
 
   /* implicit */ operator std::string() const noexcept {  // NOLINT
@@ -21,21 +28,16 @@ struct TypeName {
   }
 
   friend std::ostream& operator<<(std::ostream& ctx, TypeName<T> const& obj) { return ctx << obj.to_string(); }
+  friend detail::StringBuffer& operator<<(detail::StringBuffer& ctx, TypeName<T> const& obj) {
+    return ctx << obj.to_string();
+  }
 };
 }  // namespace librepr
 
 namespace librepr::detail {
 template <class CharT>
 using StrFormatter = REPR_FORMAT_NS::formatter<std::string, CharT>;
-}  // namespace librepr
-
-// REPR_FORMAT_NS::format support for librepr::TypeInfo<T>{} and typeinfo<T>
-template <class T, class CharT>
-struct REPR_FORMAT_RNS::formatter<librepr::TypeInfo<T>, CharT> : librepr::detail::StrFormatter<CharT> {  // NOLINT
-  auto format(librepr::TypeInfo<T> const& obj, auto& ctx) const {
-    return librepr::detail::StrFormatter<CharT>::format(obj.name(), ctx);
-  }
-};
+}  // namespace librepr::detail
 
 // REPR_FORMAT_NS::format support for librepr::TypeName<T>{} and nameof<T>
 template <class T, class CharT>

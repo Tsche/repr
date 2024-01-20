@@ -36,7 +36,7 @@ inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
   if(!symdata) [[unlikely]] { return 0; }
   if constexpr (msvc::has_rawname) {
     if (*symdata == '.') [[likely]] {
-      static constexpr auto flags =
+      constexpr static auto flags =
         UndStrategy::Decode32Bit | UndStrategy::TypeOnly;
       msvc::unDName((symdata + 1), buf, UndStrategy::Type(flags));
       auto denoised = denoise_name({ buf.data() });

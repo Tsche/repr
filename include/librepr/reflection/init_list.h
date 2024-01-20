@@ -7,6 +7,7 @@
 #include <librepr/macro/format.h>
 #include <librepr/name/type.h>
 #include <librepr/visitors/visitor.h>
+#include "category.h"
 
 namespace librepr {
 template <typename T>
@@ -14,16 +15,15 @@ struct Reflect;
 
 template <std::ranges::range T>
   requires std::constructible_from<std::initializer_list<typename T::value_type>>
-struct Reflect<T> {
-  using type = typename T::value_type;
+struct Reflect<T> : category::Type<T>{
+  using type = T;
+  using element_type = typename T::value_type;
+  constexpr static bool can_descend = true;
 
-  template <typename V>
-  static void visit(V&& visitor, T const& obj) {
-    Visit::type<T>(visitor);
-    ScopeGuard guard{visitor};
-
-    for (auto const& element : obj) {
-      Reflect<type>::visit(std::forward<V>(visitor), element);
+  template <typename V> 
+  static void visit(V&& visitor, T& obj){
+    for (auto&& value : obj){
+      visitor(category::Value{value});
     }
   }
 

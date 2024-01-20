@@ -31,7 +31,7 @@ struct Split<Idx, List<Ts...>> {
   using type = __type_pack_element<Idx, Ts...>;
 
   template <std::size_t offset, std::size_t... indices>
-  static constexpr auto do_slice(std::index_sequence<indices...>) noexcept
+  constexpr static auto do_slice(std::index_sequence<indices...>) noexcept
       -> List<__type_pack_element<indices + offset, Ts...>...>;
 
   using head = decltype(do_slice<0>(std::make_index_sequence<Idx + 1>{}));
@@ -75,7 +75,7 @@ struct ReBoxVImpl<From<Args...>, To> {
 
 template <auto V>
 struct ValueWrapper {
-  static constexpr decltype(V) value = V;
+  constexpr static decltype(V) value = V;
 };
 
 template <template <typename...> class List, auto... Vs>

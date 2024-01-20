@@ -13,7 +13,7 @@ struct Reflect;
 //TODO this shouldn't be a specialization of Reflect
 //! we need to look up in order 
 //! settings -> adl settings -> member function
-template <typename T>
+/*template <typename T>
   requires has_custom_members<T>
 struct Reflect<T> {
   using type        = T;
@@ -39,5 +39,5 @@ struct Reflect<T> {
     //return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
     return "";
   }
-};
+};*/
 }  // namespace librepr

@@ -20,7 +20,7 @@ struct CustomLiteral {
 
 template <>
 struct librepr::is_literal<CustomLiteral> {
-  static constexpr bool value = true;
+  constexpr static bool value = true;
 };
 
 TEST(customization, literal_repr_member) {
@@ -51,7 +51,7 @@ std::string librepr::repr(CustomLiteral2 const&) {
 
 template <>
 struct librepr::is_literal<CustomLiteral2> {
-  static constexpr bool value = true;
+  constexpr static bool value = true;
 };
 
 TEST(customization, literal_specialization) {

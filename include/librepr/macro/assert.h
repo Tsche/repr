@@ -2,6 +2,7 @@
 #include <librepr/feature.h>
 #include "platform.h"
 #include "default.h"
+#include "format.h"
 
 #ifndef LIBREPR_DEBUG
 #if USING(LIBREPR_COMPILER_MSVC)

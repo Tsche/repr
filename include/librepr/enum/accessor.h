@@ -41,7 +41,8 @@ private:
   }
 
 public:
-  static constexpr auto names = get_enum_names();
+  constexpr static auto names = get_enum_names();
+  //TODO enum_values?
 
   template <std::size_t Idx = 0>
   constexpr static std::string_view search_name(underlying value)

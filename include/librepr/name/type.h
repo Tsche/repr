@@ -21,14 +21,14 @@ namespace detail {
 template <typename T>
 struct TemplateInfo {
   static std::string name() { return librepr::get_name_raw<T>(); }
-  static constexpr bool is_templated = false;
+  constexpr static bool is_templated = false;
 };
 
 template <template <typename...> typename U, typename... Ts>
 struct TemplateInfo<U<Ts...>> {
   using type                         = U<Ts...>;
   using arguments                   = TypeList<Ts...>;
-  static constexpr bool is_templated = true;
+  constexpr static bool is_templated = true;
 
 private:
   template <std::size_t... Idx>

@@ -102,6 +102,6 @@ struct MemberList : ValueListBase<MemberList, Ts...> {
     static_assert(is_homogeneous_members<Ts...>, "No common class types in declared members detected.");
 
     template <typename C>
-    static constexpr bool is_valid_for = std::same_as<typename std::common_type<typename decltype(Ts)::class_type...>::type, C>;
+    constexpr static bool is_valid_for = std::same_as<typename std::common_type<typename decltype(Ts)::class_type...>::type, C>;
 };
 }

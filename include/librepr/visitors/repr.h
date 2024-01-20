@@ -2,6 +2,8 @@
 
 #include <string>
 #include <type_traits>
+#include "librepr/reflection/category.h"
+#include "librepr/util/string_buffer.h"
 
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>
@@ -22,14 +24,14 @@ private:
 
   void print_indent() {
     if (options.indent != 0) {
-      result.append("\n");
-      result.append(std::string(options.indent * level, ' '));
+      result << "\n";
+      result << std::string(options.indent * level, ' ');
     }
   }
 
   void print_separator() {
     if (separate) {
-      result.append(", ");
+      result << ", ";
     } else {
       separate = true;
     }
@@ -38,26 +40,25 @@ private:
 
 public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
-  std::string result{};
+  detail::StringBuffer result{};
 
+  
   void nesting(bool increase) {
     if (increase) {
       separate = false;
-      result += '{';
+      result << '{';
       ++level;
     }
     else {
       --level;
       print_indent();
-      result += '}';
+      result << '}';
     }
   }
   
   void member_name(std::string_view name){
     print_separator();
-    result += '.';
-    result += name;
-    result += '=';
+    result << '.'<< name << '=';
     separate = false;
   }
 
@@ -66,7 +67,7 @@ public:
     print_separator();
     if constexpr (!librepr::is_literal_v<T>) {
       if (options.should_print_type(level)) {
-        result.append(librepr::get_name<T>());
+        result << librepr::get_name<T>();
       }
     }
   }
@@ -74,7 +75,7 @@ public:
   template <typename T>
   void value(T const& obj) {
     type<T>();
-    result += librepr::repr(obj);
+    result << librepr::repr(obj);
   }
 
   template <typename T>
@@ -85,7 +86,7 @@ public:
       nesting(true);
     }
 
-    result += obj.repr();
+    result << obj.repr();
 
     if constexpr (!librepr::is_literal_v<T>) {
       nesting(false);
@@ -97,7 +98,7 @@ public:
     // TODO template this for wide string literals
     //  don't print a type, only print the separator if needed
     print_separator();
-    result.append(REPR_FORMAT("\"{}\"", obj));
+    result << REPR_FORMAT("\"{}\"", obj);
   }
 
   template <typename T>
@@ -112,14 +113,37 @@ public:
       // disabled for void* and pointer-to-pointer T
 
       if (obj) {  // don't attempt to dereference nullptr
-        result += "new " + librepr::get_name<underlying_type>();
+        result << "new " << librepr::get_name<underlying_type>();
         nesting(true);
         librepr::Reflect<underlying_type>::visit(*this, *obj);
         nesting(false);
         return;
       }
     }
-    result += '(' + librepr::get_name<T>() + ')' + librepr::repr(static_cast<const void*>(obj));
+    result << '(' << librepr::get_name<T>() << ')' << librepr::repr(static_cast<const void*>(obj));
+  }
+  
+
+  template <typename T>
+  requires category::has_value<T>
+  void operator()(T info){
+    if constexpr (category::has_name<T>){
+      member_name(info.name());
+    }
+    value(info.value());
+  }
+
+  template <typename T>
+  requires category::has_value<T> && category::can_descend<T>
+  void operator()(T info){
+    if constexpr (category::has_name<T>){
+      member_name(info.name());
+    }
+
+    type<typename T::type>();
+    nesting(true);
+    info.visit(*this, info.value());
+    nesting(false);
   }
 };
 
