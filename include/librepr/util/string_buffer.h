@@ -44,6 +44,11 @@ struct StringBuffer {
     return std::move(buffer);
   }
 
+  explicit operator std::string() {
+    flush();
+    return buffer;
+  }
+
   LIBREPR_HINT_INLINE const std::string* operator->() const {
     return &buffer;
   }

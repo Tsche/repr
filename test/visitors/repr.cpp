@@ -10,13 +10,13 @@ namespace librepr::Testing {
 TEST(ReprVisitorTest, VisitInt) {
   auto visitor = ReprVisitor(Options{});
   visitor.value(42);
-  ASSERT_EQ(visitor.result, "42");
+  ASSERT_EQ(std::string(visitor.result), "42");
 }
 
 TEST(ReprVisitorTest, VisitStringLiteral) {
   auto visitor = ReprVisitor(Options{});
   visitor.value("Hello, World!");
-  ASSERT_EQ(visitor.result, "\"Hello, World!\"");
+  ASSERT_EQ(std::string(visitor.result), "\"Hello, World!\"");
 }
 
 TEST(ReprVisitorTest, VisitPointer) {
@@ -25,7 +25,7 @@ TEST(ReprVisitorTest, VisitPointer) {
   auto visitor   = ReprVisitor(Options{});
 
   visitor.value(testValue);
-  ASSERT_EQ(visitor.result, "new int{42}");
+  ASSERT_EQ(std::string(visitor.result), "new int{42}");
 }
 
 TEST(ReprVisitorTest, VisitNullPointer) {
@@ -33,7 +33,7 @@ TEST(ReprVisitorTest, VisitNullPointer) {
   auto visitor   = ReprVisitor(Options{});
 
   visitor.value(testValue);
-  ASSERT_EQ(visitor.result, "(int*)0x0");
+  ASSERT_EQ(std::string(visitor.result), "(int*)0x0");
 }
 
 TEST(ReprVisitorTest, VisitEnum) {
@@ -43,7 +43,7 @@ TEST(ReprVisitorTest, VisitEnum) {
 
   visitor.value(testValue);
 
-  ASSERT_THAT(visitor.result, testing::HasSubstr("TestEnum::Value1"));
+  ASSERT_THAT(std::string(visitor.result), testing::HasSubstr("TestEnum::Value1"));
 }
 
 TEST(ReprVisitorTest, VisitCustomTypeWithReprMember) {
@@ -55,7 +55,7 @@ TEST(ReprVisitorTest, VisitCustomTypeWithReprMember) {
 
   visitor.value(testValue);
 
-  ASSERT_THAT(visitor.result, testing::HasSubstr("CustomType{CustomTypeRepr}"));
+  ASSERT_THAT(std::string(visitor.result), testing::HasSubstr("CustomType{CustomTypeRepr}"));
 }
 
 TEST(ReprVisitorTest, VisitCustomTypeWithoutReprMember) {
@@ -64,23 +64,23 @@ TEST(ReprVisitorTest, VisitCustomTypeWithoutReprMember) {
   auto visitor = ReprVisitor(Options{});
 
   visitor.value(testValue);
-  ASSERT_THAT(visitor.result, testing::HasSubstr("CustomType"));
+  ASSERT_THAT(std::string(visitor.result), testing::HasSubstr("CustomType"));
 }
 
 TEST(ReprVisitorTest, Nesting) {
   auto visitor = ReprVisitor(Options{});
   visitor.nesting(true);
-  ASSERT_EQ(visitor.result, "{");
+  ASSERT_EQ(std::string(visitor.result), "{");
   visitor.nesting(false);
-  ASSERT_EQ(visitor.result, "{}");
+  ASSERT_EQ(std::string(visitor.result), "{}");
 }
 
 TEST(ReprVisitorTest, Types) {
   auto visitor = ReprVisitor(Options{});
   visitor.type<std::type_identity<int>>();
-  ASSERT_EQ(visitor.result, "std::type_identity<int>");
+  ASSERT_EQ(std::string(visitor.result), "std::type_identity<int>");
   visitor.type<std::vector<int>>();
-  ASSERT_EQ(visitor.result, "std::type_identity<int>, std::vector<int>");
+  ASSERT_EQ(std::string(visitor.result), "std::type_identity<int>, std::vector<int>");
 }
 
 }  // namespace librepr::Testing

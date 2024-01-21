@@ -75,6 +75,11 @@ struct Value : T {
 
   [[nodiscard]] constexpr type& value() const noexcept { return *data; }
 
+  template <typename V>
+  void visit(V&& visitor) requires (requires { T::visit(std::declval<V>(), std::declval<type&>());}) {
+    T::visit(std::forward<V>(visitor), value());
+  }
+
 private:
   type* data;
 };

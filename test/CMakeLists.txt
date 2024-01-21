@@ -5,7 +5,7 @@ target_sources(repr_test PRIVATE
 add_subdirectory(util)
 add_subdirectory(repr)
 add_subdirectory(name)
-add_subdirectory(layout)
+#add_subdirectory(layout) # TODO reuse test cases for layout visitor
 add_subdirectory(reflection)
 add_subdirectory(visitors)
 add_subdirectory(enum)

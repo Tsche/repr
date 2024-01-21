@@ -20,7 +20,7 @@ template <typename T>
 struct Reflect<T> : category::Type<T> {
   using type = T;
   constexpr static auto enumerator_names = librepr::enum_names<T>();
-  constexpr static bool can_descend = true;
+  constexpr static bool can_descend = false;
   //TODO enum values -> names mapping
 
   template <typename V>

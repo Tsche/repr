@@ -11,7 +11,7 @@ struct TypeName {
   std::string_view namespace_{};
   std::string_view stem;
 
-  constexpr TypeName() : raw_name(librepr::get_name<T>()) {
+  TypeName() : raw_name(librepr::get_name<T>()) {
     auto name = std::string_view{raw_name};
     if (auto pos = name.rfind("::"); pos != std::string_view::npos) {
       namespace_ = name.substr(0, pos);

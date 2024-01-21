@@ -142,7 +142,7 @@ public:
 
     type<typename T::type>();
     nesting(true);
-    info.visit(*this, info.value());
+    info.visit(*this);
     nesting(false);
   }
 };
