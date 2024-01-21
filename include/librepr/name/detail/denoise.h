@@ -244,5 +244,4 @@ private:
 }
 }  // namespace librepr::detail
 
-static_assert(sizeof(void*) == 
-  sizeof(librepr::detail::msvc::SymToken));
+static_assert(sizeof(void*) == sizeof(librepr::detail::msvc::SymToken));

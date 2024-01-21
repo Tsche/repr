@@ -4,9 +4,9 @@
 #include <sstream>
 #include <type_traits>
 #include <tuple>
-#include "librepr/macro/util.h"
-#include "librepr/name/type.h"
-#include "librepr/reflection/detail/arity.h"
+#include <librepr/macro/util.h>
+#include <librepr/name/type.h>
+#include <librepr/reflection/detail/arity.h>
 
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/list.h>

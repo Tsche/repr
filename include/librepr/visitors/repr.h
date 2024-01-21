@@ -2,8 +2,8 @@
 
 #include <string>
 #include <type_traits>
-#include "librepr/reflection/category.h"
-#include "librepr/util/string_buffer.h"
+#include <librepr/reflection/category.h>
+#include <librepr/util/string_buffer.h>
 
 #include <librepr/visitors/visitor.h>
 #include <librepr/util/concepts.h>
@@ -53,6 +53,7 @@ public:
       --level;
       print_indent();
       result << '}';
+      separate = true;
     }
   }
   

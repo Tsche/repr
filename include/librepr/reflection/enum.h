@@ -18,10 +18,10 @@ struct Reflect;
 template <typename T>
   requires std::is_enum_v<T>
 struct Reflect<T> : category::Type<T> {
-  using type = T;
+  using type                             = T;
   constexpr static auto enumerator_names = librepr::enum_names<T>();
-  constexpr static bool can_descend = false;
-  //TODO enum values -> names mapping
+  constexpr static bool can_descend      = false;
+  // TODO enum values -> names mapping
 
   template <typename V>
   static void visit(V&& visitor, T& obj) {
@@ -35,12 +35,12 @@ struct Reflect<T> : category::Type<T> {
       if (&element != &*std::begin(values)) {
         list << " | ";
       }
-      #if USING(REPR_USE_MAGIC_ENUM)
+#if USING(REPR_USE_MAGIC_ENUM)
       if constexpr (detail::is_scoped_enum<T>) {
         list << librepr::get_name<T>();
         list << "::";
       }
-      #endif
+#endif
       list << element;
     }
     return list.str();

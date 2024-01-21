@@ -1,5 +1,6 @@
 #pragma once
 #include <type_traits>
+#include <librepr/name/type.h>
 #include <librepr/type_info.h>
 
 namespace librepr {
@@ -90,7 +91,7 @@ Value(T&) -> Value<Reflect<T>>;
 template <typename T>
 struct Type {
   using type = T;
-  [[nodiscard]] static auto type_name() { return librepr::TypeName<type>{}; }
+  [[nodiscard]] static auto type_name() { return librepr::get_name<type>(); }
 
   template <typename V>
   static void visit(V&& visitor) {

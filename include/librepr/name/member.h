@@ -65,7 +65,7 @@ struct MemberName<info> {
 };
 
 LIBREPR_WARNING_PUSH
-LIBREPR_WARNING_DISABLE(CLANG, -Wundefined - var - template)
+LIBREPR_WARNING_DISABLE(CLANG, "-Wundefined-var-template")
 
 // This technique has been described by @schaumb
 // For explanations see

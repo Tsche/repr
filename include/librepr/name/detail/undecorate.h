@@ -1,4 +1,6 @@
 #pragma once
+#include <librepr/macro/platform.h>
+#if USING(LIBREPR_PLATFORM_WINDOWS)
 #pragma comment(lib, "dbghelp.lib")
 
 #define WIN32_LEAN_AND_MEAN
@@ -51,3 +53,4 @@ inline std::size_t undecorate_name(const char* symdata, DemangleBuffer& buf) {
     REPR_DEMANGLE_MAX, UNDNAME_NO_MS_KEYWORDS));
 }
 }  // namespace librepr::detail
+#endif

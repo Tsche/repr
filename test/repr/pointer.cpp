@@ -9,8 +9,8 @@ TEST(pointer, nullptr) {
 struct Test {};
 
 LIBREPR_WARNING_PUSH
-LIBREPR_WARNING_DISABLE(GCC, -Wold-style-cast)
-LIBREPR_WARNING_DISABLE(CLANG, -Wold-style-cast)
+LIBREPR_WARNING_DISABLE(GCC, "-Wold-style-cast")
+LIBREPR_WARNING_DISABLE(CLANG, "-Wold-style-cast")
 //NOLINTBEGIN
 
 TEST(pointer, pointer) {
