@@ -1,9 +1,11 @@
 #pragma once
 #include <array>
 #include <cstdlib>
+#include <climits>
 #include <memory>
 #include <librepr/macro/util.h>
 #include <librepr/macro/assert.h>
+#include <librepr/macro/default.h>
 
 // Reference: https://github.com/nihilus/IDA_ClassInformer
 

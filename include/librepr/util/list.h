@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <cstddef>
 #include "pack.h"
 
 namespace librepr {

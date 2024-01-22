@@ -1,5 +1,9 @@
 #pragma once
+#include <format>
+#include <iosfwd>
 #include <string>
+#include <string_view>
+
 #include <librepr/util/string_buffer.h>
 #include <librepr/macro/format.h>
 #include <librepr/name/type.h>

@@ -1,7 +1,11 @@
 #pragma once
+#include <concepts>
+#include <cstddef>
+#include <string_view>
 #include <type_traits>
+#include <utility>
+
 #include <librepr/name/type.h>
-#include <librepr/type_info.h>
 
 namespace librepr {
 template <typename T>

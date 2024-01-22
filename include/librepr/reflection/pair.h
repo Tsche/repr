@@ -3,10 +3,7 @@
 #include <type_traits>
 
 #include <librepr/macro/format.h>
-#include <librepr/options.h>
 #include <librepr/util/concepts.h>
-#include <librepr/name/type.h>
-#include <librepr/visitors/visitor.h>
 #include "category.h"
 namespace librepr {
 template <typename T>

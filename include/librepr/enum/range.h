@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstddef>
 #include <utility>
 #include <string_view>
 #include <bit>

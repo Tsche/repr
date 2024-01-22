@@ -1,18 +1,12 @@
 #pragma once
 #include <cstddef>
 #include <string>
-#include <sstream>
+#include <string_view>
 #include <type_traits>
-#include <tuple>
-#include <librepr/macro/util.h>
-#include <librepr/name/type.h>
-#include <librepr/reflection/detail/arity.h>
 
-#include <librepr/visitors/visitor.h>
 #include <librepr/util/list.h>
+#include <librepr/util/pack.h>
 #include <librepr/util/concepts.h>
-
-#include <librepr/reflection/detail/to_tuple.h>
 #include <librepr/name/member.h>
 
 // TODO
@@ -20,6 +14,8 @@
 #include <librepr/customization/reflection.h>
 
 #include "category.h"
+#include "detail/arity.h"
+#include "detail/to_tuple.h"
 
 namespace librepr {
 

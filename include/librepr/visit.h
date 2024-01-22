@@ -1,8 +1,8 @@
 #pragma once
-
-#include <librepr/reflection/reflect.h>
 #include <type_traits>
 
+#include <librepr/reflection/category.h>
+#include <librepr/reflection/reflect.h>
 #include <librepr/visitors/cpp.h>
 
 namespace librepr {

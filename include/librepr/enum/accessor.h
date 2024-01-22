@@ -1,9 +1,11 @@
 #pragma once
-#include <string>
-#include <type_traits>
 #include <array>
+#include <bit>
+#include <cstddef>
+#include <iterator>
 #include <string_view>
-#include <algorithm>
+#include <type_traits>
+
 
 #include <librepr/util/list.h>
 

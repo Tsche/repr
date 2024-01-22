@@ -1,8 +1,13 @@
 #pragma once
+#include <cstddef>
 #include <string>
+#include <string_view>
+
+#include <librepr/feature.h>
 #include <librepr/macro/platform.h>
-#include <librepr/util/string.h>
 #include <librepr/macro/default.h>
+#include <librepr/util/string.h>
+
 namespace librepr::
 #if USING(REPR_CTTI)
     inline

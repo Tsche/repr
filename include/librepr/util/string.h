@@ -1,8 +1,8 @@
 #pragma once
-
+#include <algorithm>
+#include <cstddef>
 #include <string_view>
-#include <string>
-#include <array>
+
 namespace librepr {
 
 template <std::size_t N>

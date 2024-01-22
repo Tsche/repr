@@ -1,7 +1,9 @@
-#pragma once 
+#pragma once
+#include <concepts>
+#include <type_traits>
+
 #include <librepr/util/list.h>
 #include <librepr/util/pack.h>
-#include <type_traits>
 
 namespace librepr {
 // Enum customization traits
@@ -26,8 +28,6 @@ concept has_fast_search = std::is_enum_v<T> && requires(T obj) {
 };
 
 template <typename T>
-concept has_enumerators = std::is_enum_v<T> && requires(T obj) {
-  typename Settings<T>::enumerators;
-};
+concept has_enumerators = std::is_enum_v<T> && requires(T obj) { typename Settings<T>::enumerators; };
 
-}
+}  // namespace librepr

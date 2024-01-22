@@ -1,6 +1,7 @@
+#include <string>
 #include <gtest/gtest.h>
 #include <repr>
-#include <string>
+#include <librepr/literal.h>
 
 struct CustomType {
   std::string text{};

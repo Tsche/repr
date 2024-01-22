@@ -1,12 +1,14 @@
 #pragma once
 #include <array>
+#include <bit>
+#include <cstddef>
 #include <limits>
-#include <string_view>
 #include <type_traits>
-#include <algorithm>
 #include <utility>
 
+#include <librepr/feature.h>
 #include <librepr/customization.h>
+#include <librepr/customization/enum.h>
 #include <librepr/macro/default.h>
 
 #include "range.h"

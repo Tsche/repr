@@ -1,7 +1,9 @@
+#include <string>
+#include <type_traits>
 #include <vector>
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <librepr/visitors/repr.h>
 

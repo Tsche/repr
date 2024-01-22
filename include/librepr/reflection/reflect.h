@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 
-#include <librepr/visitors/visitor.h>
 #include <librepr/name/type.h>
 
 #include "category.h"

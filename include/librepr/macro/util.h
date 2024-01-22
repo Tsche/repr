@@ -1,4 +1,5 @@
 #pragma once
+#include <librepr/feature.h>
 #include "platform.h"
 
 #ifndef __has_attribute

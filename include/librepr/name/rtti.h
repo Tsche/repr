@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
 #include <typeinfo>
 
+#include <librepr/feature.h> 
 #include <librepr/macro/default.h>
 #include <librepr/macro/platform.h>
 #include "demangle.h"

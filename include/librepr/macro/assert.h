@@ -5,22 +5,22 @@
 #include "format.h"
 
 #ifndef LIBREPR_DEBUG
-#if USING(LIBREPR_COMPILER_MSVC)
-# if defined(_DEBUG) && !defined(NDEBUG)
-#  define LIBREPR_DEBUG 1
+# if USING(LIBREPR_COMPILER_MSVC)
+#   if defined(_DEBUG) && !defined(NDEBUG)
+#     define LIBREPR_DEBUG 1
+#   endif
+# else
+#   if !defined(NDEBUG)
+#     define LIBREPR_DEBUG 1
+#   endif
 # endif
-#else
-# if !defined(NDEBUG)
-#  define LIBREPR_DEBUG 1
-# endif
-#endif
 #endif // LIBREPR_DEBUG?
 
-# if USING(LIBREPR_PLATFORM_WINDOWS)
+#if USING(LIBREPR_PLATFORM_WINDOWS)
 // _CRT_*_C_HEADER macros
-#  include <vcruntime.h>
-# endif
-# include <assert.h>
+# include <vcruntime.h>
+#endif
+#include <assert.h>
 
 // Underlying asserts
 #if USING(LIBREPR_PLATFORM_WINDOWS)

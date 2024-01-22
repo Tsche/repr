@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <cstddef>
 
 #if defined(_WIN32)
   #define WIN32_LEAN_AND_MEAN

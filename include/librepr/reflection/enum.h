@@ -3,12 +3,11 @@
 #include <sstream>
 #include <type_traits>
 
-#include <librepr/name/type.h>
-#include <librepr/visitors/visitor.h>
-#include <librepr/util/concepts.h>
-
+#include <librepr/feature.h>
 #include <librepr/macro/default.h>
+#include <librepr/util/concepts.h>
 #include <librepr/enum/reflect.h>
+
 #include "category.h"
 
 namespace librepr {

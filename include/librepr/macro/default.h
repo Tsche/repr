@@ -70,7 +70,7 @@
 #endif
 
 #if !defined(REPR_ENUM_FAST_SEARCH)
-#if defined(__clang__)
+#if USING(LIBREPR_COMPILER_CLANG)
 #if __clang_major__ >= 16
   // https://github.com/llvm/llvm-project/issues/68489
   #define REPR_ENUM_FAST_SEARCH OFF
@@ -78,9 +78,9 @@
   //TODO verify this works with clang <= 15
   #define REPR_ENUM_FAST_SEARCH ON
 #endif
-#elif defined(__GNUC__)
+#elif USING(LIBREPR_COMPILER_GCC)
   #define REPR_ENUM_FAST_SEARCH ON
-#elif defined(_MSC_VER)
+#elif USING(LIBREPR_COMPILER_MSVC)
   //TODO
   #define REPR_ENUM_FAST_SEARCH OFF
 #endif

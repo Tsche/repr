@@ -1,5 +1,8 @@
 #pragma once
+
+#include <librepr/feature.h>
 #include <librepr/macro/platform.h>
+
 #if USING(LIBREPR_PLATFORM_WINDOWS)
 #pragma comment(lib, "dbghelp.lib")
 
@@ -20,8 +23,7 @@ namespace librepr::detail {
 namespace msvc {
   /// Checks if we need to use __FUNCDNAME__ or not.
   /// As far as I know, it should always exist, but we have this just in case
-  inline constexpr bool has_rawname =
-    requires(const std::type_info& ty) { ty.raw_name(); };
+  inline constexpr bool has_rawname = requires(const std::type_info& ty) { ty.raw_name(); };
 }  // namespace msvc
 
 // TODO: Make this better ig

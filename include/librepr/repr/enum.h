@@ -1,5 +1,8 @@
 #pragma once
+#include <string>
 #include <type_traits>
+
+#include <librepr/feature.h>
 #include <librepr/enum/reflect.h>
 #include <librepr/macro/default.h>
 

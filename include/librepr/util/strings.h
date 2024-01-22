@@ -1,8 +1,8 @@
 #pragma once
-
+#include <cstddef>
 #include <concepts>
 #include <string>
-#include <array>
+
 namespace librepr::detail {
 template <typename T>
 concept string_like = requires(T& t) {

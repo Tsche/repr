@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include <librepr/util/list.h>
 
 #include "range.h"

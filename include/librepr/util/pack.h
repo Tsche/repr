@@ -1,5 +1,7 @@
 #pragma once
-#include <tuple>
+#include <cstddef>
+#include <utility>
+
 #include <librepr/macro/util.h>
 #include "pack_generated.h"
 

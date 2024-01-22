@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <string_view>
+
+#include <librepr/feature.h> 
 #include <librepr/macro/util.h>
 #include <librepr/macro/platform.h>
 

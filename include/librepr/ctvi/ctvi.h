@@ -1,7 +1,8 @@
 #pragma once
+#include <cstddef>
+#include <iterator>
 #include <string_view>
-#include <array>
-#include <utility>
+
 #include <librepr/macro/platform.h>
 #include <librepr/util/string.h>
 

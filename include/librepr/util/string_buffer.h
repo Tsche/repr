@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstring>
+#include <iosfwd>
 #include <string>
 #include <string_view>
+#include <utility>
+
 #include <librepr/macro/assert.h>
 #include <librepr/macro/util.h>
-#include <librepr/util/strings.h>
 
 namespace librepr::detail {
 /// Wrapper around std::string.

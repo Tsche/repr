@@ -1,7 +1,8 @@
 #pragma once
-#include <type_traits>
 #include <bit>
 #include <concepts>
+#include <cstddef>
+#include <type_traits>
 
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/util/string.h>

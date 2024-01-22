@@ -4,14 +4,12 @@
 #include <string>
 #include <type_traits>
 #include <variant>
-#include <concepts>
 
 #include <librepr/name/type.h>
 
 #include <librepr/util/list.h>
 #include <librepr/util/overload.h>
 
-#include <librepr/visitors/visitor.h>
 #include "category.h"
 
 namespace librepr {

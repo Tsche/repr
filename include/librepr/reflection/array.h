@@ -1,13 +1,11 @@
 #pragma once
-#include <string>
-#include <sstream>
-#include <type_traits>
+#include <cstddef>
 #include <concepts>
+#include <string>
+#include <type_traits>
 #include "category.h"
 
 #include <librepr/macro/format.h>
-#include <librepr/name/type.h>
-#include <librepr/visitors/visitor.h>
 
 namespace librepr {
 

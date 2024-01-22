@@ -1,4 +1,6 @@
 #pragma once
+#include <librepr/feature.h>
+
 #include "util.h"
 #include "platform.h"
 

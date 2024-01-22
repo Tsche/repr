@@ -1,6 +1,5 @@
 #pragma once
-#include <cstdint>
-#include <string>
+#include <cstddef>
 
 #include <librepr/terminal.h>
 

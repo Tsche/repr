@@ -5,8 +5,6 @@
 #include <type_traits>
 
 #include <librepr/macro/format.h>
-#include <librepr/name/type.h>
-#include <librepr/visitors/visitor.h>
 #include "category.h"
 
 namespace librepr {

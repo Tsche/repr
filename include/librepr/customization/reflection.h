@@ -1,8 +1,10 @@
-#pragma once 
-#include <librepr/util/list.h>
-#include <librepr/util/pack.h>
+#pragma once
 #include <concepts>
 #include <string_view>
+
+// TODO decide whether to constrain has_custom_members to be a value list
+// #include <librepr/util/list.h>
+// #include <librepr/util/pack.h>
 
 
 namespace librepr {
