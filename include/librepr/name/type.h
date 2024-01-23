@@ -89,6 +89,6 @@ char const* get_mangled_name() {
 
 template <typename T>
 std::string get_name() {
-  return librepr::detail::TemplateInfo<T>::name();
+  return librepr::detail::TemplateInfo<std::remove_cvref_t<T>>::name();
 }
 }  // namespace librepr

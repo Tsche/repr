@@ -13,7 +13,7 @@ template <typename T>
 struct Reflect;
 
 template <typename T, std::size_t N>
-  requires(not std::same_as<std::remove_reference_t<T>, char>)  // TODO exclude other string literals
+  requires(not std::same_as<std::remove_reference_t<T>, char const>)  // TODO exclude other string literals
 struct Reflect<T[N]> : category::Type<T[N]> {
   using type = T[N];
   using element_type = T;

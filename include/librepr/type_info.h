@@ -11,20 +11,6 @@ namespace librepr {
 
 template <typename T>
 struct TypeName {
-  std::string raw_name;
-  std::string_view namespace_{};
-  std::string_view stem;
-
-  TypeName() : raw_name(librepr::get_name<T>()) {
-    auto name = std::string_view{raw_name};
-    if (auto pos = name.rfind("::"); pos != std::string_view::npos) {
-      namespace_ = name.substr(0, pos);
-      stem       = name.substr(pos + 2);
-    } else {
-      stem = name;
-    }
-  }
-
   static std::string to_string() noexcept { return librepr::get_name<T>(); }
 
   /* implicit */ operator std::string() const noexcept {  // NOLINT
