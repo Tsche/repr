@@ -15,6 +15,7 @@ public:
   using types                = TypeList<Types...>;
 
   template <detail::ref_convertible_to<Types>... U>
+  requires (sizeof...(U) != 1 || !(std::same_as<RefTuple, std::remove_cvref_t<U>> || ...))
   explicit RefTuple(U&&... values) noexcept((noexcept(detail::convert_ref<Types>(std::forward<U>(values))) && ...))
       : data{static_cast<void*>(const_cast<std::remove_cvref_t<Types>*>(
             std::addressof(detail::convert_ref<Types>(std::forward<U>(values)))))...} {}
