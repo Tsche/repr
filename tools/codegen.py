@@ -6,19 +6,20 @@ from typing import Iterable
 
 import em  # requires empy
 from palgen import Extension, Model, Sources
-from palgen.ingest import Suffixes
+from palgen.ingest import Suffix
 
 clang_format_path = shutil.which("clang-format")
 
 
 class Codegen(Extension):
-    ingest = Sources >> Suffixes(".h.in")
+    ingest = Sources >> Suffix(".h.in")
 
     class Settings(Model):
         clang_format: bool = False
 
     def render(self, data: Iterable[Path]):
         for path in data:
+            logging.debug("Template found: %s", path)
             content = path.read_text(encoding="utf-8")
             preprocessed = em.expand(content)
             if self.settings.clang_format:

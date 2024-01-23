@@ -93,7 +93,9 @@ public:
       print_struct(info, name);
     }
 
-    print_name(info);
+    if (indent_level != 0){
+      print_name(info);
+    }
     result << ";\n";
   }
 

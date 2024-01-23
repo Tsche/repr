@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string_view>
 #include <utility>
 #include <array>
@@ -8,7 +9,7 @@
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/customization/members.h>
 
-#include <librepr/util/fake_obj.h>
+#include <librepr/util/util.h>
 #include <librepr/util/string.h>
 
 #include <librepr/reflection/detail/arity.h>
@@ -20,7 +21,7 @@ namespace detail {
 
 #if USING(LIBREPR_COMPILER_CLANG)
 // clang-format off
-#define LIBREPR_SUBOBJECT_PTR(...) Wrap{__VA_ARGS__}
+#define LIBREPR_SUBOBJECT_PTR(...) ::librepr::Wrap{__VA_ARGS__}
 // clang-format on
 #else
 #define LIBREPR_SUBOBJECT_PTR(...) __VA_ARGS__

@@ -6,6 +6,7 @@
 #include <utility>
 
 #include <librepr/name/type.h>
+#include <librepr/util/util.h>
 
 namespace librepr {
 template <typename T>
@@ -45,20 +46,6 @@ concept has_value = requires (T obj){
 
 template <typename T>
 concept can_descend = has_members<T> || has_extent<T> || has_alternatives<T> || T::can_descend;
-
-namespace detail {
-template <class U>
-constexpr U& convert_ref(U& t) noexcept {
-  // https://cplusplus.github.io/LWG/issue2993
-  return t;
-}
-
-template <class U>
-void convert_ref(U&&) = delete;
-
-template <typename From, typename To>
-concept ref_convertible_to = requires { convert_ref<To>(std::declval<From>()); };
-}  // namespace detail
 
 template <class T>
 struct Value : T {

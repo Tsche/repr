@@ -6,6 +6,7 @@
 
 #include <librepr/util/list.h>
 #include <librepr/util/pack.h>
+#include <librepr/util/reftuple.h>
 #include <librepr/util/concepts.h>
 #include <librepr/name/member.h>
 
@@ -15,7 +16,7 @@
 
 #include "category.h"
 #include "detail/arity.h"
-#include "detail/to_tuple.h"
+#include "detail/to_reftuple.h"
 
 namespace librepr {
 
@@ -34,7 +35,9 @@ struct DataMember : Member {
   using parent      = Parent;
   using parent_type = Parent::type;
 
-  [[nodiscard]] std::string_view name() const { return member_name<parent_type, Index>; }
+  [[nodiscard]] std::string_view name() const { 
+    return member_name<parent_type, Index>; 
+  }
 };
 
 }  // namespace category
@@ -44,7 +47,7 @@ template <typename T>
 struct Reflect<T> : category::Type<T> {
   constexpr static auto member_count = librepr::detail::arity<T>;
 
-  using member_tuple = decltype(librepr::detail::to_tuple(std::declval<T>()));
+  using member_tuple = decltype(librepr::detail::to_reftuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>, "Aggregate reflection failed");
 
   using member_types                = pack::rebox<member_tuple, TypeList>::template map<std::remove_reference_t>;
@@ -60,12 +63,12 @@ struct Reflect<T> : category::Type<T> {
 
   template <typename V>
   static void visit(V&& visitor, T& obj) {
-    auto decomposed = librepr::detail::to_tuple(obj);
-    static_assert(members::size == std::tuple_size_v<decltype(decomposed)>,
+    auto decomposed = librepr::detail::to_reftuple(obj);
+    static_assert(members::size == decltype(decomposed)::size,
                   "Decomposed obj does not match reflected member amount.");
 
     members::enumerate([&visitor, &decomposed]<typename M, std::size_t Index> {
-      visitor(category::Value<category::DataMember<M, Reflect, Index>>{std::get<Index>(decomposed)});
+      visitor(category::Value<category::DataMember<M, Reflect, Index>>{librepr::get<Index>(decomposed)});
     });
   }
 
