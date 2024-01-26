@@ -38,6 +38,8 @@ struct DataMember : Member {
   [[nodiscard]] std::string_view name() const { 
     return member_name<parent_type, Index>; 
   }
+
+  using Member::visit;
 };
 
 }  // namespace category
@@ -70,19 +72,6 @@ struct Reflect<T> : category::Type<T> {
     members::enumerate([&visitor, &decomposed]<typename M, std::size_t Index> {
       visitor(category::Value<category::DataMember<M, Reflect, Index>>{librepr::get<Index>(decomposed)});
     });
-  }
-
-  static std::string layout() {
-    auto output = std::string("{");
-    type::enumerate([&output]<typename Member, std::size_t Index>() {
-      if (Index != 0) {
-        output += ", ";
-      }
-
-      output += Member::layout();
-    });
-
-    return output + '}';
   }
 };
 }  // namespace librepr

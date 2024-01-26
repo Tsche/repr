@@ -5,8 +5,6 @@
 #include <type_traits>
 #include "category.h"
 
-#include <librepr/macro/format.h>
-
 namespace librepr {
 
 template <typename T>
@@ -27,8 +25,6 @@ struct Reflect<T[N]> : category::Type<T[N]> {
       visitor(category::Value{obj[idx]});
     }
   }
-
-  static std::string layout() { return REPR_FORMAT("{}[{}]", Reflect<T>::layout(), N); }
 };
 
 template <typename T>
@@ -39,8 +35,6 @@ struct Reflect<T[]> : category::Type<T[]> {  // NOLINT
 
   template <typename V>
   static void visit(V&& visitor, T const& /* obj */) { }
-
-  static std::string layout() { return REPR_FORMAT("[{}]", Reflect<type>::layout()); }
 };
 
 }  // namespace librepr

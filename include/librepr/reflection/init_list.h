@@ -4,7 +4,6 @@
 #include <ranges>
 #include <type_traits>
 
-#include <librepr/macro/format.h>
 #include "category.h"
 
 namespace librepr {
@@ -24,7 +23,5 @@ struct Reflect<T> : category::Type<T>{
       visitor(category::Value{value});
     }
   }
-
-  static std::string layout() { return REPR_FORMAT("[{}]", Reflect<type>::layout()); }
 };
 }  // namespace librepr

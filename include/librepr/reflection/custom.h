@@ -4,7 +4,6 @@
 #include <librepr/customization/members.h>
 #include <librepr/customization/reflection.h>
 
-#include <librepr/visitors/visitor.h>
 
 namespace librepr {
 template <typename T>
@@ -33,11 +32,6 @@ struct Reflect<T> {
       }
       Reflect<typename decltype(member)::type>::visit(visitor, member(obj));
     });
-  }
-
-  static std::string layout() {
-    //return std::format("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
-    return "";
   }
 };*/
 }  // namespace librepr

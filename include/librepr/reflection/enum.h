@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <sstream>
 #include <type_traits>
 
 #include <librepr/feature.h>
@@ -25,24 +23,6 @@ struct Reflect<T> : category::Type<T> {
   template <typename V>
   static void visit(V&& visitor, T& obj) {
     visitor(category::Value{obj});
-  }
-
-  static std::string layout() {
-    std::ostringstream list{};
-    auto values = librepr::enum_names<T>();
-    for (auto const& element : values) {
-      if (&element != &*std::begin(values)) {
-        list << " | ";
-      }
-#if USING(REPR_USE_MAGIC_ENUM)
-      if constexpr (detail::is_scoped_enum<T>) {
-        list << librepr::get_name<T>();
-        list << "::";
-      }
-#endif
-      list << element;
-    }
-    return list.str();
   }
 };
 

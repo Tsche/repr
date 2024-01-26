@@ -1,9 +1,14 @@
 #pragma once
 
+#include <concepts>
 #include <cstddef>
 #include <stack>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <librepr/name/type.h>
+#include <librepr/reflection/category.h>
+#include <librepr/reflection/variant.h>
 #include <librepr/reflection/aggregate.h>
 #include <librepr/reflection/array.h>
 #include <librepr/util/string_buffer.h>
@@ -44,6 +49,47 @@ struct PythonVisitor {
   }
 
   template <typename T>
+  void print_type() {
+    if constexpr (std::is_fundamental_v<T>) {
+      if constexpr (std::is_floating_point_v<T>) {
+        result << "float";
+      } else if constexpr (std::same_as<T, bool>) {
+        result << "bool";
+      } else if constexpr (std::same_as<T, char>) {
+        result << "str";
+      } else if constexpr (std::is_integral_v<T>) {
+        result << "int";
+      } else {
+        // todo handle all fundamentals
+        result << fix_namespace(get_name<T>());
+      }
+    } else if constexpr (std::same_as<T, const char*>) {
+      result << "str";
+    } else if constexpr (requires { typename Reflect<T>::element_type; }) {
+      if constexpr (requires { typename T::mapped_type; }) {
+        result << "dict[";
+        print_type<typename T::key_type>();
+        result << ", ";
+        print_type<typename T::mapped_type>();
+        result << "]";
+      } else {
+        result << "list[";
+        print_type<typename Reflect<T>::element_type>();
+        result << "]";
+      }
+    } else if constexpr (is_variant<T>) {
+      Reflect<T>::alternatives::enumerate([this]<typename Member, std::size_t Index>() {
+        if constexpr (Index != 0) {
+          result << " | ";
+        }
+        print_type<Member>();
+      });
+    } else {
+      result << fix_namespace(get_name<T>());
+    }
+  }
+
+  template <typename T>
     requires category::has_members<T>
   auto operator()(T info) {
     auto full_name = info.type_name();
@@ -68,7 +114,7 @@ struct PythonVisitor {
       }
     }
 
-    result << '\n' << get_indent() << "@dataclass\n";
+    result << get_indent() << "@dataclass\n";
     result << get_indent() << "class " << name << ":\n";
 
     namespaces.push(full_name);
@@ -89,7 +135,7 @@ struct PythonVisitor {
     result << get_indent();
     if constexpr (category::has_name<T>) {
       result << info.name() << ": ";
-      if (!namespace_.empty()){
+      if (!namespace_.empty()) {
         result << fix_namespace(namespace_) << '.';
       }
       result << name << '\n';
@@ -97,14 +143,10 @@ struct PythonVisitor {
   }
 
   template <typename T>
-    requires category::has_extent<T> && category::has_name<T>
   auto operator()(T info) {
-    result << get_indent() << info.name() << ": list[" << info.type_name() << "]\n";
-  }
-
-  template <typename T>
-  auto operator()(T info) {
-    result << get_indent() << info.name() << ": " << info.type_name() << '\n';
+    result << get_indent() << info.name() << ": ";
+    print_type<typename T::type>();
+    result << '\n';
   }
 };
 }  // namespace librepr

@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 
-#include <librepr/name/type.h>
-
 #include "category.h"
 #include "aggregate.h"
 #include "array.h"
@@ -22,8 +20,6 @@ struct Reflect : category::Type<T>{
   static void visit(V&& visitor, T& obj) {
     visitor(category::Value{obj});
   }
-
-  static std::string layout() { return librepr::get_name<T>(); }
 };
 
 template <>
@@ -34,8 +30,6 @@ struct Reflect<char const*> : category::Type<char const*>{
   static void visit(V&& visitor, char const* obj) {
     visitor(category::Value<Reflect<char const*>>{obj});
   }
-
-  static std::string layout() { return "str"; }
 };
 
 template <typename T>

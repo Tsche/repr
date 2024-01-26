@@ -56,29 +56,12 @@ struct Reflect<T> : category::Type<T> {
     std::visit(overload_set, obj);
   }
 
-  /*static std::string layout() {
-    auto output = std::string("<");
-    TypeList<Ts...>::enumerate([&output]<typename Member>(std::size_t index) {
-      if (index != 0) {
-        output += " | ";
-      }
-
-      output += Reflect<Member>::layout();
-    });
-
-    return output + '>';
-  }*/
-};
-
-template <template <typename...> class Variant, typename... Ts>
-  requires std::derived_from<Variant<Ts...>, std::variant<Ts...>>
-struct Reflect<Variant<Ts...>> : category::Type<Variant<Ts...>> {
-  using type                        = Variant<Ts...>;
-  constexpr static bool can_descend = true;
-
   template <typename V>
-  static void visit(V&& visitor, type& obj) {
-    std::visit(detail::Overload{[&visitor](Ts& alternative) { visitor(category::Value{alternative}); }...}, obj);
+  static void visit(V&& visitor) {
+    alternatives::for_each([&visitor]<typename U>(){
+      visitor(Reflect<U>{});
+    });
   }
 };
+
 }  // namespace librepr

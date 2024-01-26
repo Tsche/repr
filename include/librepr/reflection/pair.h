@@ -2,7 +2,6 @@
 #include <string>
 #include <type_traits>
 
-#include <librepr/macro/format.h>
 #include <librepr/util/concepts.h>
 #include "category.h"
 namespace librepr {
@@ -20,10 +19,6 @@ struct Reflect<T> {
   static void visit(V&& visitor, T& obj) {
     visitor(category::Value{obj.first});
     visitor(category::Value{obj.second});
-  }
-
-  static std::string layout() {
-    return REPR_FORMAT("{{{}, {}}}", Reflect<first_type>::layout(), Reflect<second_type>::layout());
   }
 };
 

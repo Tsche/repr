@@ -1,11 +1,11 @@
 #pragma once
 
 #include <cstddef>
-#include <format>
 #include <string>
 #include <string_view>
 #include <type_traits>
 
+#include <librepr/macro/format.h>
 #include <librepr/name/type.h>
 #include <librepr/reflection/aggregate.h>
 #include <librepr/reflection/category.h>
@@ -30,7 +30,7 @@ private:
   template <typename T>
   auto name(T const&) {
     ++unnamed_count;
-    return std::format("UNNAMED_{}", unnamed_count);
+    return REPR_FORMAT("UNNAMED_{}", unnamed_count);
   }
 
   template <typename T>

@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "librepr/util/reftuple.h"
+#include <librepr/util/reftuple.h>
 #include "visit_aggregate.h"
 
 namespace librepr::detail {

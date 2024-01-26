@@ -14,8 +14,6 @@ struct Reflect;
 }
 
 namespace librepr::category {
-template <typename T>
-concept has_subscript = requires(T obj) { obj[0]; };
 
 template <typename T>
 concept has_name = requires(T obj) { std::string_view{obj.name()}; };
@@ -68,7 +66,7 @@ struct Value : T {
   [[nodiscard]] constexpr type& value() const noexcept { return *data; }
 
   template <typename V>
-  void visit(V&& visitor) requires (requires { T::visit(std::declval<V>(), std::declval<type&>());}) {
+  void visit(V&& visitor) { // requires (requires { T::visit(std::declval<V>(), std::declval<type&>());}) {
     T::visit(std::forward<V>(visitor), value());
   }
 

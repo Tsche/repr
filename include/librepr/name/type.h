@@ -1,6 +1,5 @@
 #pragma once
 #include <cstddef>
-#include <format>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -8,6 +7,7 @@
 #include <typeinfo>
 #include <utility>
 
+#include <librepr/macro/format.h>
 #include <librepr/macro/default.h>
 #include <librepr/util/list.h>
 #include "ctti.h"
@@ -60,7 +60,7 @@ public:
       return full;
     }
 
-    return std::format("{}<{}>", std::string_view(full.data(), marker), format_template_arguments());
+    return REPR_FORMAT("{}<{}>", std::string_view(full.data(), marker), format_template_arguments());
   }
 
   static std::string format_template_arguments() {
