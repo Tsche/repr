@@ -2,6 +2,7 @@
 #include <librepr/util/string_buffer.h>
 #include <librepr/reflection/category.h>
 #include <librepr/name/type.h>
+#include <librepr/visit.h>
 #include <type_traits>
 
 namespace librepr {
@@ -19,16 +20,15 @@ struct LayoutVisitor {
 
   template <typename T>
   void print_name() {
-    if constexpr (std::is_pointer_v<T> && std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char>){
+    if constexpr (std::is_pointer_v<T> && std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char>) {
       result << "str";
-    }
-    else{
+    } else {
       result << get_name<T>();
     }
   }
 
   template <category::can_descend T>
-  void descend(T info){
+  void descend(T info) {
     separate = false;
     info.visit(*this);
   }
@@ -42,16 +42,20 @@ struct LayoutVisitor {
       // iterable container
 
       result << '[';
-      if constexpr (requires { typename type::key_type; typename type::mapped_type; }){
+      if constexpr (requires {
+                      typename type::key_type;
+                      typename type::mapped_type;
+                    }) {
         // associative container
-        print_name<typename type::key_type>();
+        separate = false;
+        librepr::visit<typename type::key_type>(*this);
         result << " -> ";
-        print_name<typename type::mapped_type>();
-      }
-      else {
+        separate = false;
+        librepr::visit<typename type::mapped_type>(*this);
+      } else {
         print_name<typename type::value_type>();
       }
-      
+
       result << ']';
     } else {
       print_name<type>();
@@ -65,20 +69,35 @@ struct LayoutVisitor {
     descend(info);
     result << '}';
   }
-
   template <category::has_alternatives T>
   void operator()(T info) {
     print_separator();
-    result << '<';
-    descend(info);
-    result << '>';
+    T::alternatives::for_each([this, first=true]<typename U>() mutable {
+      if (!first) {
+        result << " | ";
+      }
+      first = false;
+      separate = false;
+      librepr::visit<U>(*this);
+    });
   }
 
   template <category::has_enumerator_names T>
   void operator()(T info) {
-    result << '(';
-    descend(info);
-    result << ')';
+    print_separator();
+    for (auto const& name : info.enumerator_names) {
+      if (&*info.enumerator_names.begin() != &name) {
+        result << " | ";
+      }
+      result << name;
+    }
+  }
+
+  template <category::has_extent T>
+  requires requires { typename T::element_type; }
+  void operator()(T info) {
+    print_name<typename T::element_type>();
+    result << '[' << std::to_string(info.extent) << ']';
   }
 };
 }  // namespace librepr

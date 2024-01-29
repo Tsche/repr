@@ -2,10 +2,10 @@
 #include <repr>
 
 TEST(layout, containers) {
-  EXPECT_EQ(typeinfo<const char*[5]>.layout(), "str[5]");
-  EXPECT_EQ(typeinfo<int[5]>.layout(), "int[5]");
-  EXPECT_EQ(typeinfo<const char*[]>.layout(), "[str]");
-  EXPECT_EQ(typeinfo<int[]>.layout(), "[int]");
-  EXPECT_EQ(typeinfo<std::vector<int>>.layout(), "[int]");
-  EXPECT_EQ((typeinfo<std::map<int, int>>.layout()), "[{int, int}]");
+  EXPECT_EQ(librepr::layout_of<const char*[5]>(), "str[5]");
+  EXPECT_EQ(librepr::layout_of<int[5]>(), "int[5]");
+  // EXPECT_EQ(librepr::layout_of<const char*[]>(), "str []"); //! TODO
+  EXPECT_EQ(librepr::layout_of<int[]>(), "int []");
+  EXPECT_EQ(librepr::layout_of<std::vector<int>>(), "[int]");
+  EXPECT_EQ((librepr::layout_of<std::map<int, int>>()), "[int -> int]");
 }

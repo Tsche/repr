@@ -18,6 +18,7 @@ struct Reflect<T[N]> : category::Type<T[N]> {
   
   constexpr static auto extent = N;
   constexpr static bool can_descend = true;
+  constexpr static bool iterable = true;
 
   template <typename V>
   static void visit(V&& visitor, T (&obj)[N]) {
@@ -32,6 +33,7 @@ struct Reflect<T[]> : category::Type<T[]> {  // NOLINT
   using type = T[];
   using element_type = T;
   constexpr static bool can_descend = true;
+  constexpr static bool iterable = true;
 
   template <typename V>
   static void visit(V&& visitor, T const& /* obj */) { }

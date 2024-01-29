@@ -3,12 +3,12 @@
 
 TEST(layout, nullptr){
   // TODO this is not nice
-  EXPECT_EQ(typeinfo<decltype(nullptr)>.layout(), "decltype(nullptr)");
+  EXPECT_EQ(librepr::layout_of<decltype(nullptr)>(), "decltype(nullptr)");
 }
 
 struct Test {};
 TEST(layout, pointer) {
-  EXPECT_EQ(typeinfo<int*>.layout(), "int*");
-  EXPECT_EQ(typeinfo<void*>.layout(), "void*");
-  EXPECT_EQ(typeinfo<testing::Test*>.layout(), "testing::Test*");
+  EXPECT_EQ(librepr::layout_of<int*>(), "int*");
+  EXPECT_EQ(librepr::layout_of<void*>(), "void*");
+  EXPECT_EQ(librepr::layout_of<testing::Test*>(), "testing::Test*");
 }

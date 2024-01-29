@@ -5,9 +5,11 @@
 #include <librepr/type_info.h>
 #include <librepr/visit.h>
 #include <librepr/visitors/repr.h>
-#include <type_traits>
+#include <librepr/visitors/cpp.h>
+#include <librepr/visitors/python.h>
+#include <librepr/visitors/layout.h>
 
-#include <iostream>
+
 namespace librepr {
 struct ReprWrapper {
   template <typename T>
@@ -18,6 +20,27 @@ struct ReprWrapper {
     return visitor.result.extract();
   }
 };
+
+enum class Language { CPP, Python };
+
+template <typename T, Language language = Language::CPP>
+std::string code_for() {
+  if constexpr (language == Language::Python) {
+    auto visitor = librepr::PythonVisitor{};
+    librepr::visit<T>(visitor);
+    return visitor.result.extract();
+  }
+  auto visitor = librepr::CppVisitor{};
+  librepr::visit<T>(visitor);
+  return visitor.result.extract();
+}
+
+template <typename T>
+std::string layout_of() {
+  auto visitor = librepr::LayoutVisitor();
+  librepr::visit<T>(visitor);
+  return visitor.result.extract();
+}
 }  // namespace librepr
 
 

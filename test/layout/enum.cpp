@@ -12,6 +12,6 @@ enum class ScopedEnum {
 };
 
 TEST(layout, enum) {
-  EXPECT_EQ(typeinfo<UnscopedEnum>.layout(), "FIRST | SECOND");
-  EXPECT_EQ(typeinfo<ScopedEnum>.layout(), "ScopedEnum::FIRST | ScopedEnum::SECOND");
+  EXPECT_EQ(librepr::layout_of<UnscopedEnum>(), "FIRST | SECOND");
+  EXPECT_EQ(librepr::layout_of<ScopedEnum>(), "ScopedEnum::FIRST | ScopedEnum::SECOND");
 }
