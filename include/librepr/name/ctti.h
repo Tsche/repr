@@ -6,7 +6,7 @@
 #include <librepr/feature.h>
 #include <librepr/macro/platform.h>
 #include <librepr/macro/default.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 
 namespace librepr::
 #if USING(REPR_CTTI)

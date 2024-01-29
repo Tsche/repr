@@ -3,7 +3,7 @@
 #include <string>
 #include <string_view>
 
-#include <librepr/util/string_buffer.h>
+#include <librepr/util/string/buffer.h>
 #include <librepr/macro/format.h>
 #include <librepr/name/type.h>
 namespace librepr {

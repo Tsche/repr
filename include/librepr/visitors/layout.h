@@ -1,5 +1,5 @@
 #pragma once
-#include <librepr/util/string_buffer.h>
+#include <librepr/util/string/buffer.h>
 #include <librepr/reflection/category.h>
 #include <librepr/name/type.h>
 #include <librepr/visit.h>
@@ -8,6 +8,7 @@
 namespace librepr {
 struct LayoutVisitor {
   detail::StringBuffer result;
+private:
   bool separate = false;
 
   void print_separator() {
@@ -32,6 +33,9 @@ struct LayoutVisitor {
     separate = false;
     info.visit(*this);
   }
+
+public:
+
 
   template <typename T>
   void operator()(T info) {

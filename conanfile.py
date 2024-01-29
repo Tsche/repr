@@ -18,11 +18,14 @@ class ReprRecipe(ConanFile):
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {
+        "benchmark": [True, False],
         "sanitizers": [True, False],
         "coverage": [True, False],
         "magic_enum": [True, False],
+        "fmt": [True, False],
     }
-    default_options = {"sanitizers": False, "coverage": False, "magic_enum": False}
+    default_options = {"benchmark": False, "sanitizers": False,
+                       "coverage": False, "magic_enum": False, "fmt": False}
     generators = "CMakeToolchain", "CMakeDeps"
 
     exports_sources = "CMakeLists.txt", "include/*"
@@ -30,6 +33,15 @@ class ReprRecipe(ConanFile):
     def requirements(self):
         if self.options.magic_enum:
             self.requires("magic_enum/0.9.3", transitive_headers=True)
+
+        if self.options.fmt:
+            self.requires("fmt/10.2.1",
+                          transitive_headers=True,
+                          transitive_libs=True)
+
+        if self.options.benchmark:
+            self.requires("benchmark/1.8.3")
+
         self.test_requires("gtest/1.14.0")
 
     def layout(self):
@@ -40,9 +52,11 @@ class ReprRecipe(ConanFile):
             cmake = CMake(self)
             cmake.configure(
                 variables={
+                    "ENABLE_BENCHMARK": self.options.benchmark,
                     "ENABLE_SANITIZERS": self.options.sanitizers,
                     "ENABLE_COVERAGE": self.options.coverage,
                     "ENABLE_MAGIC_ENUM": self.options.magic_enum,
+                    "ENABLE_FMTLIB": self.options.fmt,
                 }
             )
             cmake.build()

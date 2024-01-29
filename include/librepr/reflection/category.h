@@ -4,6 +4,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include "librepr/macro/util.h"
 
 #include <librepr/name/type.h>
 #include <librepr/util/util.h>
@@ -33,14 +34,10 @@ template <typename T>
 concept has_alternatives = requires { typename T::alternatives; };
 
 template <typename T>
-concept has_enumerator_names = requires {
-  T::enumerator_names;
-};
+concept has_enumerator_names = requires { T::enumerator_names; };
 
 template <typename T>
-concept has_value = requires (T obj){
-  obj.value();
-};
+concept has_value = requires(T obj) { obj.value(); };
 
 template <typename T>
 concept can_descend = has_members<T> || has_extent<T> || has_alternatives<T> || T::can_descend;
@@ -58,6 +55,7 @@ struct Value : T {
 
   Value(const Value&) noexcept            = default;
   Value& operator=(const Value&) noexcept = default;
+  ~Value()                                = default;
 
   constexpr explicit(false) operator type&() const noexcept { return *data; }
   constexpr type& operator*() const noexcept { return *data; }
@@ -66,8 +64,8 @@ struct Value : T {
   [[nodiscard]] constexpr type& value() const noexcept { return *data; }
 
   template <typename V>
-  void visit(V&& visitor) { // requires (requires { T::visit(std::declval<V>(), std::declval<type&>());}) {
-    T::visit(std::forward<V>(visitor), value());
+  void visit(V&& visitor) {
+    LIBREPR_MAYBE_DO(T::visit(std::forward<V>(visitor), value()));
   }
 
 private:
@@ -84,7 +82,7 @@ struct Type {
 
   template <typename V>
   static void visit(V&& visitor) {
-    visitor(Reflect<T>{});
+    LIBREPR_MAYBE_DO(Reflect<T>::visit(std::forward<V>(visitor)));
   }
 };
 

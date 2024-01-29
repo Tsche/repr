@@ -7,7 +7,7 @@
 #include <librepr/name/member.h>
 #include <librepr/util/list.h>
 #include <librepr/ctvi/ctvi.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 
 namespace librepr {
   
@@ -95,13 +95,13 @@ template <typename T>
 Member(T) -> Member<T, 0>;
 
 template <Member... Ts>
-concept is_homogeneous_members = requires { typename std::common_type<typename decltype(Ts)::class_type...>::type; };
+concept is_homogeneous_members = requires { typename std::common_type_t<typename decltype(Ts)::class_type...>; };
 
 template <Member... Ts>
 struct MemberList : ValueListBase<MemberList, Ts...> {
     static_assert(is_homogeneous_members<Ts...>, "No common class types in declared members detected.");
 
     template <typename C>
-    constexpr static bool is_valid_for = std::same_as<typename std::common_type<typename decltype(Ts)::class_type...>::type, C>;
+    constexpr static bool is_valid_for = std::same_as<std::common_type_t<typename decltype(Ts)::class_type...>, C>;
 };
 }

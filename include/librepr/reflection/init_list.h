@@ -28,5 +28,10 @@ struct Reflect<T> : category::Type<T> {
       visitor(category::Value{value});
     }
   }
+
+  template <typename V>
+  static void visit(V&& visitor) {
+    visitor(Reflect<element_type>{});
+  }
 };
 }  // namespace librepr

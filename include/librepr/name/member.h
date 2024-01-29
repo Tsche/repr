@@ -10,7 +10,7 @@
 #include <librepr/customization/members.h>
 
 #include <librepr/util/util.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 
 #include <librepr/reflection/detail/arity.h>
 #include <librepr/reflection/detail/to_tuple.h>

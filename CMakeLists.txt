@@ -12,15 +12,13 @@ target_include_directories(repr INTERFACE
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-# TODO
-#find_package(magic_enum CONFIG REQUIRED)
-#target_link_libraries(repr INTERFACE magic_enum::magic_enum)
 
 option(BUILD_TESTING "Enable tests" ON)
 option(ENABLE_SANITIZERS "Enable asan and ubsan" OFF)
 option(ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
 option(ENABLE_FMTLIB "Use fmt::* instead of std::*" OFF)
 option(ENABLE_MAGIC_ENUM "Use magic_enum instead of librepr::ctei" OFF)
+option(ENABLE_BENCHMARK "Enable benchmarks" OFF)
 
 if(ENABLE_FMTLIB)
   find_package(fmt CONFIG REQUIRED)
@@ -82,6 +80,15 @@ if(NOT BUILD_TESTING STREQUAL OFF)
     target_compile_options(repr_test INTERFACE -fsanitize=address,undefined)
     target_link_options(repr_test INTERFACE -fsanitize=address,undefined)
   endif()
+endif()
+
+if (ENABLE_BENCHMARK)
+  message(STATUS "Building runtime benchmarks")
+  add_executable(repr_benchmark "")
+  add_subdirectory(benchmark)
+  find_package(benchmark REQUIRED)
+  target_link_libraries(repr_benchmark PRIVATE benchmark::benchmark_main)
+  target_link_libraries(repr_benchmark PRIVATE repr)
 endif()
 
 ## headers

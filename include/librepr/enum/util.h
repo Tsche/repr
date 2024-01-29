@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include <librepr/ctvi/ctvi.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 
 namespace librepr::ctei {
 enum class EnumKind { Linear, Flags, Empty };

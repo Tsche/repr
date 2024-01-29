@@ -10,7 +10,7 @@
 #include <librepr/reflection/aggregate.h>
 #include <librepr/reflection/category.h>
 #include <librepr/util/concepts.h>
-#include <librepr/util/string_buffer.h>
+#include <librepr/util/string/buffer.h>
 #include <librepr/reflection/reflect.h>
 
 namespace librepr {

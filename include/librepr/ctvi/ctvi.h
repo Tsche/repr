@@ -3,7 +3,7 @@
 #include <string_view>
 
 #include <librepr/macro/platform.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 
 namespace librepr::ctvi {
 

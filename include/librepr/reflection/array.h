@@ -26,6 +26,11 @@ struct Reflect<T[N]> : category::Type<T[N]> {
       visitor(category::Value{obj[idx]});
     }
   }
+
+  template <typename V>
+  static void visit(V&& visitor) {
+    visitor(Reflect<element_type>{});
+  }
 };
 
 template <typename T>
@@ -36,7 +41,10 @@ struct Reflect<T[]> : category::Type<T[]> {  // NOLINT
   constexpr static bool iterable = true;
 
   template <typename V>
-  static void visit(V&& visitor, T const& /* obj */) { }
+  static void visit(V&& /* visitor */, T const& /* obj */) { }
+  
+  template <typename V>
+  static void visit(V&& /* visitor */) { }
 };
 
 }  // namespace librepr

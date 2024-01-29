@@ -58,12 +58,6 @@ struct Reflect<T> : category::Type<T> {
   constexpr static bool can_descend = true;
 
   template <typename V>
-  static void visit(V&& visitor) {
-    members::enumerate(
-        [&visitor]<typename M, std::size_t Index> { visitor(category::DataMember<M, Reflect, Index>{}); });
-  }
-
-  template <typename V>
   static void visit(V&& visitor, T& obj) {
     auto decomposed = librepr::detail::to_reftuple(obj);
     static_assert(members::size == decltype(decomposed)::size,
@@ -72,6 +66,12 @@ struct Reflect<T> : category::Type<T> {
     members::enumerate([&visitor, &decomposed]<typename M, std::size_t Index> {
       visitor(category::Value<category::DataMember<M, Reflect, Index>>{librepr::get<Index>(decomposed)});
     });
+  }
+
+  template <typename V>
+  static void visit(V&& visitor) {
+    members::enumerate(
+        [&visitor]<typename M, std::size_t Index> { visitor(category::DataMember<M, Reflect, Index>{}); });
   }
 };
 }  // namespace librepr

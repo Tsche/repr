@@ -5,6 +5,7 @@
 #include <librepr/feature.h> 
 #include <librepr/macro/util.h>
 #include <librepr/macro/platform.h>
+#include <librepr/util/string/util.h>
 
 #if USING(LIBREPR_COMPILER_MSVC)
 #include "detail/undecorate.h"

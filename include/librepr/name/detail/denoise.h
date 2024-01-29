@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <librepr/macro/assert.h>
 #include <librepr/macro/util.h>
-#include <librepr/util/string_buffer.h>
+#include <librepr/util/string/buffer.h>
 
 namespace librepr::detail {
 namespace msvc {

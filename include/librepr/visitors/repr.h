@@ -8,7 +8,7 @@
 #include <librepr/reflection/category.h>
 #include <librepr/reflection/reflect.h>
 
-#include <librepr/util/string_buffer.h>
+#include <librepr/util/string/buffer.h>
 #include <librepr/util/concepts.h>
 #include <librepr/macro/format.h>
 #include <librepr/repr/all.h>

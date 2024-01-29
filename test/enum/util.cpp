@@ -1,7 +1,7 @@
 #include <memory>
 #include <type_traits>
 #include <gtest/gtest.h>
-#include <librepr/util/string.h>
+#include <librepr/util/string/const_string.h>
 #include <librepr/enum/util.h>
 #include "test_enums.h"
 
