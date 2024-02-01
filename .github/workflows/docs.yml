@@ -29,15 +29,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: 'true'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt -y install doxygen graphviz
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Generate docs
-        uses: mattnotmitt/doxygen-action@1.9.5
-        with:
-          doxyfile-path: docs/Doxygen
-          working-directory: docs
+        working-directory: docs
+        run: doxygen
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
