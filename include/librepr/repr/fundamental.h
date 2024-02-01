@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <cmath>
-#include <librepr/detail/format.h>
+#include <librepr/macro/format.h>
 
 namespace librepr {
 

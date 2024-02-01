@@ -3,20 +3,44 @@
 
 #include <librepr/customization.h>
 #include <librepr/type_info.h>
+#include <librepr/visit.h>
 #include <librepr/visitors/repr.h>
-#include <type_traits>
+#include <librepr/visitors/cpp.h>
+#include <librepr/visitors/python.h>
+#include <librepr/visitors/layout.h>
+
 
 namespace librepr {
 struct ReprWrapper {
   template <typename T>
   std::string operator()(T const& obj, Options options = {}) const {
     //TODO this could be static once msvc supports it
-    //return librepr::TypeInfo<T>::dump(obj, with_type, explicit_types);
     auto visitor = ReprVisitor{options};
-    librepr::TypeInfo<T>::visit(visitor, obj);
-    return visitor.result;
+    librepr::visit(visitor, obj);
+    return visitor.result.extract();
   }
 };
+
+enum class Language { CPP, Python };
+
+template <typename T, Language language = Language::CPP>
+std::string code_for() {
+  if constexpr (language == Language::Python) {
+    auto visitor = librepr::PythonVisitor{};
+    librepr::visit<T>(visitor);
+    return visitor.result.extract();
+  }
+  auto visitor = librepr::CppVisitor{};
+  librepr::visit<T>(visitor);
+  return visitor.result.extract();
+}
+
+template <typename T>
+std::string layout_of() {
+  auto visitor = librepr::LayoutVisitor();
+  librepr::visit<T>(visitor);
+  return visitor.result.extract();
+}
 }  // namespace librepr
 
 
@@ -24,6 +48,3 @@ inline constexpr librepr::ReprWrapper repr {};
 
 template <typename T>
 inline constexpr librepr::TypeName<T> nameof {};
-
-template <typename T>
-inline constexpr librepr::TypeInfo<T> typeinfo {};

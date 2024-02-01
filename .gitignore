@@ -1,7 +1,9 @@
 **/build/
 .vscode/
 .vsconan/
+.vs/
 .cache/
+.trunk/
 **/.idea
 **/CMakeUserPresets.json
 compile_commands.json

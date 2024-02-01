@@ -1,0 +1,26 @@
+#pragma once
+#include <cstddef>
+
+@%max 16
+@{
+def type_list(maximum, with_typename = False):
+  return ', '.join(f"{'typename ' if with_typename else ''}T{idx}" for idx in range(maximum + 1))
+}@
+
+namespace librepr::pack {
+
+template <std::size_t Idx, typename T>
+struct Split;
+
+@[for N in range(__max__)]
+template <template <typename...> class List, @type_list(N, True), typename... Ts>
+struct Split<@N, List<@type_list(N), Ts...>> {
+  using type = T@N;
+  using head = List<@type_list(N)>;
+  using tail = List<Ts...>;
+};
+@[end for]
+
+constexpr inline auto MAX_SPEC = @(__max__ - 1)U;
+
+}

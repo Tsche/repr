@@ -1,11 +1,13 @@
 #pragma once
-#include <string>
-#include <type_traits>
 #include <array>
+#include <bit>
+#include <cstddef>
+#include <iterator>
 #include <string_view>
-#include <algorithm>
+#include <type_traits>
 
-#include <librepr/util/list.h>
+
+#include <librepr/util/collections/list.h>
 
 #include "util.h"
 
@@ -41,7 +43,8 @@ private:
   }
 
 public:
-  static constexpr auto names = get_enum_names();
+  constexpr static auto names = get_enum_names();
+  //TODO enum_values?
 
   template <std::size_t Idx = 0>
   constexpr static std::string_view search_name(underlying value)

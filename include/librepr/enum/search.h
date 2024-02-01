@@ -1,13 +1,15 @@
 #pragma once
 #include <array>
+#include <bit>
+#include <cstddef>
 #include <limits>
-#include <string_view>
 #include <type_traits>
-#include <algorithm>
 #include <utility>
 
+#include <librepr/feature.h>
 #include <librepr/customization.h>
-#include <librepr/detail/default.h>
+#include <librepr/customization/enum.h>
+#include <librepr/macro/default.h>
 
 #include "range.h"
 #include "util.h"
@@ -60,7 +62,7 @@ struct Search {
   using underlying = std::underlying_type_t<T>;
 
   template <underlying Offset, underlying Max>
-  static constexpr auto search_chunk() {
+  constexpr static auto search_chunk() {
     return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
       return std::array{
           dump_quick<std::bit_cast<T>(static_cast<underlying>(Idx) + Offset)>()[0] != '(' ...
@@ -70,7 +72,7 @@ struct Search {
   }
 
   template <underlying Offset, underlying Max>
-  static constexpr auto search_chunk_multi() {
+  constexpr static auto search_chunk_multi() {
     auto array = std::array<bool, Max - Offset>{};
 
     auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
@@ -133,7 +135,7 @@ struct Search {
 
   static consteval auto reflected_min() {
     if constexpr (has_search_range<T>) {
-      return clamp<underlying>(EnumSettings<T>::search_range::min);
+      return clamp<underlying>(Settings<T>::search_range::min);
     }
 
     if constexpr (std::is_signed_v<underlying>) {
@@ -145,7 +147,7 @@ struct Search {
 
   static consteval auto reflected_max() {
     if constexpr (has_search_range<T>) {
-      return clamp<underlying>(EnumSettings<T>::search_range::max);
+      return clamp<underlying>(Settings<T>::search_range::max);
     }
 
     if constexpr (std::is_signed_v<underlying>) {
@@ -153,6 +155,51 @@ struct Search {
     } else {
       return clamp<underlying>(REPR_ENUM_MAX_UNSIGNED);
     }
+  }
+
+  template <underlying Max = std::numeric_limits<underlying>::digits - 1>
+  constexpr static int largest_flag_multi() {
+    auto array = std::array<bool, Max>{};
+
+    auto list = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+      return dump_list<std::bit_cast<T>(static_cast<underlying>(1ULL << Idx))...>();
+    }(std::make_index_sequence<Max>{});
+
+    array[0]            = list[0] != '(';
+    std::size_t out_idx = 1;
+
+    for (std::size_t idx = 0; idx < list.length(); ++idx) {
+      if (list[idx] == ',') {
+        // TODO check if all compilers insert a space after the comma
+        array[out_idx++] = list[idx + 2] != '(';
+      }
+    }
+
+    const auto last = std::find(array.rbegin(), array.rend(), true);
+    if (last == array.rend()) {
+      if constexpr (is_enum_value<T, 0>()) {
+        return 0;
+      }
+      return -1;
+    }
+    return std::distance(array.begin(), last.base());
+  }
+
+  template <underlying Max = std::numeric_limits<underlying>::digits - 1>
+  constexpr static int largest_flag_chunk() {
+    const auto result = []<std::size_t... Idx>(std::index_sequence<Idx...>) {
+      return std::array{
+          dump_quick<std::bit_cast<T>(static_cast<underlying>(1ULL << Idx))>()[0] != '(' ...};
+    }(std::make_index_sequence<Max>{});
+
+    const auto last = std::find(result.rbegin(), result.rend(), true);
+    if (last == result.rend()) {
+      if constexpr (is_enum_value<T, 0>()) {
+        return 0;
+      }
+      return -1;
+    }
+    return std::distance(result.begin(), last.base());
   }
 
   template <auto N = std::numeric_limits<underlying>::digits - 1>
@@ -182,8 +229,14 @@ struct Search {
       return Accessor<T, Empty>{};
     } else {
       if constexpr (std::is_unsigned_v<underlying> && linear_search::is_binary_powers()) {
-        // all found values were flag-like so far, try all bits
+// all found values were flag-like so far, try all bits
+#if USING(REPR_ENUM_RECURSIVE_SEARCH)
         constexpr auto flag_max = largest_flag();
+#elif USING(REPR_ENUM_FAST_SEARCH)
+        constexpr auto flag_max = largest_flag_multi();
+#else
+        constexpr auto flag_max = largest_flag_chunk();
+#endif
         if constexpr (flag_max == -1) {
           // something went terribly wrong - none of the powers of 2 are valid values
           // assume the range was empty to begin with

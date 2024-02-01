@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <repr>
+#include <librepr/macro/warning.h>
 
 TEST(pointer, nullptr) {
   EXPECT_EQ(repr(nullptr), "nullptr");
@@ -7,12 +8,9 @@ TEST(pointer, nullptr) {
 
 struct Test {};
 
-#if defined(__clang__)
-  #pragma clang diagnostic push
-  #pragma clang diagnostic ignored "-Wold-style-cast"
-#elif defined(__GNUC__)
-  #pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
+LIBREPR_WARNING_PUSH
+LIBREPR_WARNING_DISABLE(GCC, "-Wold-style-cast")
+LIBREPR_WARNING_DISABLE(CLANG, "-Wold-style-cast")
 //NOLINTBEGIN
 
 TEST(pointer, pointer) {
@@ -23,12 +21,7 @@ TEST(pointer, pointer) {
 }
 
 //NOLINTEND
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#elif defined(__GNUC__)
-#pragma GCC diagnostic pop
-#endif
-
+LIBREPR_WARNING_POP
 
 TEST(pointer, string_literal) {
   EXPECT_EQ(repr("foo"), R"("foo")");

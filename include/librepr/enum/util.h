@@ -1,10 +1,11 @@
 #pragma once
-#include <type_traits>
 #include <bit>
 #include <concepts>
+#include <cstddef>
+#include <type_traits>
 
 #include <librepr/ctvi/ctvi.h>
-#include <librepr/util/strings.h>
+#include <librepr/util/string/const_string.h>
 
 namespace librepr::ctei {
 enum class EnumKind { Linear, Flags, Empty };
@@ -47,22 +48,20 @@ template <typename T, auto Value>
   if constexpr (!name.empty() && name[0] != '(') {
     return name;
   } else {
-    return std::array{'\0'};
+    return const_string<0>{};
   }
 }
-template <typename T, auto Value>
-inline constexpr auto enum_name_raw = get_enum_name<T, Value>();
 }  // namespace detail
 
 template <typename T, auto Value>
-inline constexpr auto enum_name = std::string_view{detail::enum_name_raw<T, Value>.data()};
+inline constexpr auto enum_name = detail::get_enum_name<T, Value>();
 
 template <auto V>
 [[nodiscard]] consteval auto dump_quick() noexcept {
 #if defined(_MSC_VER)
   constexpr auto signature = std::string_view{__FUNCSIG__};
   // TODO find prefix for MSVC
-  constexpr std::size_t start = sizeof("TODO") - 1;
+  constexpr std::size_t start = sizeof("__cdecl librepr::ctei::dump_quick<") - 1;
 #else
   constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
 #if defined(__clang__)
@@ -84,7 +83,7 @@ template <auto... V>
 #if defined(_MSC_VER)
   constexpr auto signature = std::string_view{__FUNCSIG__};
   // TODO find prefix for MSVC
-  constexpr std::size_t start = sizeof("TODO") - 1;
+  constexpr std::size_t start = sizeof("__cdecl librepr::ctei::dump_list<") - 1;
 #else
   constexpr auto signature = std::string_view{__PRETTY_FUNCTION__};
 #if defined(__clang__)

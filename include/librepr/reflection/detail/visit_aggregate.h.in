@@ -1,0 +1,29 @@
+#pragma once
+#include <type_traits>
+#include "arity.h"
+
+@%max 64
+@{
+def member_list(maximum):
+  return ', '.join(f"member_{idx}" for idx in range(maximum + 1))
+}
+
+namespace librepr::detail {
+
+//NOLINTBEGIN
+template <typename T, typename V>
+  requires(std::is_aggregate_v<std::remove_cvref_t<T>> && !std::is_array_v<std::remove_cvref_t<T>>)
+constexpr auto visit_aggregate(V&& visitor, T&& object) {
+  constexpr auto member_count = arity<std::remove_cvref_t<T>>;
+  if constexpr (member_count == 0) {
+    return visitor();
+  }
+  @[for N in range(__max__)]@
+  else if constexpr (member_count == @(N + 1)) {
+    auto& [@member_list(N)] = object;
+    return visitor(@member_list(N));
+  } 
+  @[end for]
+}
+//NOLINTEND
+}

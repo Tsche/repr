@@ -21,7 +21,7 @@ def fix_value(value):
 def generate_trace(file, output, defines: dict[str, Any]):
     defines = [
         f'-D{name}={fix_value(value)}' for name, value in defines.items()]
-    includes = ['-I../../include', '-I/home/che/src/magic_enum/include']
+    includes = ['-I../../include', '-I/home/che/src/magic_enum/include'] # TODO fix include path
     standard = ['-std=c++20']
     profile_flags = ['-ftime-trace', '-c']
 

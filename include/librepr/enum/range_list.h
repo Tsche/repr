@@ -1,5 +1,6 @@
 #pragma once
-#include <librepr/util/list.h>
+#include <type_traits>
+#include <librepr/util/collections/list.h>
 
 #include "range.h"
 #include "util.h"
@@ -9,7 +10,7 @@ namespace librepr::ctei {
 template <typename... Ranges>
 struct RangeList : TypeListBase<RangeList, Ranges...>{
   using last                       = typename RangeList::template get<0>;
-  static constexpr auto next_index = last::max + 1;
+  constexpr static auto next_index = last::max + 1;
 
   template <auto Idx>
   using add = std::conditional_t<
@@ -35,7 +36,7 @@ struct RangeList : TypeListBase<RangeList, Ranges...>{
 
 template <>
 struct RangeList<> : TypeListBase<RangeList> {
-  static constexpr auto full_size = 0;
+  constexpr static auto full_size = 0;
 
   template <auto Index>
   using add = RangeList<Range<Index>>;
@@ -47,7 +48,7 @@ struct RangeList<> : TypeListBase<RangeList> {
   using try_one = std::conditional_t<is_enum_value<T, V>(), add<Idx>, RangeList>;
 
   constexpr static bool is_binary_powers(){
-    // special case empty range list to detect higher value flags 
+    // special case empty range list to detect flags outside of initial search range
     return true;
   }
 };

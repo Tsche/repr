@@ -1,7 +1,7 @@
-#include <concepts>
+#include <memory>
 #include <type_traits>
-
 #include <gtest/gtest.h>
+#include <librepr/util/string/const_string.h>
 #include <librepr/enum/util.h>
 #include "test_enums.h"
 
@@ -29,8 +29,8 @@ TEST(enum_util, to_enum) {
 }
 
 TEST(enum_util, get_enum_name) {
-  EXPECT_EQ((enum_name<test_enum, 1>), "test_enums::scoped::Unsigned::U_A");
-  EXPECT_EQ((enum_name<test_enum, 0>), "");
+  EXPECT_EQ((enum_name<test_enum, 1>.to_sv()), "test_enums::scoped::Unsigned::U_A");
+  EXPECT_EQ((enum_name<test_enum, 0>.to_sv()), "");
 }
 
 TEST(enum_util, dump_quick) {

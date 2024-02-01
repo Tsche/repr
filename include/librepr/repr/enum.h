@@ -1,10 +1,13 @@
 #pragma once
+#include <string>
 #include <type_traits>
-#include <librepr/enum/reflect.h>
-#include <librepr/detail/default.h>
 
-#if USING(REPR_MAGIC_ENUM)
-#include <librepr/type/name.h>
+#include <librepr/feature.h>
+#include <librepr/enum/reflect.h>
+#include <librepr/macro/default.h>
+
+#if USING(REPR_USE_MAGIC_ENUM)
+#include <librepr/name/type.h>
 #endif
 
 
@@ -16,7 +19,7 @@ std::string repr(T const& obj) {
 
   // TODO handle compound flags
   if (!name.empty()) {
-#if USING(REPR_MAGIC_ENUM)
+#if USING(REPR_USE_MAGIC_ENUM)
     if constexpr (detail::is_scoped_enum<T>) {
       return librepr::get_name<T>() + "::" + std::string{name};
     }

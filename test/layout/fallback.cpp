@@ -7,5 +7,5 @@ struct Unreprable{
 };
 
 TEST(layout, fallback) {
-  EXPECT_EQ(typeinfo<Unreprable>.layout(), "Unreprable");
+  EXPECT_EQ(librepr::layout_of<Unreprable>(), "Unreprable");
 }
