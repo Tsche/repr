@@ -25,16 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     container: alpine:edge
     steps:
+      - name: Install dependencies
+        run: |
+          apk update
+          apk add --no-cache git doxygen graphviz
+          doxygen --version
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: 'true'
-      
-      - name: Install dependencies
-        run: |
-          apk update
-          apk add --no-cache doxygen graphviz
-          doxygen --version
 
       - name: Checkout correct version of style
         working-directory: docs/style
