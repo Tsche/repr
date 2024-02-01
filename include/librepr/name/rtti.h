@@ -16,7 +16,7 @@ namespace librepr::
 
 template <typename T>
 std::string get_name_raw() {
-#if USING(LIBREPR_PLATFORM_WINDOWS)
+#if USING(LIBREPR_COMPILER_MSVC)
   auto name = typeid(T).name();
   return librepr::detail::undecorate_name(name);
 #else

@@ -80,7 +80,7 @@ public:
 
 template <typename T>
 char const* get_mangled_name() {
-#if defined(_WIN32)
+#if USING(LIBREPR_COMPILER_MSVC)
   return typeid(T).raw_name();
 #else
   return typeid(T).name();
