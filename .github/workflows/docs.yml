@@ -18,10 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-docs:
     runs-on: ubuntu-latest
     container: alpine:edge
     steps:
@@ -29,7 +26,6 @@ jobs:
         run: |
           apk update
           apk add --no-cache git doxygen graphviz
-          doxygen --version
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,13 +42,30 @@ jobs:
           mkdir -p ../build/docs
           doxygen
       
+      - uses: actions/upload-artifact@master
+        with:
+          name: docs-web
+          path: build/docs/html
+
+  deploy:
+    needs: build-docs
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: docs-web
+          path: html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/docs/html'
+          path: html
 
       - name: Deploy to GitHub Pages
         id: deployment
