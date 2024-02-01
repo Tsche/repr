@@ -1,0 +1,55 @@
+.doxygen-awesome-fragment-wrapper {
+  position: relative;
+}
+
+doxygen-awesome-godbolt {
+  opacity: 0;
+  background: var(--fragment-background);
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  right: calc(var(--spacing-large) * 3);
+  top: calc(var(--spacing-large) - (var(--spacing-large) / 2.5));
+  border: 1px solid var(--fragment-foreground);
+  cursor: pointer;
+  border-radius: var(--border-radius-small);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.doxygen-awesome-fragment-wrapper:hover doxygen-awesome-godbolt, doxygen-awesome-godbolt.success {
+  opacity: .28;
+}
+
+doxygen-awesome-godbolt:hover, doxygen-awesome-godbolt.success {
+  opacity: 1 !important;
+}
+
+doxygen-awesome-godbolt:active:not([class~=success]) svg {
+  transform: scale(.91);
+}
+
+doxygen-awesome-godbolt svg {
+  fill: var(--fragment-foreground);
+  width: 18px;
+  height: 18px;
+}
+
+doxygen-awesome-godbolt.success svg {
+  fill: rgb(14, 168, 14);
+}
+
+doxygen-awesome-godbolt.success {
+  border-color: rgb(14, 168, 14);
+}
+
+@media screen and (max-width: 767px) {
+  .textblock > .doxygen-awesome-fragment-wrapper > doxygen-awesome-godbolt,
+  .textblock li > .doxygen-awesome-fragment-wrapper > doxygen-awesome-godbolt,
+  .memdoc li > .doxygen-awesome-fragment-wrapper > doxygen-awesome-godbolt,
+  .memdoc > .doxygen-awesome-fragment-wrapper > doxygen-awesome-godbolt,
+  dl dd > .doxygen-awesome-fragment-wrapper > doxygen-awesome-godbolt {
+      right: 0;
+  }
+}

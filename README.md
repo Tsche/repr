@@ -1,4 +1,6 @@
-# librepr: Reconstructable String Representations for C++ Objects
+# repr: C++ object and type serialization
+
+[TOC]
 
 librepr is a C++ library that provides a convenient way to generate string representations of C++ objects that can be used to reconstruct those objects. It is inspired by Python's `repr` function and is designed to assist developers in debugging and logging.
 
@@ -47,38 +49,15 @@ You now have added librepr as a dependency to your project using Conan.
 librepr provides a single function (or well, function object to be pedantic), `repr`, which generates a string representation of a C++ object that could be used for reconstruction:
 
 ```cpp
+//* gsnapshot -std=c++23 -O3
 #include <repr>
+#include <print>
+#include <string>
 
 int main() {
-    int number = 42;
-    std::string repr_str = repr(number);
-    std::print("Repr of number: {}\n", repr_str);
-}
-```
-
-### Customizing Representation for User-Defined Types
-
-You can customize the representation of user-defined types by overloading the `repr` function for your class or struct. To do this, define specializations of the `repr` template function for your type:
-
-```cpp
-#include <repr>
-#include <format>
-
-struct MyType {
-    unsigned value;
-
-    MyType(unsigned val) : value(val) {}
-
-    // Custom representation for MyType
-    std::string repr() const {
-        return std::format("MyType({})", repr(value));
-    }
-};
-
-int main() {
-    auto myObject = MyType{42U};
-    std::string repr_str = repr(myObject);
-    std::print("Repr of myObject: {}\n", repr_str);
+    unsigned number = 42U;
+    std::println("Stringified: {}", number); // Stringified: 42
+    std::println("Repr: {}", repr(number));  // Repr: 42U
 }
 ```
 

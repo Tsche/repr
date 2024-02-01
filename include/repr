@@ -9,12 +9,19 @@
 #include <librepr/visitors/python.h>
 #include <librepr/visitors/layout.h>
 
-
 namespace librepr {
+/** Niebloid helper class
+ */
 struct ReprWrapper {
+  /** Returns a reconstructible string representation of the given object.
+      @tparam T
+      @param obj The object to inspect
+      @param options Optional printing Options
+      @return std::string
+   */
   template <typename T>
   std::string operator()(T const& obj, Options options = {}) const {
-    //TODO this could be static once msvc supports it
+    // TODO this could be static once msvc supports it
     auto visitor = ReprVisitor{options};
     librepr::visit(visitor, obj);
     return visitor.result.extract();
@@ -23,6 +30,11 @@ struct ReprWrapper {
 
 enum class Language { CPP, Python };
 
+/** Prints code roughly matching the requested type
+    @tparam T The type to print
+    @tparam language Which language to print the type in
+
+*/
 template <typename T, Language language = Language::CPP>
 std::string code_for() {
   if constexpr (language == Language::Python) {
@@ -43,8 +55,10 @@ std::string layout_of() {
 }
 }  // namespace librepr
 
-
-inline constexpr librepr::ReprWrapper repr {};
+inline constexpr librepr::ReprWrapper
+    repr{}; /**< Returns a reconstructable string representation of the given object. */
 
 template <typename T>
-inline constexpr librepr::TypeName<T> nameof {};
+inline constexpr librepr::TypeName<T> nameof{};
+
+/** @example simple.cpp */
