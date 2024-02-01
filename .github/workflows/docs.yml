@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
-    container: alpine:v3.19
+    container: alpine:latest
     steps:
       - name: Install dependencies
         run: |
