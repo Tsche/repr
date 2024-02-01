@@ -18,7 +18,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -40,7 +39,9 @@ jobs:
 
       - name: Generate docs
         working-directory: docs
-        run: doxygen
+        run: |
+          mkdir -p ../build/docs
+          doxygen
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
