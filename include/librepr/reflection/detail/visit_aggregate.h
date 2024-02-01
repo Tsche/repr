@@ -1,7 +1,5 @@
 #pragma once
 #include <type_traits>
-
-#include <librepr/util/reftuple.h>
 #include "arity.h"
 
 namespace librepr::detail {

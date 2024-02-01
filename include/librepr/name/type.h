@@ -9,7 +9,7 @@
 
 #include <librepr/macro/format.h>
 #include <librepr/macro/default.h>
-#include <librepr/util/list.h>
+#include <librepr/util/collections/list.h>
 #include "ctti.h"
 #include "rtti.h"
 

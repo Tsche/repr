@@ -42,6 +42,9 @@ concept has_value = requires(T obj) { obj.value(); };
 template <typename T>
 concept can_descend = has_members<T> || has_extent<T> || has_alternatives<T> || T::can_descend;
 
+template <typename T>
+concept is_iterable = T::is_iterable;
+
 template <class T>
 struct Value : T {
   // essentially a std::reference_wrapper without operator()

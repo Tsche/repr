@@ -3,9 +3,7 @@
 #include <string_view>
 
 // TODO decide whether to constrain has_custom_members to be a value list
-// #include <librepr/util/list.h>
-// #include <librepr/util/pack.h>
-
+// #include <librepr/util/collections/list.h>
 
 namespace librepr {
 // Reflection customization traits

@@ -2,7 +2,7 @@
 #include <concepts>
 #include <type_traits>
 #include <gtest/gtest.h>
-#include <librepr/util/list.h>
+#include <librepr/util/collections/list.h>
 
 namespace librepr::test {
 

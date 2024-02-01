@@ -4,9 +4,8 @@
 #include <string_view>
 #include <type_traits>
 
-#include <librepr/util/list.h>
-#include <librepr/util/pack.h>
-#include <librepr/util/reftuple.h>
+#include <librepr/util/collections/list.h>
+#include <librepr/util/collections/reftuple.h>
 #include <librepr/util/concepts.h>
 #include <librepr/name/member.h>
 

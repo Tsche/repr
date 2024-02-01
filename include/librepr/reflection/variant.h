@@ -7,7 +7,7 @@
 
 #include <librepr/name/type.h>
 
-#include <librepr/util/list.h>
+#include <librepr/util/collections/list.h>
 #include <librepr/util/overload.h>
 
 #include "category.h"

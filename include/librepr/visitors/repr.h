@@ -43,7 +43,6 @@ public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
   detail::StringBuffer result{};
 
-  
   void nesting(bool increase) {
     if (increase) {
       separate = false;

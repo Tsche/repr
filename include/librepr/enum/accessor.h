@@ -7,7 +7,7 @@
 #include <type_traits>
 
 
-#include <librepr/util/list.h>
+#include <librepr/util/collections/list.h>
 
 #include "util.h"
 

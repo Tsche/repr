@@ -1,7 +1,8 @@
 #pragma once
+#include <utility>
 #include <cstddef>
 #include <memory>
-#include "util.h"
+#include <librepr/util/util.h>
 #include "list.h"
 
 namespace librepr {
@@ -30,18 +31,12 @@ public:
     requires(Idx < sizeof...(Types))
   constexpr decltype(auto) get() const noexcept {
     using return_type = types::template get<Idx>;
-    return *static_cast<return_type*>(data[Idx]);
+    return *static_cast<std::remove_reference_t<return_type>*>(data[Idx]);
   }
 };
 
 template <typename... Types>
 RefTuple(Types&...) -> RefTuple<Types...>;
-
-template <std::size_t Idx, typename Tuple>
-  requires requires(Tuple const& tuple) { tuple.template get<Idx>(); }
-constexpr decltype(auto) get(Tuple const& tuple) noexcept {
-  return tuple.template get<Idx>();
-}
 
 namespace detail {
 struct make_reftuple_impl {
@@ -54,4 +49,17 @@ struct make_reftuple_impl {
 
 constexpr inline auto make_reftuple = detail::make_reftuple_impl{};
 
+template <std::size_t Idx, typename... Ts>
+constexpr decltype(auto) get(RefTuple<Ts...> const& tuple) noexcept {
+  return tuple.template get<Idx>();
+}
+
 }  // namespace librepr
+
+template <std::size_t I, typename... Ts>
+struct std::tuple_element<I, librepr::RefTuple<Ts...>> {
+  using type = typename librepr::TypeList<Ts...>::template get<I>;
+};
+
+template <typename... Ts>
+struct std::tuple_size<librepr::RefTuple<Ts...>> : std::integral_constant<std::size_t, sizeof...(Ts)> {};

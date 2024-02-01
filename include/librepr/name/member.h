@@ -73,15 +73,10 @@ LIBREPR_WARNING_DISABLE(CLANG, "-Wundefined-var-template")
 // https://github.com/boostorg/pfr/issues/150#issuecomment-1831500004
 // https://github.com/boostorg/pfr/issues/90#issuecomment-1589530490
 
-template <std::size_t Idx>
-constexpr auto member_ptr(auto const& obj) {
-  return std::addressof(std::get<Idx>(to_tuple(obj)));
-}
-
 template <typename T, std::size_t Idx>
   requires(std::is_aggregate_v<T> && !std::is_array_v<T>)
 inline constexpr auto raw_member_name =
-    librepr::ctvi::detail::name_from_subobject<T, LIBREPR_SUBOBJECT_PTR(member_ptr<Idx>(fake_obj<T>.value))>();
+    librepr::ctvi::detail::name_from_subobject<T, LIBREPR_SUBOBJECT_PTR(get<Idx>(to_addr_tuple(fake_obj<T>.value)))>();
 
 LIBREPR_WARNING_POP
 

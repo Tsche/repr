@@ -2,9 +2,6 @@
 #include <concepts>
 #include <type_traits>
 
-#include <librepr/util/list.h>
-#include <librepr/util/pack.h>
-
 namespace librepr {
 // Enum customization traits
 
