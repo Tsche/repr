@@ -28,7 +28,7 @@ concept is_tuple_element = requires(T t) {
 template <typename T>
 concept tuple_like = !std::is_reference_v<T> && requires {
   typename std::tuple_size<T>::type;
-  std::same_as<decltype(std::tuple_size_v<T>), size_t>;
+  requires std::same_as<decltype(std::tuple_size_v<T>), size_t>;
 } && []<std::size_t... I>(std::index_sequence<I...>) {
   return (is_tuple_element<T, I> && ...);
 }(std::make_index_sequence<std::tuple_size_v<T>>{});
