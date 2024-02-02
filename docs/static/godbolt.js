@@ -1,5 +1,5 @@
 const DEFAULT_COMPILER = 'gsnapshot'
-const DEFAULT_OPTIONS = '-std=c++20 -O3'
+const DEFAULT_OPTIONS  = '-std=c++20 -O3'
 
 function getContent(node) {
   node.querySelectorAll('.lineno, .ttc').forEach((node) => {node.remove()});
@@ -8,25 +8,21 @@ function getContent(node) {
 }
 
 function parseCompiler(code) {
-  code = code.trimStart();
-  if (!code.startsWith("//*")) {
+  if (!code.startsWith('//*')) {
     return {}
   }
 
   const magic_line = code.split('\n', 1)[0].substr(3).trim();
   if (!magic_line) {
     return {'id': DEFAULT_COMPILER, 'options': DEFAULT_OPTIONS};
-  }
-  else if (magic_line.startsWith('-')) {
+  } else if (magic_line.startsWith('-')) {
     // no compiler set, but got options
     return {'id': DEFAULT_COMPILER, 'options': magic_line};
-  }
-  else if (!magic_line.includes('-')) {
+  } else if (!magic_line.includes('-')) {
     // no options, but got compiler
     return {'id': magic_line, 'options': DEFAULT_OPTIONS};
-  }
-  else {
-    const [head] = magic_line.split('-', 1);
+  } else {
+    const [head]              = magic_line.split('-', 1);
     const [compiler, options] = [head, magic_line.substr(head.length + 1)];
     return {'id': compiler.trim(), 'options': '-' + options};
   }
@@ -35,7 +31,8 @@ function parseCompiler(code) {
 class DoxygenAwesomeGodbolt extends HTMLElement {
   constructor() {
     super();
-    this.onclick = this.runContent
+    this.onclick         = this.runContent;
+    this.compiler_config = 42;
   }
   static title = 'Run in Compiler Explorer';
   static runIcon =
@@ -52,9 +49,20 @@ class DoxygenAwesomeGodbolt extends HTMLElement {
           const fragments = document.getElementsByClassName('fragment')
           for (const fragment of fragments) {
             let content = getContent(fragment);
-            if (!content.startsWith("//*")) {
+            if (!content.startsWith('//*')) {
               // special line not found => not runnable
               continue;
+            }
+            this.compiler_config = parseCompiler(content.trimStart());
+            console.info(this.compiler_config);
+            fragment.firstChild.remove();
+
+            for (const child of fragment.children) {
+              // trim whitespace before file
+              if (child.innerHTML.trim() != '') {
+                break;
+              }
+              child.remove();
             }
 
             const fragmentWrapper     = document.createElement('div');
@@ -73,20 +81,19 @@ class DoxygenAwesomeGodbolt extends HTMLElement {
   }
 
   runContent() {
-    const content = this.previousSibling.cloneNode(true);
-    // filter out line number from file listings
+    const content   = this.previousSibling.cloneNode(true);
     let textContent = getContent(content);
-    const compiler = parseCompiler(textContent)
+
     // Fix include
-    textContent = textContent.replace("#include <repr>", "#include <https://repr.palliate.io/amalgamated.h>")
+    textContent = textContent.replace('#include <repr>', '#include <https://repr.palliate.io/amalgamated.h>')
 
     const clientstate = {
       'sessions': [{
         'id': 1,
         'language': 'c++',
-        'source': textContent,
-        'compilers': [compiler],
-        'executors': [{'compiler': compiler}]
+        'source': textContent.trim() + '\n',
+        'compilers': [this.compiler_config],
+        'executors': [{'compiler': this.compiler_config}]
       }]
     };
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(clientstate))));
