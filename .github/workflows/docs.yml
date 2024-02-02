@@ -22,6 +22,7 @@ jobs:
         uses: palliate/palgen@master
         with:
           run: false
+          requirements: tools/requirements.txt
       
       - name: Run header amalgamation
         run: palgen amalgamate
