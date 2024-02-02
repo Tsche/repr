@@ -70,7 +70,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache git python3 py3-pydot
+          apk add --no-cache git python3
   
   process-tests:
     needs: [test-compiletime, test-runtime]
@@ -90,7 +90,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache git python3 py3-pydot
+          apk add --no-cache git python3
 
   build-docs:
     needs: [amalgamate-header, process-tests, process-benchmarks]
