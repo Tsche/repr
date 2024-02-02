@@ -50,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache git clang-17 gcc 
+          apk add --no-cache git clang17 gcc 
   
   benchmark-compiletime:
     runs-on: ubuntu-latest
