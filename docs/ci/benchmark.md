@@ -1,4 +1,4 @@
-# Benchmarks
+# Benchmark {#CI_Benchmark}
 
 [TOC]
 
