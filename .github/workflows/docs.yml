@@ -105,7 +105,7 @@ jobs:
       - name: Generate docs
         run: |
           mkdir -p build/docs
-          doxygen
+          doxygen docs/Doxyfile
       
       - uses: actions/upload-artifact@master
         with:
