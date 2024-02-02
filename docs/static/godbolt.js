@@ -86,7 +86,7 @@ class DoxygenAwesomeGodbolt extends HTMLElement {
 
     // Fix include
     textContent = textContent.replace('#include <repr>', '#include <https://repr.palliate.io/amalgamated.h>')
-
+    console.info(this.compiler_config)
     const clientstate = {
       'sessions': [{
         'id': 1,
