@@ -241,6 +241,11 @@
     <namespace>std</namespace>
   </compound>
   <compound kind="file">
+    <name>format</name>
+    <filename>cpp/header/format</filename>
+    <namespace>std</namespace>
+  </compound>
+  <compound kind="file">
     <name>initializer_list</name>
     <filename>cpp/header/initializer_list</filename>
     <namespace>std</namespace>
