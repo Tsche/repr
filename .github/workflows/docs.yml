@@ -14,14 +14,22 @@ concurrency:
 jobs:
   amalgamate-header:
     runs-on: ubuntu-latest
-    container: alpine:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          apk update
-          apk add --no-cache git python3
+      
+      - name: Setup palgen
+        uses: palliate/palgen@master
+        with:
+          run: false
+      
+      - name: Run header amalgamation
+        run: palgen amalgamate
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: amalgamated.h
+          path: build/amalgamated.h
 
   test-runtime:
     strategy:
