@@ -139,6 +139,14 @@ jobs:
         with:
           name: docs-web
           path: html
+      
+      - uses: actions/download-artifact@master
+        with:
+          name: amalgamated.h
+          path: html
+
+      - name: List HTML root
+        run: ls -la html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

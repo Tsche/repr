@@ -3,8 +3,9 @@
 #include <type_traits>
 
 #include <librepr/util/concepts.h>
+#include <librepr/util/collections/list.h>
 #include "category.h"
-#include "librepr/util/collections/list.h"
+
 namespace librepr {
 template <typename T>
 struct Reflect;

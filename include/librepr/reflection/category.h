@@ -4,7 +4,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
-#include "librepr/macro/util.h"
+#include <librepr/macro/util.h>
 
 #include <librepr/name/type.h>
 #include <librepr/util/util.h>
