@@ -60,5 +60,3 @@ inline constexpr librepr::ReprWrapper
 
 template <typename T>
 inline constexpr librepr::TypeName<T> nameof{};
-
-/** @example simple.cpp */
