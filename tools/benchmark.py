@@ -21,7 +21,8 @@ def fix_value(value):
 def generate_trace(file, output, defines: dict[str, Any]):
     defines = [
         f'-D{name}={fix_value(value)}' for name, value in defines.items()]
-    includes = ['-I../../include', '-I/home/che/src/magic_enum/include'] # TODO fix include path
+    # TODO fix include path
+    includes = ['-I../../../include', '-I/home/che/src/magic_enum/include']
     standard = ['-std=c++20']
     profile_flags = ['-ftime-trace', '-c']
 
@@ -63,7 +64,8 @@ class Analyze:
         self.config = config
         self.output = output
         self.repeat_each = repeat_each
-        self.queries = {name: jmespath.compile(query) for name, query in config.query.items()}
+        self.queries = {name: jmespath.compile(
+            query) for name, query in config.query.items()}
 
         self.runs: dict[str, list[Path]] = {
             name: [generate_trace(file, self.output / file.parent.stem / f'{name}.{idx}.obj', features)
@@ -112,7 +114,8 @@ class Benchmark(Extension):
         for path, config in data:
             if not (file := Path(config.source)).is_absolute():
                 file = path.parent / file
-            analyzer = Analyze(config, self.settings.repeat_each, file, self.settings.output)
+            analyzer = Analyze(
+                config, self.settings.repeat_each, file, self.settings.output)
             queries = analyzer.run_queries()
             colors = [f"#{hex(zlib.crc32(name.encode('utf-8')))[4:]}"
                       for name in config.profile]
@@ -136,19 +139,13 @@ class Benchmark(Extension):
                     logging.info("    Min: %sms", min(run) / 1000)
                 chart = self.settings.output / path.parent.name / f"{query}.json"
 
-                """
-                import { Chart } from "frappe-charts/dist/frappe-charts.esm.js";
-                import "frappe-charts/dist/frappe-charts.min.css";
-                new Chart("#chart", 
-                JSON.parse({query}.json)
-                );
-                """
-                chart.write_text(json.dumps({'title': query,
-                                             'data': chart_data,
-                                             'type': "line",
-                                             'height': 400,
-                                             'colors': colors,
-                                             'lineOptions': {'regionFill': 1, 'spline': 1}}))
+                yield chart, json.dumps({'title': query,
+                                         'data': chart_data,
+                                         'type': "line",
+                                         'height': 400,
+                                         'colors': colors,
+                                         'lineOptions': {'regionFill': 1, 'spline': 1}})
             summary_file = self.settings.output / path.parent.name / 'summary.json'
-            summary_file.write_text(json.dumps(summary))
-    pipeline = ingest >> Extension.validate >> run_benchmark
+            yield summary_file, json.dumps(summary)
+
+    pipeline = ingest >> Extension.validate >> run_benchmark >> Extension.write

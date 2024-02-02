@@ -15,9 +15,9 @@ root = "repr"
 filename = "amalgamated.h"
 
 [benchmark]
-output = "benchmark/output"
+output = "build/benchmark"
 repeat_each = 5
 
 [graphs]
-benchmark_output="benchmark/output"
+benchmark_output="build/benchmark"
 summary_path="../repr.wiki/"

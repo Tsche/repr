@@ -1,6 +1,6 @@
 /**
 @example simple.cpp
-@subsection simple_example Simple Example
+@section simple_example Simple Example
 
 Simple example showcasing type and value serialization.
 */
