@@ -78,7 +78,7 @@ class DoxygenAwesomeGodbolt extends HTMLElement {
     let textContent = getContent(content);
     const compiler = parseCompiler(textContent)
     // Fix include
-    textContent = textContent.replace("#include <repr>", "#include <https://gist.githubusercontent.com/Tsche/6dda9f11d26b9609d3c6ab391bdfef61/raw/50e65013561fe73a06cb8e26cd79092d0876ba11/repr.hpp>")
+    textContent = textContent.replace("#include <repr>", "#include <https://repr.palliate.io/amalgamated.h>")
 
     const clientstate = {
       'sessions': [{
