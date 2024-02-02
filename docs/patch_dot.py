@@ -49,6 +49,9 @@ def patch(file: Path):
             graph.del_edge(*points)
 
     for node in nodes:
+        if node.get_name() == '"\\n"':
+            graph.del_node(node)
+
         attributes: dict[str, str] = node.get_attributes()
         if (url := attributes.get('URL')):
             if "cppreference" not in url:
@@ -59,7 +62,7 @@ def patch(file: Path):
         else:
             continue
 
-        graph.del_node(node.get_name())
+        graph.del_node(node)
         filter_edges(node.get_name())
 
     graph.write_raw(file)
