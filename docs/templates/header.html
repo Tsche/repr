@@ -24,24 +24,23 @@ $darkmode
 $extrastylesheet
 
 <script type="text/javascript" src="$relpath^doxygen-awesome-fragment-copy-button.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeFragmentCopyButton.init()
-</script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-paragraph-link.js"></script>
-<script type="text/javascript">
-  //DoxygenAwesomeParagraphLink.init()
-</script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-interactive-toc.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeInteractiveToc.init()
-</script>
-<script type="text/javascript" src="$relpath^godbolt.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeGodbolt.init()
-</script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-darkmode-toggle.js"></script>
+<!-- Custom doxygen awesome extensions -->
+<script type="text/javascript" src="$relpath^doxygen-awesome-godbolt.js"></script>
+<script type="text/javascript" src="$relpath^doxygen-awesome-alerts.js"></script>
+<script type="text/javascript" src="$relpath^doxygen-awesome-charts.js"></script>
+
 <script type="text/javascript">
-  DoxygenAwesomeDarkModeToggle.init()
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+  DoxygenAwesomeParagraphLink.init();
+  DoxygenAwesomeFragmentCopyButton.init();
+  // custom extensions
+  DoxygenAwesomeGodbolt.init();
+  DoxygenAwesomeAlerts.init();
+  //DoxygenAwesomeCharts.init();
 </script>
 
 <script src="https://unpkg.com/frappe-charts@1.6.1/dist/frappe-charts.min.umd.js"></script>

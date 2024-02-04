@@ -53,11 +53,3 @@ doxygen-awesome-godbolt.success {
       right: 0;
   }
 }
-
-
-.github-corner svg {
-  fill: var(--primary-light-color);
-  color: var(--page-background-color);
-  width: 72px;
-  height: 72px;
-}
