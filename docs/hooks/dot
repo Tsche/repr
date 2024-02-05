@@ -1,3 +1,0 @@
-#!/bin/sh
-
-python docs/hooks/patch_dot.py "$@"

@@ -4,3 +4,4 @@
 [submodule "docs/extensions"]
 	path = docs/extensions
 	url = https://github.com/Tsche/doxygen-awesome-extensions.git
+	shallow = true

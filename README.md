@@ -2,37 +2,6 @@
 
 [TOC]
 
-> [!NOTE]  
-> Highlights information that users should take into account, even when skimming.
-<br/>
-
-> [!TIP]
-> Optional information to help a user be more successful.
-<br/>
-
-> [!IMPORTANT]  
-> Crucial information necessary for users to succeed.
-<br/>
-
-> [!WARNING]  
-> Critical content demanding immediate user attention due to potential risks.
-<br/>
-
-> [!CAUTION]
-> Negative potential consequences of an action.
-<br/>
-
-> [!UNRECOGNIZED]
-> Negative potential consequences of an action.
-<br/>
-
-> [!UNCLOSED
-> Negative potential consequences of an action.
-<br/>
-
-> test
-> no alert
-
 librepr is a C++ static reflection and serialization library that provides a convenient way to generate string representations of C++ objects that can be used to reconstruct those objects. It is inspired by Python's `repr` function and is primarily designed to assist developers in debugging and logging.
 
 ## Features
