@@ -46,7 +46,7 @@ This command downloads the single-header file and saves it as `repr.h` to the cu
 
 
 
-//* -std=c++23
+//* c++ -std=c++23
 #include <https://repr.palliate.io/amalgamated.h>
 #include <print>
 
@@ -102,7 +102,7 @@ You now have added librepr as a dependency to your project using Conan.
 The following example showcases usage of the `repr` function (or well, function object to be pedantic), which generates a reconstructible string representation of the given object. Furthermore we'll use `librepr::code_for` to also print the type. 
 
 ```cpp
-//* gsnapshot -std=c++23 -O3
+//* c++ gsnapshot -std=c++23 -O3
 #include <repr>
 #include <print>
 #include <string>

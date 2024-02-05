@@ -1,5 +1,4 @@
-//* gsnapshot -std=c++20 -O3
-
+//* c++ gsnapshot -std=c++20 -O3
 #include <repr>
 #include <variant>
 #include <unordered_map>
