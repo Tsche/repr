@@ -9,9 +9,9 @@
 #include <librepr/name/type.h>
 #include <librepr/reflection/aggregate.h>
 #include <librepr/reflection/category.h>
-#include <librepr/util/concepts.h>
 #include <librepr/util/string/buffer.h>
 #include <librepr/reflection/reflect.h>
+#include <librepr/util/enum.h>
 
 namespace librepr {
 struct CppVisitor {

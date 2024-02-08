@@ -1,0 +1,43 @@
+#pragma once
+
+#include "token_kind.h"
+
+@{
+error_list = {
+  "Unknown": "Unknown error",
+  "UnknownCharacter": "Found unrecognized character.",
+  "MultipleDecimalPoints": "Multiple decimal points found.",
+  "ConsecutiveDigitSeparator": "Consecutive digit separators detected.",
+  "DigitSeparatorAdjacentToDecimalPoint": "The decimal point cannot be preceeded or followed by a digit separator.",
+  "SingleColon": "Did you mean '::'?",
+  "InvalidNumericLiteral": "Invalid numeric literal found.",
+  "UnclosedStringLiteral": "String literal was not closed.",
+  "UnclosedCharacterLiteral": "Character literal was not closed"
+}
+}@
+
+namespace librepr::parsing::LexError {
+  enum Error : unsigned {
+    @[for ident in error_list]@
+    @ident,
+    @[end for]@
+  };
+
+  [[nodiscard]] constexpr inline char const* get_message(Error value) {
+    switch (value) {
+      @[for ident, message in error_list.items()]@
+      case @ident:
+        return "@message";
+      @[end for]@
+      default:
+        break;
+    }
+    return "unrecognized error";
+  }
+}  // namespace librepr::parsing::LexError
+
+
+template<>
+struct librepr::Settings<librepr::parsing::LexError::Error> {
+static constexpr auto tag = librepr::parsing::TokenCategory::error;
+};

@@ -17,9 +17,6 @@ concept has_repr_member = requires(T const& obj) {
   { obj.repr() } -> std::same_as<std::string>;
 };
 
-template <typename T>
-concept is_scoped_enum = !std::is_convertible_v<T, std::underlying_type_t<T>>;
-
 template <typename T, std::size_t N>
 concept is_tuple_element = requires(T t) {
   typename std::tuple_element_t<N, std::remove_const_t<T>>;
@@ -32,5 +29,8 @@ concept tuple_like = !std::is_reference_v<T> && requires {
 } && []<std::size_t... I>(std::index_sequence<I...>) {
   return (is_tuple_element<T, I> && ...);
 }(std::make_index_sequence<std::tuple_size_v<T>>{});
+
+template <typename T, typename... Ts>
+concept all_same = (std::same_as<T, Ts> && ...);
 
 }  // namespace librepr::detail

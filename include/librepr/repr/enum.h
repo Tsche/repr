@@ -5,6 +5,7 @@
 #include <librepr/feature.h>
 #include <librepr/enum/reflect.h>
 #include <librepr/macro/default.h>
+#include <librepr/util/enum.h>
 
 #if USING(REPR_USE_MAGIC_ENUM)
 #include <librepr/name/type.h>
