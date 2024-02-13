@@ -97,7 +97,7 @@ private:
     return false;
   }
 
-  constexpr bool lex_head(Token& token) {
+  constexpr bool lex_numeric_head(Token& token) {
     if (!token.is(TokenCategory::numeric)) {
       // do not overwrite in-flight error
       if (!token.is(TokenCategory::error)) {
@@ -134,7 +134,7 @@ private:
     auto& flags = token.get<Numeral>();
 
     if (!flags.is_float()) {
-      lex_head(token);
+      lex_numeric_head(token);
     }
 
     while (cursor < length) {

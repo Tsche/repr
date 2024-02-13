@@ -1,6 +1,6 @@
 #pragma once
 #include "concepts.h"
-
+#include <librepr/macro/warning.h>
 namespace librepr {
 
 template <typename T>
@@ -21,6 +21,9 @@ consteval auto get_tag(){
   }
 }
 
+LIBREPR_WARNING_PUSH
+LIBREPR_WARNING_DISABLE(GCC, "-Wnon-template-friend")
+
 template <class C, auto E>
 struct UnionKey {
   constexpr friend auto get_union_accessor_adl(UnionKey);
@@ -30,6 +33,8 @@ template <class C, auto E, auto V>
 struct UnionEntry {
   constexpr friend auto get_union_accessor_adl(UnionKey<C, E>) { return V; }
 };
+
+LIBREPR_WARNING_POP
 
 template <typename T>
 struct UnionAccessor;

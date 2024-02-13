@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <librepr/parsing/lex.h>
-#include "librepr/parsing/token_kind.h"
+#include <librepr/parsing/token_kind.h>
 
 namespace librepr::parsing::test {
 

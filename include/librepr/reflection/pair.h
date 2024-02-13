@@ -2,9 +2,11 @@
 #include <string>
 #include <type_traits>
 
+#include <librepr/util/collections/list.h>
 #include <librepr/util/concepts.h>
 #include "category.h"
-#include "librepr/util/collections/list.h"
+
+
 namespace librepr {
 template <typename T>
 struct Reflect;
