@@ -107,8 +107,8 @@ jobs:
 
       - name: Setup palgen
         run: |
-          pip3 install git+https://github.com/palliate/palgen.git@master
-          pip3 install -r tools/requirements.txt
+          pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
+          pip3 install -r tools/requirements.txt --break-system-packages
       
       - name: Generate docs
         run: |
