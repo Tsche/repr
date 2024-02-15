@@ -100,7 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache git doxygen graphviz font-liberation python3 py3-pydot bash
+          apk add --no-cache git doxygen graphviz font-liberation python3 py3-pydot bash py-pip
 
       - name: Checkout
         uses: actions/checkout@v4
