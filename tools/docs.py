@@ -31,14 +31,15 @@ class Docs(Extension):
     def clone_repo(self, output: Path, url: str, tag: str):
         output = self.expand_path(output)
         if not output.exists():
-            logging.info(f"Cloning {url} into {output}")
+            logging.info("Cloning %s into %s", url, output)
             repo = Repo.clone_from(url, output)
         else:
             repo = Repo(output)
-            # logging.info(f"Fetching {output}")
-            # repo.git.fetch()
+            if not repo.head.is_detached:
+                logging.info("Updating %s", output)
+                repo.git.pull()
 
-        logging.info(f"Checking out {tag}")
+        logging.info("Checking out %s", tag)
         repo.git.checkout(tag)
 
     def clone_style(self):
