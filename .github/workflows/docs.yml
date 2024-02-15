@@ -25,7 +25,7 @@ jobs:
           requirements: tools/requirements.txt
       
       - name: Run header amalgamation
-        run: palgen amalgamate
+        run: palgen --debug amalgamate
 
       - uses: actions/upload-artifact@master
         with:
@@ -106,14 +106,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup palgen
-        run: |
-          pip install git+https://github.com/palliate/palgen.git@master
-          pip install -r tools/requirements.txt
+        uses: palliate/palgen@master
+        with:
+          run: false
+          requirements: tools/requirements.txt
       
       - name: Generate docs
         run: |
           mkdir -p build/docs
-          palgen docs
+          palgen --debug docs
       
       - uses: actions/upload-artifact@master
         with:
