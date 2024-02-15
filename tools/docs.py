@@ -5,13 +5,16 @@ import subprocess  # required to run doxygen
 from pathlib import Path
 from typing import Optional
 
-from git import Repo # required to clone stylesheets
+from git import Repo  # required to clone stylesheets
 from palgen import Extension, Model
+
+doxygen_raw_path = shutil.which("doxygen")
 
 
 class Docs(Extension):
     class Settings(Model):
-        doxygen_path: Path = Path(shutil.which("doxygen"))
+        doxygen_path: Path = Path(
+            doxygen_raw_path) if doxygen_raw_path is not None else Path()
         doxyfile: Path = Path("docs") / "Doxyfile"
 
         style_output: Path = Path("build") / "style"
@@ -39,14 +42,17 @@ class Docs(Extension):
         repo.git.checkout(tag)
 
     def clone_style(self):
-        self.clone_repo(self.settings.style_output, self.settings.style_url, self.settings.style_tag)
+        self.clone_repo(self.settings.style_output,
+                        self.settings.style_url, self.settings.style_tag)
 
     def clone_extensions(self):
-        self.clone_repo(self.settings.extensions_output, self.settings.extensions_url, self.settings.extensions_tag)
+        self.clone_repo(self.settings.extensions_output,
+                        self.settings.extensions_url, self.settings.extensions_tag)
 
     def run(self, files: list, jobs: Optional[int] = None) -> list:
         self.clone_style()
         self.clone_extensions()
         self.settings.doxyfile = self.expand_path(self.settings.doxyfile)
 
-        subprocess.check_call([self.settings.doxygen_path, self.settings.doxyfile], cwd=self.root_path)
+        subprocess.check_call(
+            [self.settings.doxygen_path, self.settings.doxyfile], cwd=self.root_path)
