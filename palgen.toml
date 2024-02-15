@@ -23,3 +23,10 @@ benchmark_output="build/benchmark"
 summary_path="../repr.wiki/"
 
 [docs]
+style_output = "build/docs/style"
+style_url = "https://github.com/jothepro/doxygen-awesome-css.git"
+style_tag = "v2.3.1"
+
+extensions_output = "build/docs/extensions"
+extensions_url = "https://github.com/Tsche/doxygen-utils.git"
+extensions_tag = "master"

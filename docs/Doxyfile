@@ -1023,7 +1023,6 @@ EXCLUDE_SYMLINKS       = NO
 # exclude all test directories for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = */scratchpad.* \
-                         */docs/tags/* \
                          */docs/templates/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -1319,11 +1318,11 @@ HTML_STYLESHEET        =
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_EXTRA_STYLESHEET  = docs/github-corner.css \
-                         build/style/doxygen-awesome.css \
-                         build/style/doxygen-awesome-sidebar-only.css \
-                         build/style/doxygen-awesome-sidebar-only-darkmode-toggle.css \
-                         build/extensions/doxygen-awesome/doxygen-awesome-godbolt.css \
-                         build/extensions/doxygen-awesome/doxygen-awesome-alerts.css
+                         build/docs/style/doxygen-awesome.css \
+                         build/docs/style/doxygen-awesome-sidebar-only.css \
+                         build/docs/style/doxygen-awesome-sidebar-only-darkmode-toggle.css \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-godbolt.css \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-alerts.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1334,13 +1333,13 @@ HTML_EXTRA_STYLESHEET  = docs/github-corner.css \
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_EXTRA_FILES       = LICENSE \
-                         build/style/doxygen-awesome-darkmode-toggle.js \
-                         build/style/doxygen-awesome-fragment-copy-button.js \
-                         build/style/doxygen-awesome-paragraph-link.js \
-                         build/style/doxygen-awesome-interactive-toc.js \
-                         build/extensions/doxygen-awesome/doxygen-awesome-alerts.js \
-                         build/extensions/doxygen-awesome/doxygen-awesome-charts.js \
-                         build/extensions/doxygen-awesome/doxygen-awesome-godbolt.js
+                         build/docs/style/doxygen-awesome-darkmode-toggle.js \
+                         build/docs/style/doxygen-awesome-fragment-copy-button.js \
+                         build/docs/style/doxygen-awesome-paragraph-link.js \
+                         build/docs/style/doxygen-awesome-interactive-toc.js \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-alerts.js \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-charts.js \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-godbolt.js
 
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
@@ -2402,7 +2401,7 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES = docs/tags/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/
+TAGFILES = build/docs/extensions/tags/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
@@ -2687,7 +2686,7 @@ INTERACTIVE_SVG        = YES
 # found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_PATH               = build/extensions/hooks
+DOT_PATH               = build/docs/extensions/hooks
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the \dotfile

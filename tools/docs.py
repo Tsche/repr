@@ -13,17 +13,16 @@ doxygen_raw_path = shutil.which("doxygen")
 
 class Docs(Extension):
     class Settings(Model):
-        doxygen_path: Path = Path(
-            doxygen_raw_path) if doxygen_raw_path is not None else Path()
+        style_output: Path
+        style_url: str
+        style_tag: str
+
+        extensions_output: Path
+        extensions_url: str
+        extensions_tag: str
+
+        doxygen_path: Path = Path(doxygen_raw_path) if doxygen_raw_path is not None else Path()
         doxyfile: Path = Path("docs") / "Doxyfile"
-
-        style_output: Path = Path("build") / "style"
-        style_url: str = "https://github.com/jothepro/doxygen-awesome-css.git"
-        style_tag: str = "v2.3.1"
-
-        extensions_output: Path = Path("build") / "extensions"
-        extensions_url: str = "https://github.com/Tsche/doxygen-utils.git"
-        extensions_tag: str = "master"
 
     def expand_path(self, path: Path):
         return path if path.is_absolute() else self.root_path / path
