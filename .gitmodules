@@ -1,7 +1,0 @@
-[submodule "docs/style"]
-	path = docs/style
-	url = https://github.com/jothepro/doxygen-awesome-css.git
-[submodule "docs/extensions"]
-	path = docs/extensions
-	url = https://github.com/Tsche/doxygen-awesome-extensions.git
-	shallow = true
