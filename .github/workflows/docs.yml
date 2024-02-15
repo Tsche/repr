@@ -104,17 +104,16 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: 'true'
 
-      - name: Checkout correct version of style
-        working-directory: docs/style
-        run: git checkout v2.3.1
-
+      - name: Setup palgen
+        run: |
+          pip install git+https://github.com/palliate/palgen.git@master
+          pip install -r tools/requirements.txt
+      
       - name: Generate docs
         run: |
           mkdir -p build/docs
-          doxygen docs/Doxyfile
+          palgen docs
       
       - uses: actions/upload-artifact@master
         with:
