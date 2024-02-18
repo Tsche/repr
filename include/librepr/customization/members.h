@@ -4,7 +4,6 @@
 #include <concepts>
 #include <utility>
 
-#include <librepr/name/member.h>
 #include <librepr/util/collections/list.h>
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/util/string/const_string.h>
