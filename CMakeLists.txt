@@ -26,8 +26,6 @@ if(ENABLE_FMTLIB)
   target_compile_definitions(repr INTERFACE REPR_FORMAT_FMT=ON)
 endif()
 
-
-
 if (ENABLE_MAGIC_ENUM)
   message(STATUS "Using magic_enum")
 
