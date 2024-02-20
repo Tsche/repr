@@ -186,10 +186,11 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: benchmark
-        path: build/commits/${GITHUB_SHA::7}
+        path: build/commits/${{ github.sha }}
 
     - name: Generate graphs
       run: |
+        mv build/commits/${{ github.sha }} build/commits/${GITHUB_SHA::7}
         palgen --debug graphs --output build --input build/commits/${GITHUB_SHA::7}
 
     - uses: actions/upload-artifact@master
