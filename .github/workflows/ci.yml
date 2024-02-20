@@ -118,11 +118,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up compiler
-      run: "sudo add-apt-repository ppa:ubuntu-toolchain-r/test\nsudo apt update\nsudo apt -y install gcc-13\nsudo apt -y install g++-13\nsudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 \nsudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100\n  #magic___^_^___line\nsudo pip install -U gcovr\n  #magic___^_^___line\n"
+    - name: Set up gcovr
+      run: |
+        sudo pip install -U gcovr
+
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@v1.2
+
+    - name: Set up Conan profile
+      run: |
+        conan config install https://github.com/Tsche/github-conan-profiles.git -sf=ubuntu-latest
+
+    - name: Build
+      run: 
 
     - uses: actions/checkout@v3
       with:
@@ -139,7 +148,7 @@ jobs:
       uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
 
     - name: Build
-      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o coverage=True
+      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -pr gcc -pr:b gcc -o coverage=True
 
     - name: Coverage
       run: |
