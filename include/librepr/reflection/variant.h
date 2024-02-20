@@ -44,7 +44,7 @@ concept is_variant = detail::VariantDetector<T>::value;
 template <is_variant T>
 struct Reflect<T> : category::Type<T> {
   using type                        = T;
-  using alternatives                = detail::VariantDetector<T>::alternatives;
+  using alternatives                = typename detail::VariantDetector<T>::alternatives;
   constexpr static bool can_descend = true;
 
   template <typename V>

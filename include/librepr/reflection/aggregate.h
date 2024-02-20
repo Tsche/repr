@@ -30,9 +30,9 @@ namespace category {
 template <typename Member, typename Parent, std::size_t Index>
 struct DataMember : Member {
   using descend     = Member;
-  using type        = Member::type;
+  using type        = typename Member::type;
   using parent      = Parent;
-  using parent_type = Parent::type;
+  using parent_type = typename Parent::type;
 
   [[nodiscard]] std::string_view name() const { 
     return member_name<parent_type, Index>; 

@@ -59,7 +59,7 @@ class Graphs(Extension):
                 datasets.append({"name": name, "values": runs, "chartType": "line"})
                 markers.append({"label": name, "value": min(runs)})
 
-            chart = self.settings.output / group / f"{query}.json"
+            chart = self.settings.output / group / f"{fnv1a(query)}.json"
             yield (
                 chart,
                 json.dumps(

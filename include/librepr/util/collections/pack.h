@@ -45,7 +45,7 @@ struct Split<Idx, List<Ts...>> {
   using tail = typename recurse::tail;
   using type = typename recurse::type;
 
-  using head = Merge<typename first_page::head, typename recurse::head>::type;
+  using head = typename Merge<typename first_page::head, typename recurse::head>::type;
 #endif
 };
 

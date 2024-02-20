@@ -228,7 +228,7 @@ jobs:
   
   deploy-wiki:
     needs: [amalgamate-header, process-tests, process-benchmarks]
-    if: success() && github.ref == 'refs/heads/master'
+    # if: success() && github.ref == 'refs/heads/master'
   
     concurrency:
       group: "wiki"
