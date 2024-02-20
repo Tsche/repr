@@ -21,7 +21,6 @@ repeat_each = 5
 [graphs]
 input = "build/benchmark"
 output = "build/docs/html/benchmark"
-summary_path = "build/repr.wiki/"
 summary_url = "https://github.com/Tsche/repr.wiki.git"
 
 [docs]

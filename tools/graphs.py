@@ -1,8 +1,10 @@
 from collections import defaultdict
 import logging
 import json
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 from palgen.interface import Extension, Sources, Model
 from palgen.ingest import Name
 from palgen.machinery.filesystem import walk
@@ -28,8 +30,8 @@ class Graphs(Extension):
     class Settings(Model):
         input: Path
         output: Path
-        summary_path: Path
         summary_url: str
+        summary_path: Optional[Path] = None
 
     def expand_path(self, path: Path):
         return path if path.is_absolute() else self.root_path / path
@@ -59,7 +61,7 @@ class Graphs(Extension):
                 datasets.append({"name": name, "values": runs, "chartType": "line"})
                 markers.append({"label": name, "value": min(runs)})
 
-            chart = self.settings.output / group / f"{fnv1a(query)}.json"
+            chart = self.settings.output / group / f"{fnv1a(query):x}.json"
             yield (
                 chart,
                 json.dumps(
@@ -101,23 +103,33 @@ class Graphs(Extension):
             yield from self.generate_charts(report_path.parent.name, summary)
 
     def run(self, _, jobs):
-        self.settings.summary_path = self.expand_path(self.settings.summary_path)
-        self.settings.input = self.expand_path(self.settings.input)
-        self.settings.output = self.expand_path(self.settings.output)
-
-        self.settings.output.mkdir(exist_ok=True, parents=True)
-
-        files = walk(self.settings.input)
-        summary_path = self.settings.summary_path
-        if not summary_path.exists():
-            logging.info("Cloning %s into %s", self.settings.summary_url, summary_path)
-            repo = Repo.clone_from(self.settings.summary_url, summary_path)
+        tmp_dir = None
+        if self.settings.summary_path is None:
+            tmp_dir = tempfile.TemporaryDirectory()
+            self.settings.summary_path = Path(tmp_dir.name)
         else:
-            repo = Repo(summary_path)
-            if not repo.head.is_detached:
-                logging.info("Updating %s", summary_path)
-                repo.git.pull()
+            self.settings.summary_path = self.expand_path(self.settings.summary_path)
 
-        self.summary_repo = repo
-        self.repo = Repo(self.root_path)
-        super().run(files, jobs)
+        try:
+            self.settings.input = self.expand_path(self.settings.input)
+            self.settings.output = self.expand_path(self.settings.output)
+
+            self.settings.output.mkdir(exist_ok=True, parents=True)
+
+            files = walk(self.settings.input)
+            summary_path = self.settings.summary_path
+            if not (summary_path / '.git').exists():
+                logging.info("Cloning %s into %s", self.settings.summary_url, summary_path)
+                repo = Repo.clone_from(self.settings.summary_url, summary_path)
+            else:
+                repo = Repo(summary_path)
+                if not repo.head.is_detached:
+                    logging.info("Updating %s", summary_path)
+                    repo.git.pull()
+
+            self.summary_repo = repo
+            self.repo = Repo(self.root_path)
+            super().run(files, jobs)
+        finally:
+            if tmp_dir:
+                tmp_dir.cleanup()
