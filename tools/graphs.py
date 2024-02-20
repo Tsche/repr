@@ -75,7 +75,7 @@ class Graphs(Extension):
                         "isNavigable": True,
                         "valuesOverPoints": True,
                     }
-                ),
+                ) + "\n\n"
             )
 
     def render(self, data: list):
@@ -99,8 +99,11 @@ class Graphs(Extension):
                     }
                 )
 
-            yield summary_file, json.dumps(summary)
+            yield self.settings.output / f"{report_path.parent.name}.json", json.dumps(summary) + "\n\n"
             yield from self.generate_charts(report_path.parent.name, summary)
+
+        # self.summary_repo.git.add(all=True)
+        # yield self.settings.output / "summary.patch", self.summary_repo.git.diff(self.summary_repo.head.commit.tree)
 
     def run(self, _, jobs):
         tmp_dir = None
@@ -118,7 +121,7 @@ class Graphs(Extension):
 
             files = walk(self.settings.input)
             summary_path = self.settings.summary_path
-            if not (summary_path / '.git').exists():
+            if not (summary_path / ".git").exists():
                 logging.info("Cloning %s into %s", self.settings.summary_url, summary_path)
                 repo = Repo.clone_from(self.settings.summary_url, summary_path)
             else:

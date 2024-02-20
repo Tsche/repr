@@ -186,12 +186,11 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: benchmark
-        path: build/benchmark
+        path: build/commits/${GITHUB_SHA::7}
 
     - name: Generate graphs
       run: |
-        git config --global --add safe.directory $PWD
-        palgen --debug graphs --output build/${GITHUB_SHA::7}
+        palgen --debug benchmark --output build
 
     - uses: actions/upload-artifact@master
       with:
@@ -229,6 +228,8 @@ jobs:
   deploy-wiki:
     # process-tests,
     needs: [amalgamate-header, process-benchmarks]
+
+    # only update results of master
     # if: success() && github.ref == 'refs/heads/master'
   
     concurrency:
@@ -249,15 +250,19 @@ jobs:
       run: |
         apk update
         apk add --no-cache git python3
-  
+
+    - uses: actions/download-artifact@master
+      with:
+        name: graphs
+        path: build
+
     - name: Update text database
-      # only update results of master
       uses: cpina/github-action-push-to-another-repository@main
       env:
         API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
       with:
-        source-directory: 'build/repr.wiki'
-        destination-github-username: 'tsche'
+        source-directory: build
+        destination-github-username: tsche
         destination-repository-name: 'repr.wiki'
         user-name: CI
         target-branch: master
