@@ -1,3 +1,4 @@
 *.h linguist-language=cpp
+include/repr linguist-language=cpp
 
 * text=auto eol=lf

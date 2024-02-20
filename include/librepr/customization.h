@@ -11,4 +11,4 @@ namespace librepr {
 template <typename T>
 struct Settings;
 
-}
+} // namespace librepr
