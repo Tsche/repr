@@ -30,11 +30,27 @@ class ReprRecipe(ConanFile):
 
     exports_sources = "CMakeLists.txt", "include/*"
 
+    def needs_fmt(self):
+        compiler = self.settings.compiler
+        compiler_version = int(self.settings.get_safe("compiler.version") or "0".split('.', 1)[0])
+        libcxx = self.settings.get_safe("compiler.libcxx")
+
+        if compiler == "clang":
+            libcxx = libcxx or "libstdc++" if self.settings.os == "Linux" else "libc++"
+
+            if compiler_version < 17 and libcxx == "libc++":
+                return True
+
+        elif compiler == "gcc" and compiler_version < 13:
+            return True
+
+        return False
+
     def requirements(self):
         if self.options.magic_enum:
             self.requires("magic_enum/0.9.3", transitive_headers=True)
 
-        if self.options.fmt:
+        if self.options.fmt or self.needs_fmt():
             self.requires("fmt/10.2.1",
                           transitive_headers=True,
                           transitive_libs=True)
@@ -56,7 +72,7 @@ class ReprRecipe(ConanFile):
                     "ENABLE_SANITIZERS": self.options.sanitizers,
                     "ENABLE_COVERAGE": self.options.coverage,
                     "ENABLE_MAGIC_ENUM": self.options.magic_enum,
-                    "ENABLE_FMTLIB": self.options.fmt,
+                    "ENABLE_FMTLIB": self.options.fmt or self.needs_fmt(),
                 }
             )
             cmake.build()
