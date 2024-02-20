@@ -190,7 +190,7 @@ jobs:
 
     - name: Generate graphs
       run: |
-        palgen --debug benchmark --output build
+        palgen --debug graphs --output build --input build/commits/${GITHUB_SHA::7}
 
     - uses: actions/upload-artifact@master
       with:
