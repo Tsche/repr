@@ -21,7 +21,7 @@ struct Accessor {
   constexpr static auto kind = Kind;
 
 private:
-  static consteval auto get_enum_names() {
+  static constexpr auto get_enum_names() {
     if constexpr (structure::size == 0) {
       return std::array<std::string_view, 0>{};
     } else {
@@ -50,7 +50,7 @@ public:
   constexpr static std::string_view search_name(underlying value)
     requires(Kind == EnumKind::Linear)
   {
-    using range = structure::template get<Idx>;
+    using range = typename structure::template get<Idx>;
 
     if (range::contains(value)) {
       auto offset = value - range::min;
@@ -71,7 +71,7 @@ public:
     requires(Kind == EnumKind::Flags)
   {
     static_assert(structure::size == 1, "Flag-like enum structure should only consist of one contiguous subrange");
-    using range = structure::template get<0>;
+    using range = typename structure::template get<0>;
 
     if (value == 0) {
       // special case 0

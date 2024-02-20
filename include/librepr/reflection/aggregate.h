@@ -51,9 +51,9 @@ struct Reflect<T> : category::Type<T> {
   using member_tuple = decltype(librepr::detail::to_reftuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>, "Aggregate reflection failed");
 
-  using member_types                = pack::rebox<member_tuple, TypeList>::template map<std::remove_reference_t>;
+  using member_types                = typename pack::rebox<member_tuple, TypeList>::template map<std::remove_reference_t>;
   using type                        = T;
-  using members                     = member_types::template map<librepr::Reflect>;
+  using members                     = typename member_types::template map<librepr::Reflect>;
   constexpr static bool can_descend = true;
 
   template <typename V>
