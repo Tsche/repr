@@ -22,6 +22,11 @@ $mathjax
 $darkmode
 <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
 $extrastylesheet
+<style>
+  .data-point-value {
+    fill: var(--page-foreground-color) !important;
+  }
+</style>
 
 <script type="text/javascript" src="$relpath^doxygen-awesome-fragment-copy-button.js"></script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-paragraph-link.js"></script>
@@ -33,6 +38,11 @@ $extrastylesheet
 
 <script src="https://unpkg.com/frappe-charts@1.6.1/dist/frappe-charts.min.umd.js"></script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-charts.js"></script>
+
+<link href="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.css" rel="stylesheet">
+<script src="https://unpkg.com/sortablejs@1.7.0/Sortable.min.js"></script>
+<script src="https://unpkg.com/clusterize.js@0.18.0/clusterize.min.js"></script>
+<script src="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.js"></script>
 
 <script type="text/javascript">
   DoxygenAwesomeDarkModeToggle.init();

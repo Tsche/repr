@@ -8,39 +8,293 @@ on:
     branches: [ "master" ]
 
 jobs:
-  ci:
+  amalgamate-header:
     runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    steps:  
-    - name: Set up compiler
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-        sudo apt update
-        sudo apt -y install gcc-13
-        sudo apt -y install g++-13
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+    - name: Setup palgen
+      uses: palliate/palgen@master
+      with:
+        run: false
+        requirements: tools/requirements.txt
+
+    - name: Run header amalgamation
+      run: palgen --debug amalgamate
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: amalgamated
+        path: build/amalgamated.h
+
+  test-runtime:
+    strategy:
+      matrix:
+        compiler: [clang]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+        - compiler: gcc
+          os: ubuntu-latest
+        - compiler: msvc
+          os: windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
-    
-    - uses: actions/checkout@v3
-      with:
-        repository: Tsche/repr.wiki
-      
+
     - name: Set up Conan profile
       run: |
-        conan profile detect
-        cp conan.linux `conan profile path default`
-    
-    - uses: actions/checkout@v3
+        conan config install https://github.com/Tsche/github-conan-profiles.git -sf=${{ matrix.os }}
+
     - name: Build
-      run: conan build . -s build_type=Debug --build=missing
+      run: conan build . -s build_type=Debug --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
 
     - name: Test Package
       run: |
         conan editable add .
-        conan test test_package repr/0.1 -s build_type=Debug
+        conan test test_package repr/0.1 -s build_type=Debug -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
 
     - name: Test
       run: ./build/Debug/repr_test
+
+  test-compiletime:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+  benchmark-runtime:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache git clang17 gcc
+
+  benchmark-compiletime:
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache clang17 git bash python3 py3-pip
+  
+    - name: Checkout
+      uses: actions/checkout@v4
+  
+    - name: Setup palgen
+      run: |
+        pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
+        pip3 install -r tools/requirements.txt --break-system-packages
+
+    - name: Run benchmarks
+      run: palgen --debug benchmark -cpu 0
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: benchmark
+        path: build/benchmark
+
+  sonarcloud:
+    needs: [test-compiletime, test-runtime]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up compiler
+      run: "sudo add-apt-repository ppa:ubuntu-toolchain-r/test\nsudo apt update\nsudo apt -y install gcc-13\nsudo apt -y install g++-13\nsudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 \nsudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100\n  #magic___^_^___line\nsudo pip install -U gcovr\n  #magic___^_^___line\n"
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@main
+
+    - uses: actions/checkout@v3
+      with:
+        repository: Tsche/repr.wiki
+
+    - name: Set up Conan profile
+      run: |
+        conan profile detect
+        cp conan.linux `conan profile path default`
+
+    - uses: actions/checkout@v3
+
+    - name: Install sonar-scanner and build-wrapper
+      uses: SonarSource/sonarcloud-github-c-cpp@v2.0.2
+
+    - name: Build
+      run: build-wrapper-linux-x86-64 --out-dir out conan build . -s build_type=Debug --build=missing -o coverage=True
+
+    - name: Coverage
+      run: |
+        ./build/Debug/repr_test
+        gcovr --verbose --gcov-executable gcov-13 --sonarqube coverage.xml --decisions -b --exclude-unreachable-branches
+
+    - name: Run sonar-scanner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: sonar-scanner --define sonar.cfamily.build-wrapper-output="out" --define sonar.coverageReportPaths=coverage.xml
+
+  process-tests:
+    needs: [test-compiletime, test-runtime]
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache git python3
+
+  process-benchmarks:
+    needs: [benchmark-compiletime, benchmark-runtime]
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache git bash python3 py3-pip
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup palgen
+      run: |
+        pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
+        pip3 install -r tools/requirements.txt --break-system-packages
+
+    - uses: actions/download-artifact@master
+      with:
+        name: benchmark
+        path: build/benchmark
+
+    - name: Generate graphs
+      run: palgen --debug graphs --output build/${GITHUB_SHA::7}
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: graphs
+        path: build
+
+  build-docs:
+    needs: [amalgamate-header, process-tests, process-benchmarks]
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache git doxygen graphviz font-liberation python3 py3-pydot bash py3-pip
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup palgen
+      run: |
+        pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
+        pip3 install -r tools/requirements.txt --break-system-packages
+
+    - name: Generate docs
+      run: |
+        mkdir -p build/docs
+        palgen --debug docs
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: docs-web
+        path: build/docs/html
+  
+  deploy-wiki:
+    needs: [amalgamate-header, process-tests, process-benchmarks]
+    if: success() && github.ref == 'refs/heads/master'
+  
+    concurrency:
+      group: "wiki"
+      cancel-in-progress: false
+
+    environment: 
+      name: wiki
+      url: 'https://github.com/Tsche/repr/wiki'
+    
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+    - name: Install dependencies
+      run: |
+        apk update
+        apk add --no-cache git python3
+  
+    - name: Update text database
+      # only update results of master
+      uses: cpina/github-action-push-to-another-repository@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        source-directory: 'build/repr.wiki'
+        destination-github-username: 'tsche'
+        destination-repository-name: 'repr.wiki'
+        user-name: CI
+        target-branch: master
+
+  deploy-pages:
+    needs: build-docs
+    # only publish on master
+    if: success() && github.ref == 'refs/heads/master'
+
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@master
+      with:
+        name: docs-web
+        path: html
+
+    - uses: actions/download-artifact@master
+      with:
+        name: amalgamated
+        path: html
+
+    - name: List HTML root
+      run: ls -la html
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: html
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

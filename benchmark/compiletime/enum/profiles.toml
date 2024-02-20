@@ -20,3 +20,8 @@ REPR_ENUM_FAST_SEARCH = true
 
 [profile.magic_enum]
 REPR_USE_MAGIC_ENUM = true
+
+[[third_party]]
+url="https://github.com/Neargye/magic_enum.git"
+tag="v0.9.5"
+include="include/magic_enum"
