@@ -21,6 +21,7 @@ option(ENABLE_MAGIC_ENUM "Use magic_enum instead of librepr::ctei" OFF)
 option(ENABLE_BENCHMARK "Enable benchmarks" OFF)
 
 if(ENABLE_FMTLIB)
+  message(STATUS "Using fmt")
   find_package(fmt CONFIG REQUIRED)
   target_link_libraries(repr INTERFACE fmt::fmt)
   target_compile_definitions(repr INTERFACE REPR_FORMAT_FMT=ON)

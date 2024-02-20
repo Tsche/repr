@@ -227,7 +227,8 @@ jobs:
         path: build/docs/html
   
   deploy-wiki:
-    needs: [amalgamate-header, process-tests, process-benchmarks]
+    # process-tests,
+    needs: [amalgamate-header, process-benchmarks]
     # if: success() && github.ref == 'refs/heads/master'
   
     concurrency:
