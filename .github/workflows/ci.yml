@@ -189,7 +189,9 @@ jobs:
         path: build/benchmark
 
     - name: Generate graphs
-      run: palgen --debug graphs --output build/${GITHUB_SHA::7}
+      run: |
+        git config --global --add safe.directory $PWD
+        palgen --debug graphs --output build/${GITHUB_SHA::7}
 
     - uses: actions/upload-artifact@master
       with:
