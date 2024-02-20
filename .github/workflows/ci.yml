@@ -23,7 +23,7 @@ jobs:
     - name: Run header amalgamation
       run: palgen --debug amalgamate
 
-    - uses: actions/upload-artifact@master
+    - uses: actions/upload-artifact@v4
       with:
         name: amalgamated
         path: build/amalgamated.h
@@ -47,7 +47,7 @@ jobs:
 
     - name: Install Conan
       id: conan
-      uses: turtlebrowser/get-conan@main
+      uses: turtlebrowser/get-conan@v1.2
 
     - name: Set up Conan profile
       run: |
@@ -97,9 +97,6 @@ jobs:
         apk update
         apk add --no-cache util-linux clang17 git bash python3 py3-pip
   
-    - name: Checkout
-      uses: actions/checkout@v4
-  
     - name: Setup palgen
       run: |
         pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
@@ -111,7 +108,7 @@ jobs:
     - name: Run benchmarks
       run: palgen --debug benchmark --cpu 0
 
-    - uses: actions/upload-artifact@master
+    - uses: actions/upload-artifact@v4
       with:
         name: benchmark
         path: build/benchmark
@@ -125,7 +122,7 @@ jobs:
       run: "sudo add-apt-repository ppa:ubuntu-toolchain-r/test\nsudo apt update\nsudo apt -y install gcc-13\nsudo apt -y install g++-13\nsudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 \nsudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100\n  #magic___^_^___line\nsudo pip install -U gcovr\n  #magic___^_^___line\n"
     - name: Install Conan
       id: conan
-      uses: turtlebrowser/get-conan@main
+      uses: turtlebrowser/get-conan@v1.2
 
     - uses: actions/checkout@v3
       with:
@@ -183,7 +180,7 @@ jobs:
         pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
         pip3 install -r tools/requirements.txt --break-system-packages
 
-    - uses: actions/download-artifact@master
+    - uses: actions/download-artifact@v4
       with:
         name: benchmark
         path: build/commits/${{ github.sha }}
@@ -194,7 +191,7 @@ jobs:
         mv build/commits/${{ github.sha }} build/commits/${GITHUB_SHA::7}
         palgen --debug graphs --output build --input build/commits/${GITHUB_SHA::7}
 
-    - uses: actions/upload-artifact@master
+    - uses: actions/upload-artifact@v4
       with:
         name: graphs
         path: build
@@ -222,7 +219,7 @@ jobs:
         mkdir -p build/docs
         palgen --debug docs
 
-    - uses: actions/upload-artifact@master
+    - uses: actions/upload-artifact@v4
       with:
         name: docs-web
         path: build/docs/html
@@ -253,13 +250,13 @@ jobs:
         apk update
         apk add --no-cache git python3
 
-    - uses: actions/download-artifact@master
+    - uses: actions/download-artifact@v4
       with:
         name: graphs
         path: build
 
     - name: Update text database
-      uses: cpina/github-action-push-to-another-repository@main
+      uses: cpina/github-action-push-to-another-repository@v1.7.2
       env:
         API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -289,12 +286,12 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@master
+    - uses: actions/download-artifact@v4
       with:
         name: docs-web
         path: html
 
-    - uses: actions/download-artifact@master
+    - uses: actions/download-artifact@v4
       with:
         name: amalgamated
         path: html
