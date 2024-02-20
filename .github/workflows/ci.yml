@@ -250,21 +250,20 @@ jobs:
         apk update
         apk add --no-cache git python3
 
+    - uses: actions/checkout@v4
+      with:
+        repository: 'git@github.com:Tsche/repr.wiki.git'
+
     - uses: actions/download-artifact@v4
       with:
         name: graphs
-        path: build
+        path: .
 
     - name: Update text database
-      uses: cpina/github-action-push-to-another-repository@v1.7.2
-      env:
-        API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        source-directory: build
-        destination-github-username: tsche
-        destination-repository-name: 'repr.wiki'
-        user-name: CI
-        target-branch: master
+      run: |
+        git add .
+        git commit --author="CI" -m "Results of ${GITHUB_SHA::7}"
+        git push
 
   deploy-pages:
     needs: build-docs
