@@ -26,7 +26,7 @@ template <template <typename...> class Variant, typename... Ts>
   requires std::derived_from<Variant<Ts...>, std::variant<Ts...>>
 struct VariantDetector<Variant<Ts...> const> {
   static constexpr bool value = true;
-  using alternatives          = TypeList<Ts...>::template map<std::add_const_t>;
+  using alternatives          = typename TypeList<Ts...>::template map<std::add_const_t>;
 };
 
 template <template <typename...> class Variant, typename... Ts>
