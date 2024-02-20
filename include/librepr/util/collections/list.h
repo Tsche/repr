@@ -84,7 +84,7 @@ struct ValueListBase {
 
   template <std::size_t Idx>
     requires(sizeof...(Vs) > 0 && Idx < sizeof...(Vs))
-  using get = wrap<>::template get<Idx>::type::value;
+  constexpr static auto get = wrap<>::template get<Idx>::type::value;
 
   template <std::size_t Idx>
   using do_split = pack::Split<Idx, List<Vs...>>;
