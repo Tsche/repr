@@ -22,16 +22,16 @@ public:
 
   template <std::size_t Idx>
     requires(sizeof...(Ts) > 0 && Idx < sizeof...(Ts))
-  using get = pack::Split<Idx, List<Ts...>>::type;
+  using get = typename pack::Split<Idx, List<Ts...>>::type;
 
   template <std::size_t Idx>
   using split = List<typename do_split<Idx>::head, typename do_split<Idx>::tail>;
 
   template <std::size_t Idx>
-  using head = do_split<Idx>::head;
+  using head = typename do_split<Idx>::head;
 
   template <std::size_t Idx>
-  using tail = do_split<Idx>::tail;
+  using tail = typename do_split<Idx>::tail;
 
   template <typename T>
   using append = List<Ts..., T>;
@@ -94,10 +94,10 @@ struct ValueListBase {
                          pack::unwrap<List, typename do_split<Idx>::tail>>;
 
   template <std::size_t Idx>
-  using head = do_split<Idx>::head;
+  using head = typename do_split<Idx>::head;
 
   template <std::size_t Idx>
-  using tail = do_split<Idx>::tail;
+  using tail = typename do_split<Idx>::tail;
 
   template <auto V>
   using append = List<Vs..., V>;

@@ -93,5 +93,5 @@ template <typename T, template <auto...> class To>
 using rebox_v = typename detail::ReBoxVImpl<T, To>::type;
 
 template <std::size_t Idx, typename T>
-using get = Split<Idx, T>::type;
+using get = typename Split<Idx, T>::type;
 }  // namespace librepr::pack

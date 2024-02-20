@@ -95,7 +95,7 @@ jobs:
     - name: Install dependencies
       run: |
         apk update
-        apk add --no-cache clang17 git bash python3 py3-pip
+        apk add --no-cache util-linux clang17 git bash python3 py3-pip
   
     - name: Checkout
       uses: actions/checkout@v4
@@ -104,6 +104,9 @@ jobs:
       run: |
         pip3 install git+https://github.com/palliate/palgen.git@master --break-system-packages
         pip3 install -r tools/requirements.txt --break-system-packages
+
+    - name: Print Clang version
+      run: clang++ --version
 
     - name: Run benchmarks
       run: palgen --debug benchmark --cpu 0

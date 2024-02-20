@@ -35,6 +35,12 @@ public:
   }
 };
 
+template <>
+class RefTuple<> {
+public:
+  RefTuple() = default;
+};
+
 template <typename... Types>
 RefTuple(Types&...) -> RefTuple<Types...>;
 
