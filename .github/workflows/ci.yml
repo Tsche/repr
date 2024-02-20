@@ -190,6 +190,7 @@ jobs:
 
     - name: Generate graphs
       run: |
+        git config --global --add safe.directory $PWD
         mv build/commits/${{ github.sha }} build/commits/${GITHUB_SHA::7}
         palgen --debug graphs --output build --input build/commits/${GITHUB_SHA::7}
 
