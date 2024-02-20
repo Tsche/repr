@@ -79,6 +79,9 @@ struct ValueListBase {
   template <template <typename...> class T = TypeList>
   using wrap = pack::wrap<T, Vs...>;
 
+  template <template <typename...> class T = TypeList>
+  using types = T<decltype(Vs)...>;
+
   template <std::size_t Idx>
     requires(sizeof...(Vs) > 0 && Idx < sizeof...(Vs))
   using get = wrap<>::template get<Idx>::type::value;
