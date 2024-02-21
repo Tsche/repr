@@ -258,6 +258,7 @@ jobs:
 
     - name: Update text database
       run: |
+        git config --global --add safe.directory $PWD
         git add .
         git commit --author="CI" -m "Results of ${GITHUB_SHA::7}"
         git push
