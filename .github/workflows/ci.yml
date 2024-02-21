@@ -261,8 +261,11 @@ jobs:
     - name: Update text database
       run: |
         git config --global --add safe.directory $PWD
+        git config --global user.name 'CI'
+        git config --global user.email '<>'
+
         git add .
-        git commit --author="CI <>" -m "Results of ${GITHUB_SHA::7}"
+        git commit -m "Results of ${GITHUB_SHA::7}"
         git push
 
   deploy-pages:
