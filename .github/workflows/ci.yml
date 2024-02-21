@@ -130,18 +130,6 @@ jobs:
       run: |
         conan config install https://github.com/Tsche/github-conan-profiles.git -sf=ubuntu-latest
 
-    - name: Build
-      run: 
-
-    - uses: actions/checkout@v3
-      with:
-        repository: Tsche/repr.wiki
-
-    - name: Set up Conan profile
-      run: |
-        conan profile detect
-        cp conan.linux `conan profile path default`
-
     - uses: actions/checkout@v3
 
     - name: Install sonar-scanner and build-wrapper
