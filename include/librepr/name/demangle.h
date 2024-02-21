@@ -19,7 +19,7 @@
 
 namespace librepr {
 [[nodiscard]] inline std::string demangle(std::string_view mangled) {
-#if USING(LIBREPR_COMPILER_MSVC)
+#if USING(LIBREPR_PLATFORM_WINDOWS)
   detail::DemangleBuffer buffer{};
   auto count = detail::undecorate_name(mangled.data(), buffer);
   if (count == 0) [[unlikely]] {
