@@ -61,7 +61,7 @@ class Graphs(Extension):
                 datasets.append({"name": name, "values": runs, "chartType": "line"})
                 markers.append({"label": name, "value": min(runs)})
 
-            chart = self.settings.output / group / f"{fnv1a(query):x}.json"
+            chart = self.settings.output / group / f"{fnv1a(query):x}_chart.json"
             yield (
                 chart,
                 json.dumps(
@@ -77,6 +77,14 @@ class Graphs(Extension):
                     }
                 ) + "\n\n"
             )
+
+    def generate_tables(self, group: str, summary):
+        for query, data in summary.items():
+            table = self.settings.output / group / f"{fnv1a(query):x}.json"
+            for entry in data:
+                for key in entry["results"]:
+                    entry["results"][key] //= 1000
+            yield table, json.dumps(data)
 
     def render(self, data: list):
         for report_path in data:
@@ -101,6 +109,7 @@ class Graphs(Extension):
 
             yield self.settings.output / f"{report_path.parent.name}.json", json.dumps(summary) + "\n\n"
             yield from self.generate_charts(report_path.parent.name, summary)
+            yield from self.generate_tables(report_path.parent.name, summary)
 
         # self.summary_repo.git.add(all=True)
         # yield self.settings.output / "summary.patch", self.summary_repo.git.diff(self.summary_repo.head.commit.tree)

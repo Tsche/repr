@@ -1322,6 +1322,7 @@ HTML_EXTRA_STYLESHEET  = docs/github-corner.css \
                          build/docs/style/doxygen-awesome-sidebar-only.css \
                          build/docs/style/doxygen-awesome-sidebar-only-darkmode-toggle.css \
                          build/docs/extensions/doxygen-awesome/doxygen-awesome-godbolt.css \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-tables.css \
                          build/docs/extensions/doxygen-awesome/doxygen-awesome-alerts.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
@@ -1339,6 +1340,7 @@ HTML_EXTRA_FILES       = LICENSE \
                          build/docs/style/doxygen-awesome-interactive-toc.js \
                          build/docs/extensions/doxygen-awesome/doxygen-awesome-alerts.js \
                          build/docs/extensions/doxygen-awesome/doxygen-awesome-charts.js \
+                         build/docs/extensions/doxygen-awesome/doxygen-awesome-tables.js \
                          build/docs/extensions/doxygen-awesome/doxygen-awesome-godbolt.js
 
 

@@ -7,7 +7,7 @@
 #include <librepr/macro/platform.h>
 #include <librepr/util/string/util.h>
 
-#if USING(LIBREPR_COMPILER_MSVC)
+#if USING(LIBREPR_PLATFORM_WINDOWS)
 #include "detail/undecorate.h"
 #include "detail/denoise.h"
 #elif __has_include(<cxxabi.h>)
