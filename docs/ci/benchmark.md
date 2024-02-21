@@ -69,10 +69,13 @@ datatable enum_name_data
       const trace_url = `${detail_url}/${result}_trace.json`;
       buffer += `
       <dt>${result}:</dt>
-      <dd><a href="${trace_url}">Raw trace</a></dd>
-      <dd><a href="${detail_url}/${result}.json">Summary</a></dd>
+      <dd><a href="${trace_url}" target="_blank" rel="noopener noreferrer">Raw trace</a></dd>
+      <dd><a href="${detail_url}/${result}.json" target="_blank" rel="noopener noreferrer">Summary</a></dd>
       <dd>
-      <a href="https://www.speedscope.app/#profileURL=${escape(trace_url)}&title=${escape(result)}">View in speedscope</a></dd>
+        <a href="https://www.speedscope.app/#profileURL=${escape(trace_url)}&title=${escape(result)}" target="_blank" rel="noopener noreferrer">
+          View in speedscope
+        </a>
+      </dd>
       `;
     }
     return `<dl>${buffer}</dl>`;
