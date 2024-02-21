@@ -8,26 +8,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  amalgamate-header:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup palgen
-      uses: palliate/palgen@master
-      with:
-        run: false
-        requirements: tools/requirements.txt
-
-    - name: Run header amalgamation
-      run: palgen --debug amalgamate
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: amalgamated
-        path: build/amalgamated.h
-
   test-runtime:
     strategy:
       fail-fast: false
@@ -114,6 +94,26 @@ jobs:
       with:
         name: benchmark
         path: build/benchmark
+
+  amalgamate-header:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup palgen
+      uses: palliate/palgen@master
+      with:
+        run: false
+        requirements: tools/requirements.txt
+
+    - name: Run header amalgamation
+      run: palgen --debug amalgamate
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: amalgamated
+        path: build/amalgamated.h
 
   sonarcloud:
     needs: [test-compiletime, test-runtime]
