@@ -54,18 +54,9 @@ public:
 
   template <typename F, typename... Args>
   constexpr static void enumerate(F&& callable, Args&&... args) {
-    /*constexpr auto expects_index_arg = (requires {
-      { callable.template operator()<Ts>(std::size_t{}, std::forward<Args>(args)...) };
-    } && ...);
-
-    if constexpr (expects_index_arg) {
-      auto index = 0U;
-      (callable.template operator()<Ts>(index++, std::forward<Args>(args)...), ...);
-    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::index_sequence_for<Ts...>{});
-    //}
   }
 };
 
@@ -120,19 +111,9 @@ struct ValueListBase {
 
   template <typename F, typename... Args>
   constexpr static void enumerate(F&& callable, Args&&... args) {
-    //TODO MSVC hard fails on this. Consider extracting this or using Constant<V> instead
-    /*constexpr auto expects_index_arg = (requires {
-      { callable.template operator()<Vs>(std::size_t{}, std::forward<Args>(args)...) };
-    } && ...);
-
-    if constexpr (expects_index_arg) {
-      auto index = 0U;
-      (callable.template operator()<Vs>(index++, std::forward<Args>(args)...), ...);
-    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::make_index_sequence<sizeof...(Vs)>{});
-    //}
   }
 };
 

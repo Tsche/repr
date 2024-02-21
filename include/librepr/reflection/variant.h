@@ -49,18 +49,17 @@ struct Reflect<T> : category::Type<T> {
 
   template <typename V>
   static void visit(V&& visitor, type& obj) {
-    auto overload_set = alternatives::invoke([&visitor]<typename... Ts>() {
-      return detail::Overload{[&visitor](Ts& alternative) { visitor(category::Value<Reflect<Ts>>{alternative}); }...};
-    });
-
-    std::visit(overload_set, obj);
+    std::visit(
+        [&visitor]<typename U>(U&& alternative) {
+          using alt_type = std::remove_reference_t<U>;
+          visitor(category::Value<Reflect<alt_type>>{std::forward<U>(alternative)});
+        },
+        obj);
   }
 
   template <typename V>
   static void visit(V&& visitor) {
-    alternatives::for_each([&visitor]<typename U>(){
-      visitor(Reflect<U>{});
-    });
+    alternatives::for_each([&visitor]<typename U>() { visitor(Reflect<U>{}); });
   }
 };
 
