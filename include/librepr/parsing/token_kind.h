@@ -1,74 +1,76 @@
 #pragma once
 #include <librepr/customization.h>
+#include <cstdint>
+#include "constants.h"
 
 namespace librepr::parsing {
 namespace TokenCategory {
-enum Category : unsigned { error, generic, character, string, numeric };
+enum Category : unsigned { error, generic, character, string, numeric, name };
 }
 
 namespace TokenKind {
-  enum Kind : unsigned {
-    invalid,
-    eof,
-    identifier,
-    numeric_literal,
-    string_literal,
-    char_literal,
+enum Kind : unsigned {
+  invalid,
+  eof,
+  identifier,
+  numeric_literal,
+  string_literal,
+  char_literal,
 
-    l_square,             // [
-    r_square,             // ]
-    l_paren,              // (
-    r_paren,              // )
-    l_brace,              // {
-    r_brace,              // }
-    period,               // .
-    amp,                  // &
-    ampamp,               // &&
-    ampequal,             // &=
-    star,                 // *
-    starequal,            // *=
-    plus,                 // +
-    plusplus,             // ++
-    plusequal,            // +=
-    minus,                // -
-    arrow,                // ->
-    minusminus,           // --
-    minusequal,           // -=
-    tilde,                // ~
-    exclaim,              // !
-    exclaimequal,         // !=
-    slash,                // /
-    slashequal,           // /=
-    percent,              // %
-    percentequal,         // %=
-    less,                 // <
-    lessless,             // <<
-    lessequal,            // <=
-    lesslessequal,        // <<=
-    spaceship,            // <=>
-    greater,              // >
-    greatergreater,       // >>
-    greaterequal,         // >=
-    greatergreaterequal,  // >>=
-    caret,                // ^
-    caretequal,           // ^=
-    pipe,                 // |
-    pipepipe,             // ||
-    pipeequal,            // |=
-    question,             // ?
-    colon,                // :
-    coloncolon,           // ::
-    semi,                 // ;
-    equal,                // =
-    equalequal,           // ==
-    comma,                // ,
-    periodstar,           // .*
-    arrowstar,            // ->*
-  };
+  l_square,             // [
+  r_square,             // ]
+  l_paren,              // (
+  r_paren,              // )
+  l_brace,              // {
+  r_brace,              // }
+  period,               // .
+  amp,                  // &
+  ampamp,               // &&
+  ampequal,             // &=
+  star,                 // *
+  starequal,            // *=
+  plus,                 // +
+  plusplus,             // ++
+  plusequal,            // +=
+  minus,                // -
+  arrow,                // ->
+  minusminus,           // --
+  minusequal,           // -=
+  tilde,                // ~
+  exclaim,              // !
+  exclaimequal,         // !=
+  slash,                // /
+  slashequal,           // /=
+  percent,              // %
+  percentequal,         // %=
+  less,                 // <
+  lessless,             // <<
+  lessequal,            // <=
+  lesslessequal,        // <<=
+  spaceship,            // <=>
+  greater,              // >
+  greatergreater,       // >>
+  greaterequal,         // >=
+  greatergreaterequal,  // >>=
+  caret,                // ^
+  caretequal,           // ^=
+  pipe,                 // |
+  pipepipe,             // ||
+  pipeequal,            // |=
+  question,             // ?
+  colon,                // :
+  coloncolon,           // ::
+  semi,                 // ;
+  equal,                // =
+  equalequal,           // ==
+  comma,                // ,
+  periodstar,           // .*
+  arrowstar,            // ->*
+};
 };
 
 namespace CharacterFlags {
-  enum Flag : unsigned { is_plain = 0, is_raw = 1U << 0U, is_wide = 1U << 1U };
+enum Flag : unsigned { is_plain = 0, is_raw = 1U << 0U, is_wide = 1U << 1U };
 };
 
 template <typename T, auto Tag>
@@ -77,16 +79,16 @@ struct TaggedEnum {
 };
 
 namespace StringFlags {
-  enum Flag : unsigned {
-    is_plain = 0,
-    is_raw   = 1U << 0U,
-    is_wide  = 1U << 1U,
-  };
-
-  inline auto librepr_settings(Flag){
-    return TaggedEnum<Flag, TokenCategory::string>{};
-  }
+enum Flag : unsigned {
+  is_plain = 0,
+  is_raw   = 1U << 0U,
+  is_wide  = 1U << 1U,
 };
+
+inline auto librepr_settings(Flag) {
+  return TaggedEnum<Flag, TokenCategory::string>{};
+}
+};  // namespace StringFlags
 
 struct Numeral {
   constexpr static auto tag = TokenCategory::numeric;
@@ -208,20 +210,64 @@ struct Numeral {
     kind.integer = type_;
   }
 
-  constexpr void set(Flags flag) {
-    flags = (Flags)(flag | flags);
-  }
+  constexpr void set(Flags flag) { flags = (Flags)(flag | flags); }
 };
 static_assert(sizeof(Numeral) <= 4);
+
+struct Name {
+  constexpr static auto tag = TokenCategory::name;
+
+  enum Kind : unsigned  {
+    identifier = 0,
+    keyword,
+    literal,
+    type,
+    alt_operator,
+    cast,
+    control,
+    magic,
+    contextual,
+    preprocessor
+  };
+
+  Kind kind;
+
+  constexpr explicit Name(std::uint32_t hash, bool check_preprocessor = false) {
+    if (constants::keyword.contains(hash)) {
+      kind = keyword;
+    } else if (constants::literal.contains(hash)) {
+      kind = literal;
+    } else if (constants::type.contains(hash)) {
+      kind = type;
+    } else if (constants::alternative_operator.contains(hash)) {
+      kind = alt_operator;
+    } else if (constants::cast.contains(hash)) {
+      kind = cast;
+    } else if (constants::control_statement.contains(hash)) {
+      kind = control;
+    } else if (constants::magic.contains(hash)) {
+      kind = magic;
+    } else if (constants::contextual_keyword.contains(hash)) {
+      kind = contextual;
+    } else if (check_preprocessor && constants::preprocessor.contains(hash)) {
+      kind = preprocessor;
+    } else {
+      kind = identifier;
+    }
+  }
+
+  [[nodiscard]] constexpr bool is(Kind type_) const { return kind == type_; }
+
+  [[nodiscard]] constexpr bool in(Kind types) const { return (kind & types) != 0; }
+};
 }  // namespace librepr::parsing
 
-
-template<>
+template <>
 struct librepr::Settings<librepr::parsing::TokenKind::Kind> {
   static constexpr auto tag = librepr::parsing::TokenCategory::generic;
 };
 
-template<>
+template <>
 struct librepr::Settings<librepr::parsing::CharacterFlags::Flag> {
-static constexpr auto tag = librepr::parsing::TokenCategory::character;
+  static constexpr auto tag = librepr::parsing::TokenCategory::character;
 };

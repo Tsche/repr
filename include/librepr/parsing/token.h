@@ -24,9 +24,14 @@ public:
     CharacterFlags::Flag char_flags;
     StringFlags::Flag string_flags;
     Numeral numeric_flags;
+    Name name;
 
-    static_assert(
-        EnableUnion<&Type::lex_error, &Type::kind, &Type::char_flags, &Type::string_flags, &Type::numeric_flags>);
+    static_assert(EnableUnion<&Type::lex_error,
+                              &Type::kind,
+                              &Type::char_flags,
+                              &Type::string_flags,
+                              &Type::numeric_flags,
+                              &Type::name>);
   } type{.lex_error = LexError::Unknown};
 
 public:
@@ -108,6 +113,10 @@ public:
   template <detail::is_class T>
     requires is_token_category<T::tag>
   [[nodiscard]] constexpr bool is(T flags) const {
+    if (category != T::tag) {
+      return false;
+    }
+
     T const& current = get<T>();
     return current.is(flags);
   }
@@ -115,6 +124,10 @@ public:
   template <typename T>
     requires std::is_enum_v<T>
   [[nodiscard]] constexpr bool is(T flags) const {
+    if (category != get_tag<T>) {
+      return false;
+    }
+
     auto const& current = get<get_union_type<Type, get_tag<T>>>();
     static_assert(std::same_as<std::remove_cvref_t<decltype(current)>, T>);
 
@@ -124,21 +137,31 @@ public:
   [[nodiscard]] constexpr bool in(TokenCategory::Category category_) const { return category_ == category; }
 
   template <std::same_as<TokenCategory::Category>... Ts>
-  [[nodiscard]] constexpr bool in(Ts... alternatives) const { return ((category == alternatives) || ...); }
+  [[nodiscard]] constexpr bool in(Ts... alternatives) const {
+    return ((category == alternatives) || ...);
+  }
 
   template <detail::is_class T, detail::is_class... Ts>
     requires is_token_category<T::tag> && (is_token_category<Ts::tag> && ...)
   [[nodiscard]] constexpr bool in(T flags) const {
+    if (category != T::tag) {
+      return false;
+    }
+
     T const& current = get<T>();
     return current.has(flags);
   }
 
   template <detail::is_enum T, std::same_as<T>... Ts>
-    requires (!std::same_as<T, TokenCategory::Category>)
+    requires(!std::same_as<T, TokenCategory::Category>)
   [[nodiscard]] constexpr bool in(T flag, Ts... flags) const {
+    if (category != get_tag<T>) {
+      return false;
+    }
+
     auto const& current = get<get_union_type<Type, get_tag<T>>>();
     static_assert(std::same_as<std::remove_cvref_t<decltype(current)>, T>);
-    return (current & static_cast<T>(flag | (flags | ...))) != 0;
+    return (current & static_cast<T>((flag | ... | flags))) != 0;
   }
 
   [[nodiscard]] constexpr operator bool() const {

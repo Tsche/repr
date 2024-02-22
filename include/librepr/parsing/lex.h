@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string_view>
 #include <librepr/macro/assert.h>
+#include <librepr/util/hash.h>
 #include "token_kind.h"
 #include "lex_error.h"
 #include "token.h"
@@ -205,14 +206,15 @@ private:
     return Token{token.start, cursor, flags};
   }
 
-  constexpr Token lex_identifier(Token& token) {
+  constexpr Token lex_identifier(Token& token, bool preprocessor = false) {
     while (cursor < length) {
       if (!advance_pred(is_ident_continue)) {
         break;
       }
     }
-    token     = TokenKind::identifier;
-    token.end = cursor;
+    token.end                = cursor;
+    std::uint32_t const hash = librepr::fnv1a(&data[token.start], token.end - token.start);
+    token = Name{hash};
     return token;
   }
 
@@ -334,7 +336,8 @@ private:
           output = (is_raw) ? (StringFlags::Flag)(StringFlags::is_wide | StringFlags::is_raw) : StringFlags::is_wide;
           return lex_string(output);
         } else if (advance_if('\'')) {
-          output = (is_raw) ? (CharacterFlags::Flag)(CharacterFlags::is_wide | CharacterFlags::is_raw) : CharacterFlags::is_wide;
+          output = (is_raw) ? (CharacterFlags::Flag)(CharacterFlags::is_wide | CharacterFlags::is_raw)
+                            : CharacterFlags::is_wide;
           return lex_character(output);
         } else {
           return lex_identifier(output);
