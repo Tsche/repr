@@ -1,8 +1,7 @@
 #pragma once
 #include <string_view>
-#include "librepr/customization.h"
-#include "librepr/util/union.h"
-#include "librepr/util/concepts.h"
+#include <librepr/util/union.h>
+#include <librepr/util/concepts.h>
 #include "generic.h"
 
 namespace librepr::parsing::detail {

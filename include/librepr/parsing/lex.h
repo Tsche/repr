@@ -4,7 +4,7 @@
 #include <librepr/macro/assert.h>
 #include <librepr/util/hash.h>
 #include "token_kind.h"
-#include "librepr/parsing/token/lex_error.h"
+#include "token/lex_error.h"
 #include "token.h"
 #include "classify.h"
 

@@ -10,4 +10,4 @@ struct Overload : Fs... {
 template <typename... Fs>
 Overload(Fs...) -> Overload<Fs...>;
 
-}  // namespace librepr::detail
+}  // namespace librepr::util

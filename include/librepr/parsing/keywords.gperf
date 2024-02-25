@@ -1,6 +1,6 @@
 %{
 #pragma once
-#include "librepr/parsing/token/name.h"
+#include "token/name.h"
 
   namespace librepr::parsing::detail {
 //NOLINT
