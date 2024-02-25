@@ -1,14 +1,11 @@
 #pragma once
-
-#include "token_kind.h"
-
 @{
 error_list = {
   "Unknown": "Unknown error",
   "UnknownCharacter": "Found unrecognized character.",
   "MultipleDecimalPoints": "Multiple decimal points found.",
   "ConsecutiveDigitSeparator": "Consecutive digit separators detected.",
-  "DigitSeparatorAdjacentToDecimalPoint": "The decimal point cannot be preceeded or followed by a digit separator.",
+  "DigitSeparatorAdjacentToDecimalPoint": "The decimal point cannot be preceded or followed by a digit separator.",
   "SingleColon": "Did you mean '::'?",
   "InvalidNumericLiteral": "Invalid numeric literal found.",
   "UnclosedStringLiteral": "String literal was not closed.",
@@ -35,9 +32,3 @@ namespace librepr::parsing::LexError {
     return "unrecognized error";
   }
 }  // namespace librepr::parsing::LexError
-
-
-template<>
-struct librepr::Settings<librepr::parsing::LexError::Error> {
-static constexpr auto tag = librepr::parsing::TokenCategory::error;
-};

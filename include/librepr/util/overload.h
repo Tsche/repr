@@ -1,6 +1,6 @@
 #pragma once
 
-namespace librepr::detail {
+namespace librepr::util {
 
 template <typename... Fs>
 struct Overload : Fs... {

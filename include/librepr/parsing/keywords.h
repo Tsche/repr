@@ -24,7 +24,7 @@
 #line 1 "keywords.gperf"
 
 #pragma once
-#include "keyword.h"
+#include "librepr/parsing/token/name.h"
 
 namespace librepr::parsing::detail {
 // NOLINT
@@ -385,4 +385,12 @@ constexpr const KeywordEntry* KeywordHash::find(std::string_view str) {
 #line 163 "keywords.gperf"
 
 // NOLINTEND
+
+constexpr Name lex_name(std::string_view str) {
+  if (auto const* entry = KeywordHash::find(str)) {
+    return entry->value;
+  }
+  return Name{Identifier::identifier};
+}
+
 }  // namespace librepr::parsing::detail

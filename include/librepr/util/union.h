@@ -1,74 +1,81 @@
 #pragma once
 #include "concepts.h"
+#include "member_ptr.h"
 #include <librepr/macro/warning.h>
-namespace librepr {
 
-template <typename T>
-struct Settings;
+namespace librepr::util {
 
-namespace util {
+template <is_member_pointer Ptr, is_enum Tag>
+struct UnionMember {
+  using member_ptr_info = MemberPtr<Ptr>;
+  static_assert(!member_ptr_info::is_function, "Member functions are not supported.");
+  static_assert(std::is_union_v<typename member_ptr_info::class_type>, "Member's class type isn't a union.");
+  using class_type  = typename MemberPtr<Ptr>::class_type;
+  using member_type = typename MemberPtr<Ptr>::return_type;
 
-template <typename T>
-consteval auto get_tag(){
-  if constexpr (requires { T::tag; }){
-    return T::tag;
-  }
-  else if constexpr (requires {Settings<T>::tag; }){
-    return Settings<T>::tag;
-  }
-  else if constexpr (requires (T obj) { {librepr_settings(obj)}; }) {
-    return decltype(librepr_settings(T{}))::tag;
-  }
-  else {
-    throw;
-  }
-}
+  Ptr member;
+  Tag tag;
+};
 
+template <is_member_pointer Ptr, is_enum Tag>
+UnionMember(Ptr, Tag) -> UnionMember<Ptr, Tag>;
+
+namespace detail {
 LIBREPR_WARNING_PUSH
 LIBREPR_WARNING_DISABLE(GCC, "-Wnon-template-friend")
 
 template <class C, auto E>
-struct UnionKey {
-  constexpr friend auto get_union_accessor_adl(UnionKey);
+struct ByTag {
+  constexpr friend auto get_union_accessor_adl(ByTag);
 };
 
-template <class C, auto E, auto V>
+template <class C, typename T>
+struct ByMemberType {
+  constexpr friend auto get_union_accessor_adl(ByMemberType);
+};
+
+template <UnionMember Member>
 struct UnionEntry {
-  constexpr friend auto get_union_accessor_adl(UnionKey<C, E>) { return V; }
+  using class_type = typename decltype(Member)::class_type;
+  constexpr friend auto get_union_accessor_adl(ByTag<class_type, Member.tag>) { return Member; }
+  constexpr friend auto get_union_accessor_adl(ByMemberType<class_type, typename decltype(Member)::member_type>) {
+    return Member;
+  }
 };
 
 LIBREPR_WARNING_POP
 
-template <typename T>
-struct UnionAccessor;
+template <UnionMember... Ts>
+consteval bool enroll_union_members() {
+  ((void)detail::UnionEntry<Ts>{}, ...);
+  return true;
+}
 
-template <typename T, class U>
-struct UnionAccessor<T U::*> {
-  using class_type = U;
-  using type       = T;
+template <UnionMember... Ts>
+struct EnableUnionImpl;
 
-  template <T U::*V>
-  consteval static bool write() {
-    (void)UnionEntry<U, get_tag<T>(), V>{};
-    return true;
-  }
+template <UnionMember T, UnionMember... Ts>
+struct EnableUnionImpl<T, Ts...> {
+  static_assert(all_same<decltype(T.tag)>, "Inconsistent tag type used.");
+  static_assert(all_same<typename decltype(T)::class_type>, "Not all member pointers belong to the same union.");
+
+  constexpr static bool value = enroll_union_members<T, Ts...>();
 };
+}  // namespace detail
 
-template <auto Accessor>
-using union_from_accessor = typename UnionAccessor<decltype(Accessor)>::class_type;
-}  // namespace util
-template <auto Accessor, auto... Accessors>
-concept EnableUnion = util::all_same<util::union_from_accessor<Accessor>, util::union_from_accessor<Accessors>...> &&
-                      util::UnionAccessor<decltype(Accessor)>::template write<Accessor>() &&
-    (util::UnionAccessor<decltype(Accessors)>::template write<Accessors>() && ...);
+template <UnionMember... Accessors>
+concept EnableUnion = detail::EnableUnionImpl<Accessors...>::value;
 
 template <typename Union, auto E>
-constexpr inline auto get_union_accessor = get_union_accessor_adl(util::UnionKey<Union, E>{});
+constexpr inline auto get_union_accessor = get_union_accessor_adl(detail::ByTag<Union, E>{}).member;
 
-template <typename Union, auto E>
-using get_union_type =
-    typename util::UnionAccessor<std::remove_const_t<decltype(get_union_accessor<Union, E>)> >::type;
+template <typename Union, typename Member>
+constexpr inline auto get_union_tag = get_union_accessor_adl(detail::ByMemberType<Union, Member>{}).tag;
 
-template <typename T>
-constexpr inline auto get_tag = util::get_tag<std::remove_const_t<T>>();
-}  // namespace librepr
+template <typename Union, typename Member>
+using union_member_type = typename decltype(get_union_accessor_adl(detail::ByMemberType<Union, Member>{}))::member_type;
+
+template <typename Union, typename Member>
+concept is_tagged_union = requires { get_union_accessor_adl(detail::ByMemberType<Union, Member>{}); };
+
+}  // namespace librepr::util

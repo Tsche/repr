@@ -1,8 +1,8 @@
 %{
 #pragma once
-#include "keyword.h"
+#include "librepr/parsing/token/name.h"
 
-namespace librepr::parsing::detail {
+  namespace librepr::parsing::detail {
 //NOLINT
 %}
 
@@ -162,4 +162,12 @@ import,                 Name{Contextual::Import}
 module,                 Name{Contextual::Module}
 %%
 //NOLINTEND
+
+constexpr Name lex_name(std::string_view str) {
+  if (auto const* entry = KeywordHash::find(str)) {
+    return entry->value;
+  }
+  return Name{Identifier::identifier};
+}
+
 } // librepr::parsing::detail

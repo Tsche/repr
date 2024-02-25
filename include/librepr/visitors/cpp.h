@@ -18,7 +18,7 @@ struct CppVisitor {
   std::size_t indent_level  = 0;
   std::size_t indent_amount = 4;
   std::size_t unnamed_count = 0;
-  detail::StringBuffer result;
+  util::StringBuffer result;
 
 private:
   template <typename T>

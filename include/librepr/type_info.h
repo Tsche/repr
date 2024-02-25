@@ -17,7 +17,7 @@ struct TypeName {
   }
 
   friend std::ostream& operator<<(std::ostream& ctx, TypeName<T> const& obj) { return ctx << obj.to_string(); }
-  friend detail::StringBuffer& operator<<(detail::StringBuffer& ctx, TypeName<T> const& obj) {
+  friend util::StringBuffer& operator<<(util::StringBuffer& ctx, TypeName<T> const& obj) {
     return ctx << obj.to_string();
   }
 };

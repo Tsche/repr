@@ -1,8 +1,5 @@
 #pragma once
 
-#include "token_kind.h"
-
-
 namespace librepr::parsing::LexError {
   enum Error : unsigned {
         Unknown,
@@ -27,7 +24,7 @@ namespace librepr::parsing::LexError {
             case ConsecutiveDigitSeparator:
         return "Consecutive digit separators detected.";
             case DigitSeparatorAdjacentToDecimalPoint:
-        return "The decimal point cannot be preceeded or followed by a digit separator.";
+        return "The decimal point cannot be preceded or followed by a digit separator.";
             case SingleColon:
         return "Did you mean '::'?";
             case InvalidNumericLiteral:
@@ -42,9 +39,3 @@ namespace librepr::parsing::LexError {
     return "unrecognized error";
   }
 }  // namespace librepr::parsing::LexError
-
-
-template<>
-struct librepr::Settings<librepr::parsing::LexError::Error> {
-static constexpr auto tag = librepr::parsing::TokenCategory::error;
-};

@@ -11,7 +11,7 @@ namespace librepr {
 template <typename T>
 struct Reflect;
 
-template <detail::pair_like T>
+template <util::pair_like T>
 struct Reflect<T> : category::Type<T> {
   using type                        = T;
   using first_type                  = T::first_type;

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <librepr/parsing/lex_error.h>
+#include "librepr/parsing/token/lex_error.h"
 #include <librepr/parsing/token.h>
 #include <librepr/parsing/token_kind.h>
 

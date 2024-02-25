@@ -41,7 +41,7 @@ private:
 
 public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
-  detail::StringBuffer result{};
+  util::StringBuffer result{};
 
   void nesting(bool increase) {
     if (increase) {
@@ -80,7 +80,7 @@ public:
   }
 
   template <typename T>
-    requires detail::has_repr_member<T>
+    requires util::has_repr_member<T>
   void value(T const& obj) {
     if constexpr (!librepr::is_literal_v<T>) {
       type<T>();

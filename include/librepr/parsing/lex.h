@@ -4,7 +4,7 @@
 #include <librepr/macro/assert.h>
 #include <librepr/util/hash.h>
 #include "token_kind.h"
-#include "lex_error.h"
+#include "librepr/parsing/token/lex_error.h"
 #include "token.h"
 #include "classify.h"
 
@@ -29,7 +29,7 @@ public:
   constexpr Token next(bool peek = false) {
     if (data.empty() || cursor >= length) {
       // nothing to do, return sentinel
-      return {0, 0, TokenKind::eof};
+      return Token{0, 0, TokenKind::eof};
     }
 
     auto const previous      = cursor;
@@ -209,8 +209,7 @@ private:
       }
     }
     token.end                = cursor;
-    std::uint32_t const hash = librepr::fnv1a(&data[token.start], token.end - token.start);
-    token                    = Name{hash};
+    token                    = detail::lex_name(std::string_view{&data[token.start], static_cast<std::size_t>(token.end - token.start)});
     return token;
   }
 
