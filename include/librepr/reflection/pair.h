@@ -4,8 +4,8 @@
 
 #include <librepr/util/collections/list.h>
 #include <librepr/util/concepts.h>
+#include <librepr/util/collections/list.h>
 #include "category.h"
-
 
 namespace librepr {
 template <typename T>

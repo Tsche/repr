@@ -17,8 +17,18 @@
 #endif // LIBREPR_DEBUG?
 
 #if USING(LIBREPR_PLATFORM_WINDOWS)
+# if USING(LIBREPR_COMPILER_MSVC)
 // _CRT_*_C_HEADER macros
-# include <vcruntime.h>
+#  include <vcruntime.h>
+#  define LIBREPR_CRT_BEGIN_C _CRT_BEGIN_C_HEADER
+#  define LIBREPR_CRT_END_C _CRT_END_C_HEADER
+# else
+#  define LIBREPR_CRT_BEGIN_C \
+    _Pragma("pack(push, 8)") \
+    extern "C" {
+#  define LIBREPR_CRT_END_C } \
+    _Pragma("pack(pop)")
+# endif
 #endif
 #include <assert.h>
 
@@ -31,14 +41,14 @@
  * Windows generally uses `_wassert` for their
  * `assert`, which we don't want.
  */
-_CRT_BEGIN_C_HEADER
+LIBREPR_CRT_BEGIN_C
   __declspec(dllimport) void 
    __cdecl _assert( // NOLINT
     char const* _Message,
     char const* _File,
     unsigned    _Line
   );
-_CRT_END_C_HEADER
+LIBREPR_CRT_END_C
 
 #elif USING(LIBREPR_PLATFORM_MACOS)
 # define LIBREPR_UND_ASSERT_(...) \
