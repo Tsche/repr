@@ -9,7 +9,7 @@
 #include <librepr/macro/assert.h>
 #include <librepr/macro/util.h>
 
-namespace librepr::detail {
+namespace librepr::util {
 /// Wrapper around std::string.
 struct StringBuffer {
   StringBuffer() = default;
@@ -92,4 +92,4 @@ private:
   std::string inplace_buffer{};
   std::size_t cursor{std::string::npos};
 };
-} // namespace librepr::detail
+} // namespace librepr::util

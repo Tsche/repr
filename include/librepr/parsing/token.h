@@ -48,7 +48,7 @@ public:
    * @param end_
    * @param type_
    */
-  template <librepr::detail::is_class T>
+  template <librepr::util::is_class T>
     requires is_token_category<T::tag>
   constexpr Token(uint16_t start_, uint16_t end_, T type_) : start(start_),
                                                              end(end_),
@@ -64,7 +64,7 @@ public:
    * @param end_
    * @param type_
    */
-  template <librepr::detail::is_enum T>
+  template <librepr::util::is_enum T>
     requires is_token_category<get_tag<T>>
   constexpr Token(uint16_t start_, uint16_t end_, T type_) : start(start_),
                                                              end(end_),
@@ -72,7 +72,7 @@ public:
     std::construct_at(&(type.*get_union_accessor<Type, get_tag<T>>), type_);
   }
 
-  template <librepr::detail::is_class T>
+  template <librepr::util::is_class T>
     requires is_token_category<T::tag>
   constexpr Token& operator=(T type_) {
     category = T::tag;
@@ -80,7 +80,7 @@ public:
     return *this;
   }
 
-  template <librepr::detail::is_enum T>
+  template <librepr::util::is_enum T>
     requires is_token_category<get_tag<T>>
   constexpr Token& operator=(T type_) {
     category = get_tag<T>;
@@ -110,7 +110,7 @@ public:
 
   [[nodiscard]] constexpr bool is(TokenCategory::Category category_) const { return category == category_; }
 
-  template <librepr::detail::is_class T>
+  template <librepr::util::is_class T>
     requires is_token_category<T::tag>
   [[nodiscard]] constexpr bool is(T flags) const {
     if (category != T::tag) {
@@ -141,7 +141,7 @@ public:
     return ((category == alternatives) || ...);
   }
 
-  template <librepr::detail::is_class T, librepr::detail::is_class... Ts>
+  template <librepr::util::is_class T, librepr::util::is_class... Ts>
     requires is_token_category<T::tag> && (is_token_category<Ts::tag> && ...)
   [[nodiscard]] constexpr bool in(T flags) const {
     if (category != T::tag) {
@@ -152,7 +152,7 @@ public:
     return current.has(flags);
   }
 
-  template <librepr::detail::is_enum T, std::same_as<T>... Ts>
+  template <librepr::util::is_enum T, std::same_as<T>... Ts>
     requires(!std::same_as<T, TokenCategory::Category>)
   [[nodiscard]] constexpr bool in(T flag, Ts... flags) const {
     if (category != get_tag<T>) {

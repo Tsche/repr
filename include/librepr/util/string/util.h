@@ -3,7 +3,7 @@
 #include <concepts>
 #include <string>
 
-namespace librepr::detail {
+namespace librepr::util {
 template <typename T>
 concept string_like = requires(T& obj) {
   obj.size();
@@ -23,4 +23,4 @@ template <string_like T>
 constexpr std::size_t strsize(T&& obj) {
   return obj.size();
 }
-}  // namespace librepr::detail
+}  // namespace librepr::util

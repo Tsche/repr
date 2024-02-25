@@ -6,7 +6,7 @@ namespace librepr {
 template <typename T>
 struct Settings;
 
-namespace detail {
+namespace util {
 
 template <typename T>
 consteval auto get_tag(){
@@ -56,20 +56,19 @@ struct UnionAccessor<T U::*> {
 
 template <auto Accessor>
 using union_from_accessor = typename UnionAccessor<decltype(Accessor)>::class_type;
-}  // namespace detail
+}  // namespace util
 template <auto Accessor, auto... Accessors>
-concept EnableUnion =
-    detail::all_same<detail::union_from_accessor<Accessor>, detail::union_from_accessor<Accessors>...> &&
-    detail::UnionAccessor<decltype(Accessor)>::template write<Accessor>() &&
-    (detail::UnionAccessor<decltype(Accessors)>::template write<Accessors>() && ...);
+concept EnableUnion = util::all_same<util::union_from_accessor<Accessor>, util::union_from_accessor<Accessors>...> &&
+                      util::UnionAccessor<decltype(Accessor)>::template write<Accessor>() &&
+    (util::UnionAccessor<decltype(Accessors)>::template write<Accessors>() && ...);
 
 template <typename Union, auto E>
-constexpr inline auto get_union_accessor = get_union_accessor_adl(detail::UnionKey<Union, E>{});
+constexpr inline auto get_union_accessor = get_union_accessor_adl(util::UnionKey<Union, E>{});
 
 template <typename Union, auto E>
 using get_union_type =
-    typename detail::UnionAccessor<std::remove_const_t<decltype(get_union_accessor<Union, E>)> >::type;
+    typename util::UnionAccessor<std::remove_const_t<decltype(get_union_accessor<Union, E>)> >::type;
 
 template <typename T>
-constexpr inline auto get_tag = detail::get_tag<std::remove_const_t<T>>();
+constexpr inline auto get_tag = util::get_tag<std::remove_const_t<T>>();
 }  // namespace librepr

@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <string>
 
-namespace librepr::detail {
+namespace librepr::util {
 template <typename T>
 concept pair_like = requires(T t) {
   t.first;
@@ -38,4 +38,4 @@ concept is_enum = std::is_enum_v<T>;
 
 template <typename T>
 concept is_class = std::is_class_v<T>;
-}  // namespace librepr::detail
+}  // namespace librepr::util

@@ -364,13 +364,13 @@ struct Name {
   Kind value {.identifier_=Identifier::error};
   NameCategory category {NameCategory::identifier};
 
-  /*template <librepr::detail::is_class T>
+  /*template <librepr::util::is_class T>
     requires is_name_category<T::tag>
   constexpr explicit Name(T value_) : category(T::tag) {
     std::construct_at(&(value.*get_union_accessor<Kind, T::tag>), value_);
   }*/
 
-  template <librepr::detail::is_enum T>
+  template <librepr::util::is_enum T>
     requires is_name_category<get_tag<T>>
   constexpr explicit Name(T value_) : category(get_tag<T>) {
     std::construct_at(&(value.*get_union_accessor<Kind, get_tag<T>>), value_);

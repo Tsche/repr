@@ -57,7 +57,7 @@ _CRT_END_C_HEADER
 # define LIBREPR_ASSERT(cond, ...) \
  do { if(!(cond)) [[unlikely]] { LIBREPR_EXASSERT(__VA_ARGS__); } } while(0)
 #else
-# define LIBREPR_EXASSERT(...) ::librepr::detail::unreachable()
+# define LIBREPR_EXASSERT(...) ::librepr::util::unreachable()
 # define LIBREPR_ASSERT(...) (void)(0)
 #endif
 
@@ -76,7 +76,7 @@ _CRT_END_C_HEADER
 # define LIBREPR_UNREACHABLE() __builtin_unreachable()
 #endif
 
-namespace librepr::detail {
+namespace librepr::util {
 #ifndef __cpp_lib_unreachable
   [[noreturn]] inline void unreachable() {
     LIBREPR_UNREACHABLE();
@@ -84,4 +84,4 @@ namespace librepr::detail {
 #else // Supports unreachable
   using std::unreachable;
 #endif // __cpp_lib_unreachable
-} // namespace librepr::detail
+} // namespace librepr::util

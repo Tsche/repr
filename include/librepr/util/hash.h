@@ -54,7 +54,7 @@ consteval std::uint32_t operator""_fnv1a(const char* str, std::size_t size) {
   return fnv1a(str, size);
 }
 
-namespace detail {
+namespace util {
 struct Hash {
   // Everything being implicit here is intended. This type is just a conversion helper.
   // NOLINTBEGIN
@@ -68,7 +68,7 @@ struct Hash {
 
   std::uint32_t value;
 };
-}  // namespace detail
+}  // namespace util
 
 template <std::size_t N>
 struct HashSet {
@@ -76,13 +76,13 @@ struct HashSet {
 
   HashSet() = delete;
 
-  template <std::convertible_to<detail::Hash>... Vs>
+  template <std::convertible_to<util::Hash>... Vs>
     requires(sizeof...(Vs) == N)
-  constexpr explicit HashSet(Vs... values) : set{detail::Hash{values}...} {}
+  constexpr explicit HashSet(Vs... values) : set{util::Hash{values}...} {}
 
   constexpr explicit HashSet(std::uint32_t (&set_)[N]) : set{} { std::copy(set_, set_ + N, set); }
 
-  [[nodiscard]] constexpr bool contains(detail::Hash hash) const {
+  [[nodiscard]] constexpr bool contains(util::Hash hash) const {
     for (auto&& key : set) {
       if (hash.value == key) {
         return true;
