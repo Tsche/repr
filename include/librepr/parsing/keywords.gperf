@@ -1,0 +1,165 @@
+%{
+#pragma once
+#include "keyword.h"
+
+namespace librepr::parsing::detail {
+//NOLINT
+%}
+
+struct KeywordEntry;
+
+%language=C++
+%enum
+
+%global-table
+%struct-type
+%omit-struct-type
+%define class-name KeywordHash
+%define lookup-function-name find
+%define hash-function-name hash
+%define slot-name key
+%define word-array-name keywords
+%define constants-prefix KW_
+
+%%
+true,                   Name{Literal::True}
+false,                  Name{Literal::False}
+nullptr,                Name{Literal::Nullptr}
+const,                  Name{Qualifier::Const}
+volatile,               Name{Qualifier::Volatile}
+private,                Name{AccessSpecifier::Private}
+protected,              Name{AccessSpecifier::Protected}
+public,                 Name{AccessSpecifier::Public}
+consteval,              Name{Specifier::Consteval}
+constexpr,              Name{Specifier::Constexpr}
+constinit,              Name{Specifier::Constinit}
+inline,                 Name{Specifier::Inline}
+mutable,                Name{Specifier::Mutable}
+class,                  Name{ClassKey::Class}
+struct,                 Name{ClassKey::Struct}
+union,                  Name{ClassKey::Union}
+enum,                   Name{EnumKey::Enum}
+template,               Name{Keyword::Template}
+typename,               Name{Keyword::Typename}
+concept,                Name{Keyword::Concept}
+namespace,              Name{Keyword::Namespace}
+export,                 Name{Keyword::Export}
+extern,                 Name{Keyword::Extern}
+friend,                 Name{Keyword::Friend}
+operator,               Name{Keyword::Operator}
+register,               Name{Keyword::Register}
+static,                 Name{Keyword::Static}
+this,                   Name{Keyword::This}
+thread_local,           Name{Keyword::ThreadLocal}
+typedef,                Name{Keyword::Typedef}
+using,                  Name{Keyword::Using}
+virtual,                Name{Keyword::Virtual}
+delete,                 Name{Keyword::Delete}
+new,                    Name{Keyword::New}
+__asm,                  Name{WindowsKeyword::Asm}
+__cdecl,                Name{WindowsKeyword::Cdecl}
+__restrict,             Name{WindowsKeyword::Restrict}
+__fastcall,             Name{WindowsKeyword::FastCall}
+__thiscall,             Name{WindowsKeyword::ThisCall}
+__stdcall,              Name{WindowsKeyword::StdCall}
+__vectorcall,           Name{WindowsKeyword::VectorCall}
+__w64,                  Name{WindowsKeyword::W64}
+__unaligned,            Name{WindowsKeyword::Unaligned}
+__sptr,                 Name{WindowsKeyword::Sptr}
+__uptr,                 Name{WindowsKeyword::Uptr}
+__event,                Name{WindowsKeyword::Event}
+__inline,               Name{WindowsKeyword::Inline}
+__forceinline,          Name{WindowsKeyword::ForceInline}
+__interface,            Name{WindowsKeyword::Interface}
+__single_inheritance,   Name{WindowsKeyword::SingleInheritance}
+__multiple_inheritance, Name{WindowsKeyword::MultipleInheritance}
+__virtual_inheritance,  Name{WindowsKeyword::VirtualInheritance}
+__raise,                Name{WindowsKeyword::Raise}
+__super,                Name{WindowsKeyword::Super}
+return,                 Name{Control::Return}
+if,                     Name{Control::If}
+else,                   Name{Control::Else}
+for,                    Name{Control::For}
+continue,               Name{Control::Continue}
+while,                  Name{Control::While}
+do,                     Name{Control::Do}
+throw,                  Name{Control::Throw}
+try,                    Name{Control::Try}
+catch,                  Name{Control::Catch}
+switch,                 Name{Control::Switch}
+case,                   Name{Control::Case}
+default,                Name{Control::Default}
+break,                  Name{Control::Break}
+goto,                   Name{Control::Goto}
+co_await,               Name{Control::CoAwait}
+co_yield,               Name{Control::CoYield}
+co_return,              Name{Control::CoReturn}
+__try,                  Name{WindowsSEH::Try}
+__except,               Name{WindowsSEH::Except}
+__leave,                Name{WindowsSEH::Leave}
+__finally,              Name{WindowsSEH::Finally}
+const_cast,             Name{Cast::Const}
+dynamic_cast,           Name{Cast::Dynamic}
+reinterpret_cast,       Name{Cast::Reinterpret}
+static_cast,            Name{Cast::Static}
+__declspec,             Name{WindowsMagic::Declspec}
+__based,                Name{WindowsMagic::Based}
+__assume,               Name{WindowsMagic::Assume}
+__alignof,              Name{WindowsMagic::Alignof}
+__if_not_exists,        Name{WindowsMagic::IfNotExists}
+__if_exists,            Name{WindowsMagic::IfExists}
+__hook,                 Name{WindowsMagic::Hook}
+__unhook,               Name{WindowsMagic::Unhook}
+__uuidof,               Name{WindowsMagic::UuidOf}
+asm,                    Name{Magic::Asm}
+requires,               Name{Magic::Requires}
+sizeof,                 Name{Magic::Sizeof}
+static_assert,          Name{Magic::StaticAssert}
+typeid,                 Name{Magic::Typeid}
+alignas,                Name{Magic::Alignas}
+alignof,                Name{Magic::Alignof}
+explicit,               Name{Magic::Explicit}
+noexcept,               Name{Magic::Noexcept}
+decltype,               Name{Magic::Decltype}
+__int8,                 Name{Type::Int8}
+__int16,                Name{Type::Int16}
+__int32,                Name{Type::Int32}
+__int64,                Name{Type::Int64}
+__m64,                  Name{Type::M64}
+__m128,                 Name{Type::M128}
+__m128d,                Name{Type::M128d}
+__m128i,                Name{Type::M128i}
+__ptr32,                Name{Type::Ptr32}
+__ptr64,                Name{Type::Ptr64}
+auto,                   Name{Type::Auto}
+bool,                   Name{Type::Bool}
+char,                   Name{Type::Char}
+char8_t,                Name{Type::Char8}
+char16_t,               Name{Type::Char16}
+char32_t,               Name{Type::Char32}
+double,                 Name{Type::Double}
+float,                  Name{Type::Float}
+int,                    Name{Type::Int}
+void,                   Name{Type::Void}
+long,                   Name{Modifier::Long}
+short,                  Name{Modifier::Short}
+signed,                 Name{Modifier::Signed}
+unsigned,               Name{Modifier::Unsigned}
+and,                    Name{Operator::And}
+and_eq,                 Name{Operator::AndEq}
+bitand,                 Name{Operator::BitAnd}
+bitor,                  Name{Operator::BitOr}
+compl,                  Name{Operator::Compl}
+not,                    Name{Operator::Not}
+not_eq,                 Name{Operator::NotEq}
+or,                     Name{Operator::Or}
+or_eq,                  Name{Operator::OrEq}
+xor,                    Name{Operator::Xor}
+xor_eq,                 Name{Operator::XorEq}
+final,                  Name{Contextual::Final}
+override,               Name{Contextual::Override}
+import,                 Name{Contextual::Import}
+module,                 Name{Contextual::Module}
+%%
+//NOLINTEND
+} // librepr::parsing::detail

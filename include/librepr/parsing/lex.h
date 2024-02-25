@@ -43,11 +43,7 @@ public:
 
 private:
   constexpr void skip_whitespace() {
-    while (is_whitespace(data[cursor])) {
-      if (cursor >= length) {
-        cursor = length;
-        return;
-      }
+    while (cursor < length && is_whitespace(data[cursor])) {
       ++cursor;
     }
   }
@@ -214,7 +210,7 @@ private:
     }
     token.end                = cursor;
     std::uint32_t const hash = librepr::fnv1a(&data[token.start], token.end - token.start);
-    token = Name{hash};
+    token                    = Name{hash};
     return token;
   }
 
@@ -230,9 +226,7 @@ private:
   }
 
   constexpr Token lex_character(Token& token) {
-    if (advance_if('\\')) {
-      ++cursor;
-    }
+    advance_if('\\');
     ++cursor;
     if (!advance_if('\'')) {
       return Token{token.start, cursor, LexError::UnclosedCharacterLiteral};
@@ -257,155 +251,65 @@ private:
         output.end = cursor;
         output     = eof;
         break;
-      // numeric constants
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
+
+      case '?': output = question; break;
+      case '[': output = l_square; break;
+      case ']': output = r_square; break;
+      case '(': output = l_paren; break;
+      case ')': output = r_paren; break;
+      case '{': output = l_brace; break;
+      case '}': output = r_brace; break;
+      case '~': output = tilde; break;
+      case ';': output = semi; break;
+      case ',': output = comma; break;
+      case '*': output = advance_if('=') ? starequal : star; break;
+      case '!': output = advance_if('=') ? exclaimequal : exclaim; break;
+      case '%': output = advance_if('=') ? percentequal : percent; break;
+      case '^': output = advance_if('=') ? caretequal : caret; break;
+      case ':': output = advance_if(':') ? coloncolon : colon; break;
+      case '=': output = advance_if('=') ? equalequal : equal; break;
+      case '"': output = StringFlags::is_plain; return lex_string(output);
+      case '\'': output = CharacterFlags::is_plain; return lex_character(output);
+
+      // clang-format off
+      case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
         --cursor;
         output = Numeral{};
         return lex_numeric(output);
-      // identifier
-      case 'A':
-      case 'B':
-      case 'C':
-      case 'D':
-      case 'E':
-      case 'F':
-      case 'G':
-      case 'H':
-      case 'I':
-      case 'J':
-      case 'K':
-      /*'L'*/
-      case 'M':
-      case 'N':
-      case 'O':
-      case 'P':
-      case 'Q':
-      /*'R'*/
-      case 'S':
-      case 'T':
-      /*'U'*/
-      case 'V':
-      case 'W':
-      case 'X':
-      case 'Y':
-      case 'Z':
-      case 'a':
-      case 'b':
-      case 'c':
-      case 'd':
-      case 'e':
-      case 'f':
-      case 'g':
-      case 'h':
-      case 'i':
-      case 'j':
-      case 'k':
-      case 'l':
-      case 'm':
-      case 'n':
-      case 'o':
-      case 'p':
-      case 'q':
-      case 'r':
-      case 's':
-      case 't':
-      /*'u'*/
-      case 'v':
-      case 'w':
-      case 'x':
-      case 'y':
-      case 'z':
-      case '_':
-      case '$':
+
+      case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':  case 'G': case 'H': case 'I': case 'J':
+      case 'K': /*'L'*/   case 'M': case 'N': case 'O': case 'P': case 'Q': /*'R'*/    case 'S': case 'T': 
+      /*'U'*/   case 'W': case 'X': case 'Y': case 'Z': 
+      case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': 
+      case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
+      /*'u'*/   case 'v': case 'w': case 'x': case 'y': case 'z': case '_': case '$':
+        // clang-format on
         return lex_identifier(output);
+
       case 'u':
       case 'U':
+        // TODO
 
       case 'L': {                             // wide literal or ident
         bool const is_raw = advance_if('R');  // wide raw literal or ident
         if (advance_if('"')) {
-          output = (is_raw) ? (StringFlags::Flag)(StringFlags::is_wide | StringFlags::is_raw) : StringFlags::is_wide;
+          output = is_raw ? (StringFlags::Flag)(StringFlags::is_wide | StringFlags::is_raw) : StringFlags::is_wide;
           return lex_string(output);
         } else if (advance_if('\'')) {
-          output = (is_raw) ? (CharacterFlags::Flag)(CharacterFlags::is_wide | CharacterFlags::is_raw)
-                            : CharacterFlags::is_wide;
+          output = is_raw ? (CharacterFlags::Flag)(CharacterFlags::is_wide | CharacterFlags::is_raw)
+                          : CharacterFlags::is_wide;
           return lex_character(output);
         } else {
           return lex_identifier(output);
         }
       }
-      // character literal
-      case '\'':
-        output = CharacterFlags::is_plain;
-        return lex_character(output);
+
       case 'R':  // raw string literal or ident
         if (advance_if('"')) {
           output = StringFlags::is_raw;
           return lex_string(output);
         }
         return lex_identifier(output);
-      // string literal
-      case '"':
-        output = StringFlags::is_plain;
-        return lex_string(output);
-      // braces
-      case '?':
-        output = question;
-        break;
-      case '[':
-        output = l_square;
-        break;
-      case ']':
-        output = r_square;
-        break;
-      case '(':
-        output = l_paren;
-        break;
-      case ')':
-        output = r_paren;
-        break;
-      case '{':
-        output = l_brace;
-        break;
-      case '}':
-        output = r_brace;
-        break;
-      case '*':
-        output = advance_if('=') ? starequal : star;
-        break;
-      case '!':
-        output = advance_if('=') ? exclaimequal : exclaim;
-        break;
-      case '%':
-        output = advance_if('=') ? percentequal : percent;
-        break;
-      case '^':
-        output = advance_if('=') ? caretequal : caret;
-        break;
-      case ':':
-        output = advance_if(':') ? coloncolon : colon;
-        break;
-      case '=':
-        output = advance_if('=') ? equalequal : equal;
-        break;
-      case '~':
-        output = tilde;
-        break;
-      case ';':
-        output = semi;
-        break;
-      case ',':
-        output = comma;
-        break;
 
       case '.':
         if (check(1, '1', '2', '3', '4', '5', '6', '7', '8', '9')) {
@@ -415,6 +319,7 @@ private:
         }
         output = advance_if('*') ? periodstar : period;
         break;
+
       case '&':
         if (advance_if('&')) {
           output = ampamp;
@@ -430,6 +335,7 @@ private:
           output = advance_if('=') ? plusequal : plus;
         }
         break;
+
       case '-':
         if (advance_if('-')) {
           output = minusminus;
@@ -449,11 +355,12 @@ private:
         break;
 
       case '/':
-        if (data[cursor] == ('/')) {
-          while (advance_if_not('\n')) {}
+        if (data[cursor] == '/') {
+          while (advance_if_not('\n')) { /* advance until next line */
+          }
           return next_token();
         }
-        if (data[cursor] == ('*')) {
+        if (data[cursor] == '*') {
           // inline comment
           ++cursor;
           while (cursor < length) {
@@ -468,6 +375,7 @@ private:
 
         output = advance_if('=') ? slashequal : slash;
         break;
+
       case '<':
         if (advance_if('=')) {
           output = advance_if('>') ? spaceship : lessequal;
@@ -477,6 +385,7 @@ private:
           output = less;
         }
         break;
+
       case '>':
         if (advance_if('=')) {
           output = greaterequal;
@@ -486,6 +395,7 @@ private:
           output = greater;
         }
         break;
+
       case '|':
         if (advance_if('=')) {
           output = pipeequal;
@@ -495,9 +405,8 @@ private:
           output = pipe;
         }
         break;
-      default:
-        output = LexError::UnknownCharacter;
-        break;
+
+      default: output = LexError::UnknownCharacter; break;
     }
 
     return output;

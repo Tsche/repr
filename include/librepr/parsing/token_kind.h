@@ -2,72 +2,12 @@
 #include <librepr/customization.h>
 #include <cstdint>
 #include "constants.h"
-
+#include "token/generic.h"
+#include "keywords.h"
 namespace librepr::parsing {
 namespace TokenCategory {
 enum Category : unsigned { error, generic, character, string, numeric, name };
 }
-
-namespace TokenKind {
-enum Kind : unsigned {
-  invalid,
-  eof,
-  identifier,
-  numeric_literal,
-  string_literal,
-  char_literal,
-
-  l_square,             // [
-  r_square,             // ]
-  l_paren,              // (
-  r_paren,              // )
-  l_brace,              // {
-  r_brace,              // }
-  period,               // .
-  amp,                  // &
-  ampamp,               // &&
-  ampequal,             // &=
-  star,                 // *
-  starequal,            // *=
-  plus,                 // +
-  plusplus,             // ++
-  plusequal,            // +=
-  minus,                // -
-  arrow,                // ->
-  minusminus,           // --
-  minusequal,           // -=
-  tilde,                // ~
-  exclaim,              // !
-  exclaimequal,         // !=
-  slash,                // /
-  slashequal,           // /=
-  percent,              // %
-  percentequal,         // %=
-  less,                 // <
-  lessless,             // <<
-  lessequal,            // <=
-  lesslessequal,        // <<=
-  spaceship,            // <=>
-  greater,              // >
-  greatergreater,       // >>
-  greaterequal,         // >=
-  greatergreaterequal,  // >>=
-  caret,                // ^
-  caretequal,           // ^=
-  pipe,                 // |
-  pipepipe,             // ||
-  pipeequal,            // |=
-  question,             // ?
-  colon,                // :
-  coloncolon,           // ::
-  semi,                 // ;
-  equal,                // =
-  equalequal,           // ==
-  comma,                // ,
-  periodstar,           // .*
-  arrowstar,            // ->*
-};
-};
 
 namespace CharacterFlags {
 enum Flag : unsigned { is_plain = 0, is_raw = 1U << 0U, is_wide = 1U << 1U };

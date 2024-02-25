@@ -62,7 +62,7 @@ TEST(lex_token, numeral) {
 }
 
 TEST(lex_token, keyword) {
-  auto token = Token(0, 0, Name{.kind=Name::type});
+  auto token = Token(0, 0, Name{Name::type});
   EXPECT_TRUE(token.is(TokenCategory::name));
   // EXPECT_TRUE(token.in(TokenCategory::Category(~0U)));
   

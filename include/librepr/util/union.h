@@ -16,8 +16,11 @@ consteval auto get_tag(){
   else if constexpr (requires {Settings<T>::tag; }){
     return Settings<T>::tag;
   }
-  else {
+  else if constexpr (requires (T obj) { {librepr_settings(obj)}; }) {
     return decltype(librepr_settings(T{}))::tag;
+  }
+  else {
+    throw;
   }
 }
 
