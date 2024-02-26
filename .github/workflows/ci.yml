@@ -39,7 +39,7 @@ jobs:
     - name: Test Package
       run: |
         conan editable add .
-        conan test test_package repr/0.1 -s build_type=Debug -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
+        conan test test/packaging repr/0.1 -s build_type=Debug -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
 
     - name: Test
       continue-on-error: true
@@ -55,6 +55,15 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Setup palgen
+      uses: palliate/palgen@master
+      with:
+        run: false
+        requirements: tools/requirements.txt
+
+    - name: Run header amalgamation
+      run: palgen --debug amalgamate
 
   benchmark-runtime:
     runs-on: ubuntu-latest
