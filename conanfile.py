@@ -71,6 +71,7 @@ class ReprRecipe(ConanFile):
         tc.variables["ENABLE_COVERAGE"]   = bool(self.options.coverage)
         tc.variables["ENABLE_MAGIC_ENUM"] = bool(self.options.magic_enum)
         tc.variables["ENABLE_FMTLIB"]     = bool(self.options.fmt) or self.needs_fmt()
+
         tc.generate()
 
     def build(self):

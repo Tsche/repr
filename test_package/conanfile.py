@@ -13,15 +13,8 @@ class ReprTestConan(ConanFile):
         self.requires(self.tested_reference_str)
 
     def build(self):
-        lib_options = self.dependencies[self.tested_reference_str].options
-
         cmake = CMake(self)
-        cmake.configure(
-            variables={
-                "ENABLE_MAGIC_ENUM": lib_options.magic_enum,
-                "ENABLE_FMTLIB": lib_options.fmt,
-            }
-        )
+        cmake.configure()
         cmake.build()
 
     def layout(self):
