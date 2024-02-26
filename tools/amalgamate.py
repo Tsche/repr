@@ -1,3 +1,4 @@
+import re
 import logging
 from pathlib import Path
 from enum import Enum, auto
@@ -45,7 +46,7 @@ class Header:
         assert kind != IncludeKind.SYSTEM
         return (self.root.parent if kind == IncludeKind.LOCAL else origin.parent) / filename
 
-    def get_includes(self, path: Path):
+    def get_includes(self, path: Path, pp_depth = 0):
         if path in self.seen:
             return
         self.seen.add(path)
@@ -53,26 +54,29 @@ class Header:
         self.local_includes.append(path)  # guaranteed to be unique
 
         text = path.read_text(encoding='utf-8')
-        in_pp_conditional = False
 
         for line in text.split('\n'):
             stripped = line.strip()
-            if in_pp_conditional:
-                if stripped.startswith("#endif"):
-                    in_pp_conditional = False
-                elif stripped.startswith(INCLUDE_MARKER):
+            if pp_depth != 0:
+                if stripped.startswith(INCLUDE_MARKER):
                     include = stripped[len(INCLUDE_MARKER):]
                     if self.classify_include(include) != IncludeKind.SYSTEM:
+                        # dump relative imports
                         self.get_includes(self.resolve_include(include, path))
                         continue
+                elif re.match(r"#\s*endif", stripped):
+                    pp_depth -= 1
 
-            elif stripped.startswith("#if"):
-                in_pp_conditional = True
-
+            if re.match(r"#\s*if", stripped):
+                pp_depth += 1
             elif stripped.startswith("#pragma once"):
                 continue
-            elif stripped.startswith(INCLUDE_MARKER):
+            elif pp_depth == 0 and stripped.startswith(INCLUDE_MARKER):
                 include = stripped[len(INCLUDE_MARKER):]
+                if include.startswith("<fmt"):
+                    print(pp_depth)
+                    print(f"found include {include}")
+                    print(path)
                 if self.classify_include(include) != IncludeKind.SYSTEM:
                     self.get_includes(self.resolve_include(include, path))
                 else:

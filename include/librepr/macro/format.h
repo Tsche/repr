@@ -12,9 +12,11 @@
 #endif
 
 #if USING(REPR_FORMAT_FMT)
+
 #if !__has_include(<fmt/format.h>)
 #error "Configured to use fmt, but fmt was not found."
 #endif
+
 #include <fmt/format.h>
 #define REPR_FORMAT_RNS fmt
 #else
