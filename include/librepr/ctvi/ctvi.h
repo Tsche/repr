@@ -8,7 +8,7 @@
 
 namespace librepr::ctvi {
 
-#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
 LIBREPR_WARNING_PUSH
 // https://github.com/llvm/llvm-project/issues/68489
 LIBREPR_WARNING_DISABLE_CLANG("-Wenum-constexpr-conversion")
@@ -71,7 +71,7 @@ consteval auto name_from_member_ptr() {
 template <auto V>
 constexpr inline auto value = detail::get_ctvi<V>();
 
-#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
 LIBREPR_WARNING_POP
 #endif
 

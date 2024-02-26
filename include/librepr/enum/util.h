@@ -43,7 +43,7 @@ template <typename T, auto Value>
   }
 }
 
-#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
 LIBREPR_WARNING_PUSH
 // https://github.com/llvm/llvm-project/issues/68489
 LIBREPR_WARNING_DISABLE_CLANG("-Wenum-constexpr-conversion")
@@ -113,7 +113,7 @@ template <typename T, auto Value>
   return !name.empty() && name[0] != '(';
 }
 
-#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
 LIBREPR_WARNING_POP
 #endif
 

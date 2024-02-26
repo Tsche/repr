@@ -20,6 +20,11 @@
 # define __has_include(x) (0)
 #endif
 
+#ifndef __has_warning
+// GCC/Clang specific
+#define __has_warning(x) (0)
+#endif
+
 #ifdef __has_cpp_attribute
 # define REPR_HAS_CPP_ATTR(x) __has_cpp_attribute(x)
 #else
