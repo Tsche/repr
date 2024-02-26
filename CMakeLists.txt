@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.15)
-#include(cmake/warnings.cmake)
 
 project(repr CXX)
 
@@ -46,8 +45,6 @@ if(BUILD_TESTING)
 
   enable_testing()
   add_executable(repr_test "")
-  
-  #enable_warnings(repr_test)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)

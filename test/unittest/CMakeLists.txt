@@ -10,3 +10,6 @@ add_subdirectory(reflection)
 add_subdirectory(visitors)
 add_subdirectory(enum)
 add_subdirectory(ctvi)
+
+include(warnings.cmake)
+enable_warnings(repr_test)
