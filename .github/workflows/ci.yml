@@ -79,14 +79,9 @@ jobs:
         compiler: [clang, gcc]
 
     runs-on: ubuntu-latest
-    container: alpine:latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install dependencies
-      run: |
-        apk update
-        apk add --no-cache util-linux clang17 git bash python3 py3-pip
 
     - name: Install Conan
       id: conan
@@ -100,7 +95,6 @@ jobs:
       run: conan build . -s build_type=Release --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }} -o benchmark=True
 
     - name: Test
-      continue-on-error: true
       run: |
         ./build/Release/repr_benchmark
 
