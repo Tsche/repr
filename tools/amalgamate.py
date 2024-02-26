@@ -62,21 +62,17 @@ class Header:
                     include = stripped[len(INCLUDE_MARKER):]
                     if self.classify_include(include) != IncludeKind.SYSTEM:
                         # dump relative imports
-                        self.get_includes(self.resolve_include(include, path))
+                        self.get_includes(self.resolve_include(include, path), pp_depth)
                         continue
-                elif re.match(r"#\s*endif", stripped):
+                elif re.match(r"\s*#\s*endif", stripped):
                     pp_depth -= 1
 
-            if re.match(r"#\s*if", stripped):
+            if re.match(r"\s*#\s*if", stripped):
                 pp_depth += 1
             elif stripped.startswith("#pragma once"):
                 continue
             elif pp_depth == 0 and stripped.startswith(INCLUDE_MARKER):
                 include = stripped[len(INCLUDE_MARKER):]
-                if include.startswith("<fmt"):
-                    print(pp_depth)
-                    print(f"found include {include}")
-                    print(path)
                 if self.classify_include(include) != IncludeKind.SYSTEM:
                     self.get_includes(self.resolve_include(include, path))
                 else:

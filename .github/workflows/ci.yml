@@ -45,7 +45,6 @@ jobs:
       continue-on-error: true
       run: |
         ./build/Debug/repr_test
-        exit 0
 
   test-compiletime:
     strategy:
