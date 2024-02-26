@@ -66,11 +66,11 @@ class ReprRecipe(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        tc.variables["ENABLE_BENCHMARK"] = self.options.benchmark,
-        tc.variables["ENABLE_SANITIZERS"] = self.options.sanitizers,
-        tc.variables["ENABLE_COVERAGE"] = self.options.coverage,
-        tc.variables["ENABLE_MAGIC_ENUM"] = self.options.magic_enum,
-        tc.variables["ENABLE_FMTLIB"] = self.options.fmt or self.needs_fmt(),
+        tc.variables["ENABLE_BENCHMARK"]  = bool(self.options.benchmark)
+        tc.variables["ENABLE_SANITIZERS"] = bool(self.options.sanitizers)
+        tc.variables["ENABLE_COVERAGE"]   = bool(self.options.coverage)
+        tc.variables["ENABLE_MAGIC_ENUM"] = bool(self.options.magic_enum)
+        tc.variables["ENABLE_FMTLIB"]     = bool(self.options.fmt) or self.needs_fmt()
         tc.generate()
 
     def build(self):
