@@ -1,6 +1,7 @@
 #pragma once
 #include <librepr/feature.h>
-#include <librepr/macro/platform.h>
+#include "platform.h"
+#include "warning.h"
 
 #ifndef REPR_HARD_CHECKS
 # define REPR_HARD_CHECKS OFF
@@ -70,20 +71,12 @@
 #endif
 
 #if !defined(REPR_ENUM_FAST_SEARCH)
-#if USING(LIBREPR_COMPILER_CLANG)
-#if __clang_major__ >= 16
-  // https://github.com/llvm/llvm-project/issues/68489
-  #define REPR_ENUM_FAST_SEARCH OFF
-#else
-  //TODO verify this works with clang <= 15
-  #define REPR_ENUM_FAST_SEARCH ON
-#endif
+#define REPR_ENUM_FAST_SEARCH ON
 #elif USING(LIBREPR_COMPILER_GCC)
   #define REPR_ENUM_FAST_SEARCH ON
 #elif USING(LIBREPR_COMPILER_MSVC)
   //TODO
   #define REPR_ENUM_FAST_SEARCH OFF
-#endif
 #endif
 
 #if !defined(REPR_ENUM_RECURSIVE_SEARCH)

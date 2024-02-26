@@ -3,9 +3,16 @@
 #include <string_view>
 
 #include <librepr/macro/platform.h>
+#include <librepr/macro/warning.h>
 #include <librepr/util/string/const_string.h>
 
 namespace librepr::ctvi {
+
+#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+LIBREPR_WARNING_PUSH
+// https://github.com/llvm/llvm-project/issues/68489
+LIBREPR_WARNING_DISABLE_CLANG("-Wenum-constexpr-conversion")
+#endif
 
 namespace detail {
 template <auto V>
@@ -63,5 +70,9 @@ consteval auto name_from_member_ptr() {
 
 template <auto V>
 constexpr inline auto value = detail::get_ctvi<V>();
+
+#if USING(LIBREPR_COMPILER_CLANG) && __clang_major__ >= 16
+LIBREPR_WARNING_POP
+#endif
 
 }  // namespace librepr::ctvi

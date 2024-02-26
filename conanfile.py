@@ -1,6 +1,7 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 from conan.tools.files import copy
+from conan.tools.cmake import CMakeToolchain
 
 
 class ReprRecipe(ConanFile):
@@ -26,7 +27,7 @@ class ReprRecipe(ConanFile):
     }
     default_options = {"benchmark": False, "sanitizers": False,
                        "coverage": False, "magic_enum": False, "fmt": False}
-    generators = "CMakeToolchain", "CMakeDeps"
+    generators = "CMakeDeps"
 
     exports_sources = "CMakeLists.txt", "include/*"
 
@@ -63,18 +64,19 @@ class ReprRecipe(ConanFile):
     def layout(self):
         cmake_layout(self)
 
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.variables["ENABLE_BENCHMARK"] = self.options.benchmark,
+        tc.variables["ENABLE_SANITIZERS"] = self.options.sanitizers,
+        tc.variables["ENABLE_COVERAGE"] = self.options.coverage,
+        tc.variables["ENABLE_MAGIC_ENUM"] = self.options.magic_enum,
+        tc.variables["ENABLE_FMTLIB"] = self.options.fmt or self.needs_fmt(),
+        tc.generate()
+
     def build(self):
         if not self.conf.get("tools.build:skip_test", default=False):
             cmake = CMake(self)
-            cmake.configure(
-                variables={
-                    "ENABLE_BENCHMARK": self.options.benchmark,
-                    "ENABLE_SANITIZERS": self.options.sanitizers,
-                    "ENABLE_COVERAGE": self.options.coverage,
-                    "ENABLE_MAGIC_ENUM": self.options.magic_enum,
-                    "ENABLE_FMTLIB": self.options.fmt or self.needs_fmt(),
-                }
-            )
+            cmake.configure()
             cmake.build()
 
     def package(self):
