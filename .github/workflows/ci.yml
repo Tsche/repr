@@ -62,8 +62,8 @@ jobs:
         run: false
         requirements: tools/requirements.txt
 
-    - name: Run header amalgamation
-      run: palgen --debug amalgamate
+    - name: Run diagtest
+      run: palgen --debug diagnostics
 
   benchmark-runtime:
     runs-on: ubuntu-latest

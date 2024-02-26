@@ -7,6 +7,16 @@ add_library(repr INTERFACE)
 
 set_property(TARGET repr PROPERTY CXX_STANDARD 20)
 
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+  # gcc/clang won't emit color codes if the output medium isn't a terminal
+  # ninja interferes with this => force colored output
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options (-fdiagnostics-color=always)
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options (-fcolor-diagnostics)
+  endif()
+endif()
+
 target_include_directories(repr INTERFACE 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
