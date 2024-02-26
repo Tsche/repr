@@ -3,11 +3,12 @@
 #include "util.h"
 
 #ifndef REPR_FORMAT_FMT
-#if __has_include(<format>)
-#define REPR_FORMAT_FMT OFF
-#else
 #define REPR_FORMAT_FMT ON
 #endif
+
+#if !__has_include(<format>)
+#undef REPR_FORMAT_FMT
+#define REPR_FORMAT_FMT ON
 #endif
 
 #if USING(REPR_FORMAT_FMT)
