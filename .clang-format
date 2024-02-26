@@ -1,19 +1,29 @@
-ColumnLimit: 120
 BasedOnStyle: Chromium
 IndentWidth: 2
-AccessModifierOffset: -2
-
-AlignConsecutiveAssignments: true
+ColumnLimit: 120
 
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
-
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
-
-AllowShortBlocksOnASingleLine: true
-
 SortIncludes: false
 
 # Available starting from clang_format 18
 # AllowShortCompoundRequirementOnASingleLine: true
+
+AccessModifierOffset: '-2'
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+BinPackArguments: true
+BinPackParameters: false
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+IndentPPDirectives: AfterHash
+SortUsingDeclarations: true

@@ -9,16 +9,16 @@
 #include <librepr/name/type.h>
 #include <librepr/reflection/aggregate.h>
 #include <librepr/reflection/category.h>
-#include <librepr/util/concepts.h>
 #include <librepr/util/string/buffer.h>
 #include <librepr/reflection/reflect.h>
+#include <librepr/util/enum.h>
 
 namespace librepr {
 struct CppVisitor {
   std::size_t indent_level  = 0;
   std::size_t indent_amount = 4;
   std::size_t unnamed_count = 0;
-  detail::StringBuffer result;
+  util::StringBuffer result;
 
 private:
   template <typename T>

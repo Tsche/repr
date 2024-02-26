@@ -44,7 +44,7 @@ struct DataMember : Member {
 }  // namespace category
 
 template <typename T>
-  requires(std::is_aggregate_v<T> && !(std::is_array_v<T> || has_custom_members<T> || detail::has_repr_member<T>))
+  requires(std::is_aggregate_v<T> && !(std::is_array_v<T> || has_custom_members<T> || util::has_repr_member<T>))
 struct Reflect<T> : category::Type<T> {
   constexpr static auto member_count = librepr::detail::arity<T>;
 

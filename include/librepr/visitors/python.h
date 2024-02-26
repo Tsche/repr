@@ -27,7 +27,7 @@ struct PythonVisitor {
   std::size_t indent_level  = 0;
   std::size_t indent_amount = 4;
   std::stack<std::string> namespaces{};
-  detail::StringBuffer result;
+  util::StringBuffer result;
 
   [[nodiscard]] auto get_indent() const { return std::string(indent_amount * indent_level, ' '); }
 

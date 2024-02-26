@@ -5,7 +5,7 @@
  * but I'm leaving them in so it's 
  * easier to extend later.
  */
-
+#include <cstdint>
 #include <cstddef>
 #include <set>
 #include <type_traits>

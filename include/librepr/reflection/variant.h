@@ -50,7 +50,7 @@ struct Reflect<T> : category::Type<T> {
   template <typename V>
   static void visit(V&& visitor, type& obj) {
     auto overload_set = alternatives::invoke([&visitor]<typename... Ts>() {
-      return detail::Overload{[&visitor](Ts& alternative) { visitor(category::Value<Reflect<Ts>>{alternative}); }...};
+      return util::Overload{[&visitor](Ts& alternative) { visitor(category::Value<Reflect<Ts>>{alternative}); }...};
     });
 
     std::visit(overload_set, obj);
