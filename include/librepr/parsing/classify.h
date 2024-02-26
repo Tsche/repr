@@ -24,8 +24,4 @@ constexpr inline bool is_ident_continue(char cur) {
 constexpr inline bool is_whitespace(char cur) {
     return (cur == ' ') || (cur == '\t') || (cur == '\n') || (cur == '\r') || (cur == '\f');
 }
-
-constexpr inline bool isNumeric(char cur) {
-    return (cur >= '0' && cur <= '9') || (cur == '.');
-}
 }

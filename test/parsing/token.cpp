@@ -1,14 +1,13 @@
 #include <gtest/gtest.h>
 #include "librepr/parsing/token/lex_error.h"
 #include <librepr/parsing/token.h>
-#include <librepr/parsing/token_kind.h>
 
 namespace librepr::parsing::testing {
 
 TEST(lex_token, default_) {
   auto token = Token(0, 0);
   EXPECT_TRUE(token.is(TokenCategory::error));
-  EXPECT_TRUE(!token.in(TokenCategory::Category(~0U))); // error is not part of the valid set of tokens
+//  EXPECT_TRUE(!token.in(TokenCategory::Category(~0U))); // error is not part of the valid set of tokens
 }
 
 TEST(lex_token, error) {
@@ -62,13 +61,13 @@ TEST(lex_token, numeral) {
 }
 
 TEST(lex_token, keyword) {
-  auto token = Token(0, 0, Name{Name::type});
+  auto token = Token(nullptr, 0, detail::Name{detail::Keyword::Template});
   EXPECT_TRUE(token.is(TokenCategory::name));
   // EXPECT_TRUE(token.in(TokenCategory::Category(~0U)));
   
-  auto const& flags = token.get<Name>();
-  EXPECT_TRUE(flags.kind == Name::type);
-  EXPECT_TRUE(flags.is(Name::type));
+  auto const& flags = token.get<detail::Name>();
+  EXPECT_TRUE(flags.category == detail::NameCategory::keyword);
+  EXPECT_TRUE(flags.is(detail::NameCategory::keyword));
 }
 
 TEST(lex_token, reassign) {

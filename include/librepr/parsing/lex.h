@@ -3,10 +3,9 @@
 #include <string_view>
 #include <librepr/macro/assert.h>
 #include <librepr/util/hash.h>
-#include "token_kind.h"
-#include "token/lex_error.h"
 #include "token.h"
 #include "classify.h"
+#include "keywords.h"
 
 namespace librepr::parsing {
 // NOLINTBEGIN(*-pointer-arithmetic)
@@ -29,7 +28,7 @@ public:
   constexpr Token next(bool peek = false) {
     if (data.empty() || cursor >= length) {
       // nothing to do, return sentinel
-      return Token{0, 0, TokenKind::eof};
+      return Token{nullptr, 0, TokenKind::eof};
     }
 
     auto const previous      = cursor;
@@ -42,12 +41,6 @@ public:
   }
 
 private:
-  constexpr void skip_whitespace() {
-    while (cursor < length && is_whitespace(data[cursor])) {
-      ++cursor;
-    }
-  }
-
   template <std::same_as<char>... Ts>
   [[nodiscard]] constexpr bool check(std::size_t offset, Ts... needles) const {
     if (cursor + offset >= length) {
@@ -93,6 +86,13 @@ private:
     }
     return false;
   }
+
+  constexpr void skip_whitespace() {
+    while (cursor < length && is_whitespace(data[cursor])) {
+      ++cursor;
+    }
+  }
+
 
   constexpr bool lex_numeric_head(Token& token) {
     if (!token.is(TokenCategory::numeric)) {
@@ -203,18 +203,21 @@ private:
   }
 
   constexpr Token lex_identifier(Token& token, bool preprocessor = false) {
-    while (cursor < length) {
-      if (!advance_pred(is_ident_continue)) {
-        break;
-      }
+    while (cursor < length && is_ident_continue(data[cursor])) {
+      ++cursor;
     }
     token.end                = cursor;
-    token                    = detail::lex_name(std::string_view{&data[token.start], static_cast<std::size_t>(token.end - token.start)});
+    if (auto const* entry = detail::KeywordHash::find(token.start, token.end)) {
+      token = entry->value;
+    } else {
+      token = detail::Name{detail::Identifier::identifier};
+    }
+
     return token;
   }
 
   constexpr Token lex_string(Token& token) {
-    while (advance_if_not('"')) {}
+    while (cursor < length && data[cursor] != '"') { ++cursor; }
     if (data[cursor] != '"') {
       return Token{token.start, cursor, LexError::UnclosedStringLiteral};
     }
@@ -239,10 +242,10 @@ private:
     auto const start_cursor = cursor;
     if (cursor >= length) {
       // nothing to parse
-      return Token{0, 0, TokenKind::eof};
+      return Token{nullptr, 0, TokenKind::eof};
     }
     ++cursor;
-    Token output = Token{start_cursor, cursor, TokenKind::eof};
+    Token output = Token{&data.data()[start_cursor], cursor, TokenKind::eof};
     switch (data[start_cursor]) {
       using enum TokenKind::Kind;
       case '\0':

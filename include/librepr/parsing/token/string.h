@@ -1,11 +1,5 @@
 #pragma once
-#include <librepr/customization.h>
-#include <cstdint>
-#include "constants.h"
-#include "token/generic.h"
-#include "token/numeral.h"
-#include "token/name.h"
-#include "keywords.h"
+
 namespace librepr::parsing {
 
 namespace CharacterFlags {

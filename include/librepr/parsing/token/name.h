@@ -281,8 +281,10 @@ struct Name {
   }
 };
 
+static_assert(sizeof(Name) <= 4);
+
 struct KeywordEntry {
-  std::string_view key;
+  const char* key;
   Name value;
 };
 }  // namespace librepr::parsing::detail

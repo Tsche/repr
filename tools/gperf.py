@@ -34,19 +34,14 @@ class Gperf(Extension):
         for path, source in data:
             name = path.stem
             source = source.replace(f"{path.parent}/", "") \
-                           .replace("inline ", "constexpr ")\
-                           .replace("struct ", "constexpr const ")\
-                           .replace("const char *", "std::string_view ")\
-                           .replace(", size_t len", "") \
-                           .replace(", len", "") \
-                           .replace("len", "str.length()")\
+                           .replace("inline ", "constexpr ") \
+                           .replace("struct ", "constexpr const ") \
                            .replace("return 0;", "return nullptr;")
 
-            source = re.sub("static ([a-zA-Z]+) lookup", "constexpr static \\1 lookup", source)
-            source = source.replace("lookup", f"{name}_lookup")
-            source = re.sub(r"\*str.*!strcmp \(.*?\)", "str == s", source)
+            source = re.sub("static ([a-zA-Z ]+) lookup", "constexpr static \\1 lookup", source)
+            source = re.sub("static ([a-zA-Z ]+) lengthtable", "constexpr static \\1 lengthtable", source)
+            source = re.sub(r"\*str.*memcmp \((.*?)\)", "std::char_traits<char>::compare(\\1) == 0", source)
             asso_def = re.search(r"static (?P<type>[a-zA-Z ]+) asso_values\[\].*", source)
-            print()
             asso_start = asso_def.end()
             asso_end = source.find("};", asso_start) + 2
             insertion_point = source.rfind("};\n", 0, asso_start) + 3
@@ -58,7 +53,9 @@ class Gperf(Extension):
                 source[insertion_point:asso_def.start()],
                 source[asso_end:]
                 ])
-            source = source.replace("asso_values", f"{name}_asso_values")
+            source = source.replace("asso_values", f"{name}_asso_values") \
+                           .replace("lengthtable", f"{name}_lengthtable") \
+                           .replace("lookup", f"{name}_lookup")
             yield path, source
 
     def render(self, data: Iterable[tuple[Path, str]]):

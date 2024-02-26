@@ -24,7 +24,7 @@
 #line 1 "keywords.gperf"
 
 #pragma once
-#include "librepr/parsing/token/name.h"
+#include "token/name.h"
 
 namespace librepr::parsing::detail {
 // NOLINT
@@ -40,10 +40,10 @@ enum {
 
 class KeywordHash {
 private:
-  static constexpr unsigned int hash(std::string_view str);
+  static constexpr unsigned int hash(const char* str, size_t len);
 
 public:
-  static constexpr const KeywordEntry* find(std::string_view str);
+  static constexpr const KeywordEntry* find(const char* str, size_t len);
 };
 
 static constexpr unsigned char keywords_asso_values[] = {
@@ -60,8 +60,8 @@ static constexpr unsigned char keywords_asso_values[] = {
     229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229,
     229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229, 229};
 
-constexpr unsigned int KeywordHash::hash(std::string_view str) {
-  unsigned int hval = str.length();
+constexpr unsigned int KeywordHash::hash(const char* str, size_t len) {
+  unsigned int hval = len;
 
   switch (hval) {
     default: hval += keywords_asso_values[static_cast<unsigned char>(str[4])];
@@ -72,8 +72,15 @@ constexpr unsigned int KeywordHash::hash(std::string_view str) {
     case 2:
     case 1: hval += keywords_asso_values[static_cast<unsigned char>(str[0])]; break;
   }
-  return hval + keywords_asso_values[static_cast<unsigned char>(str[str.length() - 1])];
+  return hval + keywords_asso_values[static_cast<unsigned char>(str[len - 1])];
 }
+
+constexpr static unsigned char keywords_lengthtable[] = {
+    3,  7, 3, 2, 8, 3,  5,  5, 11, 7, 5, 8, 7, 8,  9, 10, 9,  8,  4,  3,  7,  4, 4, 9, 6,  8, 5,  16,
+    13, 9, 9, 4, 3, 11, 8,  7, 15, 6, 6, 6, 8, 10, 6, 7,  11, 20, 13, 5,  7,  6, 8, 7, 10, 6, 5,  7,
+    6,  8, 9, 5, 9, 7,  21, 8, 10, 3, 8, 5, 7, 8,  6, 8,  6,  10, 6,  8,  12, 6, 8, 7, 5,  4, 12, 22,
+    4,  7, 2, 5, 4, 4,  8,  8, 12, 6, 3, 5, 8, 7,  5, 6,  7,  5,  5,  6,  6,  5, 8, 4, 6,  5, 6,  7,
+    4,  6, 3, 7, 7, 9,  6,  8, 6,  5, 2, 7, 7, 6,  6, 6,  7,  7,  5,  11, 5,  7, 6, 9, 4,  8};
 
 static constexpr const KeywordEntry keywords[] = {
 #line 142 "keywords.gperf"
@@ -365,18 +372,20 @@ constexpr static short keywords_lookup[] = {
     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  132, -1,  -1,  -1,  -1,  -1, 133, -1,  -1,  -1,  -1,  -1,  134, -1,
     -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  135, 136, -1, -1,  -1,  -1,  -1,  -1,  -1,  137};
 
-constexpr const KeywordEntry* KeywordHash::find(std::string_view str) {
-  if (str.length() <= KW_MAX_WORD_LENGTH && str.length() >= KW_MIN_WORD_LENGTH) {
-    unsigned int key = hash(str);
+constexpr const KeywordEntry* KeywordHash::find(const char* str, size_t len) {
+  if (len <= KW_MAX_WORD_LENGTH && len >= KW_MIN_WORD_LENGTH) {
+    unsigned int key = hash(str, len);
 
     if (key <= KW_MAX_HASH_VALUE) {
       int index = keywords_lookup[key];
 
       if (index >= 0) {
-        std::string_view s = keywords[index].key;
+        if (len == keywords_lengthtable[index]) {
+          const char* s = keywords[index].key;
 
-        if (str == s)
-          return &keywords[index];
+          if (std::char_traits<char>::compare(str + 1, s + 1, len - 1) == 0)
+            return &keywords[index];
+        }
       }
     }
   }
@@ -385,12 +394,4 @@ constexpr const KeywordEntry* KeywordHash::find(std::string_view str) {
 #line 163 "keywords.gperf"
 
 // NOLINTEND
-
-constexpr Name lex_name(std::string_view str) {
-  if (auto const* entry = KeywordHash::find(str)) {
-    return entry->value;
-  }
-  return Name{Identifier::identifier};
-}
-
 }  // namespace librepr::parsing::detail

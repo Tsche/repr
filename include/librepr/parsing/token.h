@@ -6,8 +6,11 @@
 #include <librepr/util/union.h>
 
 #include <librepr/util/concepts.h>
-#include "token_kind.h"
 #include "token/lex_error.h"
+#include "token/generic.h"
+#include "token/string.h"
+#include "token/numeral.h"
+#include "token/name.h"
 
 namespace librepr::parsing {
 
@@ -17,8 +20,6 @@ template <auto V>
 concept is_token_category = std::same_as<std::remove_const_t<decltype(V)>, TokenCategory>;
 
 class Token {
-private:
-public:
   union Type {
     LexError::Error lex_error;
     TokenKind::Kind kind;
@@ -33,18 +34,19 @@ public:
                                     util::UnionMember{&Type::string_flags, TokenCategory::string},
                                     util::UnionMember{&Type::numeric_flags, TokenCategory::numeric},
                                     util::UnionMember{&Type::name_flags, TokenCategory::name}>);
-  } type{.lex_error = LexError::Unknown};
-  TokenCategory category{TokenCategory::error};
-
+  };
 public:
-  uint16_t start;
-  uint16_t end;
+  char const* start;
+  std::uint16_t end;
+  TokenCategory category{TokenCategory::error};
+  Type type{.lex_error = LexError::Unknown};
+
   constexpr Token() : start(0), end(0) {}
-  constexpr Token(uint16_t start_, uint16_t end_) : start(start_), end(end_) {}
+  constexpr Token(char const* start_, uint16_t end_) : start(start_), end(end_) {}
 
   template <typename T>
     requires util::is_tagged_union<Type, T>
-  constexpr explicit Token(uint16_t start_, uint16_t end_, T value)
+  constexpr explicit Token(char const* start_, uint16_t end_, T value)
       : start(start_)
       , end(end_)
       , category(util::get_union_tag<Type, T>) {
@@ -82,9 +84,8 @@ public:
   [[nodiscard]] constexpr bool is(TokenCategory category_) const { return category == category_; }
 
   template <librepr::util::is_class T>
-    requires is_token_category<T::tag>
   [[nodiscard]] constexpr bool is(T flags) const {
-    if (category != T::tag) {
+    if (category != util::get_union_tag<Type, T>) {
       return false;
     }
 
@@ -147,10 +148,9 @@ public:
     return true;
   }
 
-  [[nodiscard]] constexpr std::string_view extract(std::string_view data) const {
-    return data.substr(start, end - start);
+  [[nodiscard]] constexpr std::string_view extract() const {
+    return std::string_view{start, end};
   }
 };
-
-// static_assert(sizeof(Token) <= 8);
+static_assert(sizeof(Token) == 16);
 }  // namespace librepr::parsing
