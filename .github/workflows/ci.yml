@@ -86,7 +86,7 @@ jobs:
     - name: Install dependencies
       run: |
         apk update
-        apk add --no-cache git clang17
+        apk add --no-cache util-linux clang17 git bash python3 py3-pip
 
     - name: Install Conan
       id: conan
