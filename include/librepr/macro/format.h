@@ -3,20 +3,16 @@
 #include "util.h"
 
 #ifndef REPR_FORMAT_FMT
-#define REPR_FORMAT_FMT ON
+#define REPR_FORMAT_FMT OFF
 #endif
 
 #if !__has_include(<format>)
-#undef REPR_FORMAT_FMT
-#define REPR_FORMAT_FMT ON
+#warning "std::format not found - falling back to FMT"
+//#undef REPR_FORMAT_FMT
+//#define REPR_FORMAT_FMT ON
 #endif
 
 #if USING(REPR_FORMAT_FMT)
-
-#if !__has_include(<fmt/format.h>)
-#error "Configured to use fmt, but fmt was not found."
-#endif
-
 #include <fmt/format.h>
 #define REPR_FORMAT_RNS fmt
 #else
