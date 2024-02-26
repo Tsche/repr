@@ -7,9 +7,8 @@
 #endif
 
 #if !__has_include(<format>)
-#warning "std::format not found - falling back to FMT"
-//#undef REPR_FORMAT_FMT
-//#define REPR_FORMAT_FMT ON
+#undef REPR_FORMAT_FMT
+#define REPR_FORMAT_FMT ON
 #endif
 
 #if USING(REPR_FORMAT_FMT)
