@@ -1,8 +1,14 @@
 #pragma once
 #include <librepr/feature.h>
+#include "util.h"
 
 #ifndef REPR_FORMAT_FMT
 #define REPR_FORMAT_FMT OFF
+#endif
+
+#if !__has_include(<format>) || __has_include(<fmt/format.h>)
+#undef REPR_FORMAT_FMT
+#define REPR_FORMAT_FMT ON
 #endif
 
 #if USING(REPR_FORMAT_FMT)

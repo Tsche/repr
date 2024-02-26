@@ -22,16 +22,16 @@ public:
 
   template <std::size_t Idx>
     requires(sizeof...(Ts) > 0 && Idx < sizeof...(Ts))
-  using get = pack::Split<Idx, List<Ts...>>::type;
+  using get = typename pack::Split<Idx, List<Ts...>>::type;
 
   template <std::size_t Idx>
   using split = List<typename do_split<Idx>::head, typename do_split<Idx>::tail>;
 
   template <std::size_t Idx>
-  using head = do_split<Idx>::head;
+  using head = typename do_split<Idx>::head;
 
   template <std::size_t Idx>
-  using tail = do_split<Idx>::tail;
+  using tail = typename do_split<Idx>::tail;
 
   template <typename T>
   using append = List<Ts..., T>;
@@ -54,18 +54,9 @@ public:
 
   template <typename F, typename... Args>
   constexpr static void enumerate(F&& callable, Args&&... args) {
-    /*constexpr auto expects_index_arg = (requires {
-      { callable.template operator()<Ts>(std::size_t{}, std::forward<Args>(args)...) };
-    } && ...);
-
-    if constexpr (expects_index_arg) {
-      auto index = 0U;
-      (callable.template operator()<Ts>(index++, std::forward<Args>(args)...), ...);
-    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::index_sequence_for<Ts...>{});
-    //}
   }
 };
 
@@ -84,7 +75,7 @@ struct ValueListBase {
 
   template <std::size_t Idx>
     requires(sizeof...(Vs) > 0 && Idx < sizeof...(Vs))
-  using get = wrap<>::template get<Idx>::type::value;
+  constexpr static auto get = wrap<>::template get<Idx>::type::value;
 
   template <std::size_t Idx>
   using do_split = pack::Split<Idx, List<Vs...>>;
@@ -94,10 +85,10 @@ struct ValueListBase {
                          pack::unwrap<List, typename do_split<Idx>::tail>>;
 
   template <std::size_t Idx>
-  using head = do_split<Idx>::head;
+  using head = typename do_split<Idx>::head;
 
   template <std::size_t Idx>
-  using tail = do_split<Idx>::tail;
+  using tail = typename do_split<Idx>::tail;
 
   template <auto V>
   using append = List<Vs..., V>;
@@ -120,19 +111,9 @@ struct ValueListBase {
 
   template <typename F, typename... Args>
   constexpr static void enumerate(F&& callable, Args&&... args) {
-    //TODO MSVC hard fails on this. Consider extracting this or using Constant<V> instead
-    /*constexpr auto expects_index_arg = (requires {
-      { callable.template operator()<Vs>(std::size_t{}, std::forward<Args>(args)...) };
-    } && ...);
-
-    if constexpr (expects_index_arg) {
-      auto index = 0U;
-      (callable.template operator()<Vs>(index++, std::forward<Args>(args)...), ...);
-    } else {*/
       [&callable, &args...]<std::size_t... Idx>(std::index_sequence<Idx...>) {
         (callable.template operator()<get<Idx>, Idx>(std::forward<Args>(args)...), ...);
       }(std::make_index_sequence<sizeof...(Vs)>{});
-    //}
   }
 };
 

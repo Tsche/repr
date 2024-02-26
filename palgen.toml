@@ -19,8 +19,9 @@ output = "build/benchmark"
 repeat_each = 5
 
 [graphs]
-benchmark_output="build/benchmark"
-summary_path="../repr.wiki/"
+input = "build/benchmark"
+output = "build/docs/html/benchmark"
+summary_url = "https://github.com/Tsche/repr.wiki.git"
 
 [docs]
 style_output = "build/docs/style"

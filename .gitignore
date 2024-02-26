@@ -1,4 +1,6 @@
 **/build/
+venv/
+.venv/
 .vscode/
 .vsconan/
 .vs/

@@ -13,9 +13,9 @@ struct Reflect;
 template <detail::pair_like T>
 struct Reflect<T> : category::Type<T> {
   using type                        = T;
-  using first_type                  = T::first_type;
-  using second_type                 = T::second_type;
-  using members                     = TypeList<first_type, second_type>::template map<librepr::Reflect>;
+  using first_type                  = typename T::first_type;
+  using second_type                 = typename T::second_type;
+  using members                     = typename TypeList<first_type, second_type>::template map<librepr::Reflect>;
   constexpr static bool can_descend = true;
   constexpr static bool iterable    = false;
   constexpr static bool tuple_like  = true;

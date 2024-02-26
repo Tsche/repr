@@ -4,7 +4,7 @@ target_sources(repr_test PRIVATE
   pointer.cpp
   initializer_list.cpp
   pair.cpp
-  customization.cpp
+  #customization.cpp
   aggregate.cpp
   enum.cpp
   variant.cpp

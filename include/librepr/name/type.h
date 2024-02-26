@@ -28,14 +28,14 @@ struct TemplateInfo {
 template <template <typename...> typename U, typename... Ts>
 struct TemplateInfo<U<Ts...>> {
   using type                         = U<Ts...>;
-  using arguments                   = TypeList<Ts...>;
+  using arguments                    = TypeList<Ts...>;
   constexpr static bool is_templated = true;
 
 private:
   template <std::size_t... Idx>
   consteval static auto get_min_required(std::index_sequence<Idx...> seq) -> std::size_t {
     if constexpr (requires {
-                    typename U<typename arguments::template get<Idx>...>; //pack::rebox<arguments::head<Idx>, U>
+                    typename U<typename arguments::template get<Idx>...>;  // pack::rebox<arguments::head<Idx>, U>
                     requires std::is_same_v<U<Ts...>, U<typename arguments::template get<Idx>...>>;
                   }) {
       if constexpr (sizeof...(Idx) == 0) {
@@ -49,8 +49,8 @@ private:
   constexpr static auto required_amount = get_min_required(std::make_index_sequence<sizeof...(Ts)>());
 
 public:
-  using required  = arguments::template head<required_amount>;
-  using defaulted = arguments::template tail<required_amount>;
+  using required  = typename arguments::template head<required_amount>;
+  using defaulted = typename arguments::template tail<required_amount>;
 
   static std::string name() {
     auto full = librepr::get_name_raw<type>();
@@ -69,7 +69,7 @@ public:
     return []<std::size_t... Idx>(std::index_sequence<Idx...>) {
       const char* sep = "";
       std::ostringstream out;
-      
+
       (((out << sep << TemplateInfo<typename arguments::template get<Idx>>::name()), sep = ", "), ...);
       return out.str();
     }(std::make_index_sequence<argument_count>());

@@ -56,6 +56,12 @@ constexpr T clamp(auto value) {
   return std::cmp_less(max, value) ? max : static_cast<T>(value);
 }
 
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
+LIBREPR_WARNING_PUSH
+// https://github.com/llvm/llvm-project/issues/68489
+LIBREPR_WARNING_DISABLE_CLANG("-Wenum-constexpr-conversion")
+#endif
+
 template <typename T>
   requires std::is_enum_v<T>
 struct Search {
@@ -250,6 +256,10 @@ struct Search {
     }
   }
 };
+
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
+LIBREPR_WARNING_POP
+#endif
 
 template <typename T>
   requires std::is_enum_v<T>

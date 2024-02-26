@@ -30,9 +30,15 @@ public:
   template <std::size_t Idx>
     requires(Idx < sizeof...(Types))
   constexpr decltype(auto) get() const noexcept {
-    using return_type = types::template get<Idx>;
+    using return_type = typename types::template get<Idx>;
     return *static_cast<std::remove_reference_t<return_type>*>(data[Idx]);
   }
+};
+
+template <>
+class RefTuple<> {
+public:
+  RefTuple() = default;
 };
 
 template <typename... Types>

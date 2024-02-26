@@ -26,7 +26,7 @@ template <template <typename...> class Variant, typename... Ts>
   requires std::derived_from<Variant<Ts...>, std::variant<Ts...>>
 struct VariantDetector<Variant<Ts...> const> {
   static constexpr bool value = true;
-  using alternatives          = TypeList<Ts...>::template map<std::add_const_t>;
+  using alternatives          = typename TypeList<Ts...>::template map<std::add_const_t>;
 };
 
 template <template <typename...> class Variant, typename... Ts>
@@ -44,23 +44,22 @@ concept is_variant = detail::VariantDetector<T>::value;
 template <is_variant T>
 struct Reflect<T> : category::Type<T> {
   using type                        = T;
-  using alternatives                = detail::VariantDetector<T>::alternatives;
+  using alternatives                = typename detail::VariantDetector<T>::alternatives;
   constexpr static bool can_descend = true;
 
   template <typename V>
   static void visit(V&& visitor, type& obj) {
-    auto overload_set = alternatives::invoke([&visitor]<typename... Ts>() {
-      return detail::Overload{[&visitor](Ts& alternative) { visitor(category::Value<Reflect<Ts>>{alternative}); }...};
-    });
-
-    std::visit(overload_set, obj);
+    std::visit(
+        [&visitor]<typename U>(U&& alternative) {
+          using alt_type = std::remove_reference_t<U>;
+          visitor(category::Value<Reflect<alt_type>>{std::forward<U>(alternative)});
+        },
+        obj);
   }
 
   template <typename V>
   static void visit(V&& visitor) {
-    alternatives::for_each([&visitor]<typename U>(){
-      visitor(Reflect<U>{});
-    });
+    alternatives::for_each([&visitor]<typename U>() { visitor(Reflect<U>{}); });
   }
 };
 

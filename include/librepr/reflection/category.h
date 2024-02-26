@@ -49,7 +49,7 @@ template <class T>
 struct Value : T {
   // essentially a std::reference_wrapper without operator()
   using descend = T;
-  using type    = T::type;
+  using type    = typename T::type;
 
   template <detail::ref_convertible_to<type> U>
     requires(!std::same_as<Value, std::remove_cvref_t<U>>)

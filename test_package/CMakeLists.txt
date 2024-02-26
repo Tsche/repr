@@ -3,7 +3,6 @@ project(PackageTest CXX)
 
 find_package(repr CONFIG REQUIRED)
 
-
-
 add_executable(example src/example.cpp)
-target_link_libraries(example repr::repr)
+
+target_link_libraries(example PRIVATE repr::repr)

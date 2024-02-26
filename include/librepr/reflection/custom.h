@@ -16,7 +16,7 @@ struct Reflect;
   requires has_custom_members<T>
 struct Reflect<T> {
   using type        = T;
-  using members = Settings<T>::members;
+  using members = typename Settings<T>::members;
 
   static_assert(members::template is_valid_for<T>, "Members visit the wrong class type.");
 

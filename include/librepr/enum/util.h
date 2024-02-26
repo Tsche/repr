@@ -4,11 +4,13 @@
 #include <cstddef>
 #include <type_traits>
 
+#include <librepr/macro/platform.h>
+#include <librepr/macro/warning.h>
 #include <librepr/ctvi/ctvi.h>
 #include <librepr/util/string/const_string.h>
 
 namespace librepr::ctei {
-enum class EnumKind { Linear, Flags, Empty };
+enum class EnumKind : unsigned char { Linear, Flags, Empty };
 
 template <typename T, EnumKind Kind>
 [[nodiscard]] constexpr auto to_underlying(auto idx) noexcept -> std::underlying_type_t<T> {
@@ -40,6 +42,12 @@ template <typename T, auto Value>
     return std::bit_cast<T>(static_cast<underlying>(Value));
   }
 }
+
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
+LIBREPR_WARNING_PUSH
+// https://github.com/llvm/llvm-project/issues/68489
+LIBREPR_WARNING_DISABLE_CLANG("-Wenum-constexpr-conversion")
+#endif
 
 namespace detail {
 template <typename T, auto Value>
@@ -104,5 +112,9 @@ template <typename T, auto Value>
   constexpr auto name = dump_quick<std::bit_cast<T>(static_cast<std::underlying_type_t<T>>(Value))>();
   return !name.empty() && name[0] != '(';
 }
+
+#if USING(LIBREPR_COMPILER_CLANG) && __has_warning("-Wenum-constexpr-conversion")
+LIBREPR_WARNING_POP
+#endif
 
 }  // namespace librepr::ctei

@@ -45,7 +45,7 @@ struct Split<Idx, List<Ts...>> {
   using tail = typename recurse::tail;
   using type = typename recurse::type;
 
-  using head = Merge<typename first_page::head, typename recurse::head>::type;
+  using head = typename Merge<typename first_page::head, typename recurse::head>::type;
 #endif
 };
 
@@ -93,5 +93,5 @@ template <typename T, template <auto...> class To>
 using rebox_v = typename detail::ReBoxVImpl<T, To>::type;
 
 template <std::size_t Idx, typename T>
-using get = Split<Idx, T>::type;
+using get = typename Split<Idx, T>::type;
 }  // namespace librepr::pack

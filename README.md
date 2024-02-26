@@ -33,7 +33,7 @@ Alternatively if you do not use CMake simply pass your compiler an additional `-
 
 You can download a single-header distribution of repr from the URL provided:
 ```bash
-wget https://repr.palliate.io/amalgamated.h -O repr.h
+wget https://repr.wtf/amalgamated.h -O repr.h
 ```
 
 This command downloads the single-header file and saves it as `repr.h` to the current working directory. You can place this file wherever convenient (ie `external/repr.h`).
@@ -47,7 +47,7 @@ This command downloads the single-header file and saves it as `repr.h` to the cu
 
 
 //* c++ -std=c++23
-#include <https://repr.palliate.io/amalgamated.h>
+#include <https://repr.wtf/amalgamated.h>
 #include <print>
 
 int main(){

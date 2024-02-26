@@ -14,10 +14,10 @@ namespace librepr {
  */
 struct ReprWrapper {
   /** Returns a reconstructible string representation of the given object.
-      @tparam T
-      @param obj The object to inspect
-      @param options Optional printing Options
-      @return std::string
+   * @tparam T 
+   * @param obj The object to inspect
+   * @param options Optional printing Options
+   * @return std::string 
    */
   template <typename T>
   std::string operator()(T const& obj, Options options = {}) const {
@@ -31,10 +31,10 @@ struct ReprWrapper {
 enum class Language { CPP, Python };
 
 /** Prints code roughly matching the requested type
-    @tparam T The type to print
-    @tparam language Which language to print the type in
-
-*/
+ * @tparam T The type to print
+ * @tparam language Which language to print the type in
+ * @return std::string 
+ */
 template <typename T, Language language = Language::CPP>
 std::string code_for() {
   if constexpr (language == Language::Python) {

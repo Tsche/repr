@@ -30,9 +30,9 @@ namespace category {
 template <typename Member, typename Parent, std::size_t Index>
 struct DataMember : Member {
   using descend     = Member;
-  using type        = Member::type;
+  using type        = typename Member::type;
   using parent      = Parent;
-  using parent_type = Parent::type;
+  using parent_type = typename Parent::type;
 
   [[nodiscard]] std::string_view name() const { 
     return member_name<parent_type, Index>; 
@@ -51,9 +51,9 @@ struct Reflect<T> : category::Type<T> {
   using member_tuple = decltype(librepr::detail::to_reftuple(std::declval<T>()));
   static_assert(!std::is_same_v<member_tuple, void>, "Aggregate reflection failed");
 
-  using member_types                = pack::rebox<member_tuple, TypeList>::template map<std::remove_reference_t>;
+  using member_types                = typename pack::rebox<member_tuple, TypeList>::template map<std::remove_reference_t>;
   using type                        = T;
-  using members                     = member_types::template map<librepr::Reflect>;
+  using members                     = typename member_types::template map<librepr::Reflect>;
   constexpr static bool can_descend = true;
 
   template <typename V>
