@@ -55,8 +55,8 @@ std::string layout_of() {
 }
 }  // namespace librepr
 
-inline constexpr librepr::ReprWrapper
+inline constexpr ::librepr::ReprWrapper
     repr{}; /**< Returns a reconstructable string representation of the given object. */
 
 template <typename T>
-inline constexpr librepr::TypeName<T> nameof{};
+inline constexpr ::librepr::TypeName<T> nameof{};

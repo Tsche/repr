@@ -75,10 +75,9 @@ class ReprRecipe(ConanFile):
         tc.generate()
 
     def build(self):
-        if not self.conf.get("tools.build:skip_test", default=False):
-            cmake = CMake(self)
-            cmake.configure()
-            cmake.build()
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
 
     def package(self):
         copy(self, "repr", self.source_folder, self.package_folder)

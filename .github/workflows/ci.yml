@@ -92,7 +92,7 @@ jobs:
         conan config install https://github.com/Tsche/github-conan-profiles.git -sf=ubuntu-latest
 
     - name: Build
-      run: conan build . -s build_type=Release --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }} -o benchmark=True
+      run: conan build . -s build_type=Release --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }} -o benchmark=True -c tools.build:skip_test=True
 
     - name: Test
       run: |

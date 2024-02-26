@@ -21,7 +21,7 @@ enum_constexpr_conversion = ".*-Wenum-constexpr-conversion"
     @return_code(gcc, 0)
     @return_code(msvc, 0)
 
-    @error(Clang(version='>=16'), regex=enum_constexpr_conversion)
+    @error(clang16, regex=enum_constexpr_conversion)
 }
 
 @test("scoped enum without fixed underlying type"){
@@ -29,7 +29,7 @@ enum_constexpr_conversion = ".*-Wenum-constexpr-conversion"
     @return_code(gcc, 0)
     @return_code(msvc, 0)
 
-    @error(Clang(version='>=16'), regex=enum_constexpr_conversion)
+    @error(clang16, regex=enum_constexpr_conversion)
 }
 
 int main() {}
