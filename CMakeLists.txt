@@ -56,7 +56,7 @@ if(BUILD_TESTING)
   include(GoogleTest)
   gtest_discover_tests(repr_test)
   
-  add_subdirectory(test)
+  add_subdirectory(test/unittest)
 
   if(ENABLE_COVERAGE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
