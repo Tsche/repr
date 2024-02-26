@@ -66,10 +66,18 @@ jobs:
         run: false
         requirements: tools/requirements.txt
 
+    - name: List compilers
+      run: diagtest --list-compilers
+
     - name: Run diagtest
       run: palgen --debug diagnostics
 
   benchmark-runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [clang, gcc]
+
     runs-on: ubuntu-latest
     container: alpine:latest
     steps:
@@ -78,7 +86,23 @@ jobs:
     - name: Install dependencies
       run: |
         apk update
-        apk add --no-cache git clang17 gcc
+        apk add --no-cache git clang17
+
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@v1.2
+  
+    - name: Set up Conan profile
+      run: |
+        conan config install https://github.com/Tsche/github-conan-profiles.git -sf=ubuntu-latest
+
+    - name: Build
+      run: conan build . -s build_type=Release --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }} -o benchmark=True
+
+    - name: Test
+      continue-on-error: true
+      run: |
+        ./build/Release/repr_benchmark
 
   benchmark-compiletime:
     runs-on: ubuntu-latest

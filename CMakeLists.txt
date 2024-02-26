@@ -49,21 +49,30 @@ if (MSVC)
   target_compile_options(repr INTERFACE "/Zc:preprocessor")
 endif()
 
+if (ENABLE_BENCHMARK)
+  message(STATUS "Building runtime benchmarks")
+
+  add_executable(repr_benchmark "")
+  add_subdirectory(benchmark/runtime)
+
+  find_package(benchmark REQUIRED)
+  target_link_libraries(repr_benchmark PRIVATE benchmark::benchmark_main)
+  target_link_libraries(repr_benchmark PRIVATE repr)
+endif()
 
 if(BUILD_TESTING)
   message(STATUS "Building unit tests")
 
   enable_testing()
   add_executable(repr_test "")
+  add_subdirectory(test/unittest)
 
   find_package(GTest REQUIRED)
   target_link_libraries(repr_test PRIVATE repr)
-  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock)
+  target_link_libraries(repr_test PRIVATE GTest::gtest GTest::gmock)
 
   include(GoogleTest)
   gtest_discover_tests(repr_test)
-  
-  add_subdirectory(test/unittest)
 
   if(ENABLE_COVERAGE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -90,14 +99,6 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-if (ENABLE_BENCHMARK)
-  message(STATUS "Building runtime benchmarks")
-  add_executable(repr_benchmark "")
-  add_subdirectory(benchmark)
-  find_package(benchmark REQUIRED)
-  target_link_libraries(repr_benchmark PRIVATE benchmark::benchmark_main)
-  target_link_libraries(repr_benchmark PRIVATE repr)
-endif()
 
 ## headers
 set_target_properties(repr PROPERTIES PUBLIC_HEADER "include/repr")
