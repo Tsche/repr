@@ -39,7 +39,7 @@ jobs:
     - name: Test Package
       run: |
         conan editable add .
-        conan test test_package repr/0.1 -s build_type=Debug -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
+        conan test test/packaging repr/0.1 -s build_type=Debug -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }}
 
     - name: Test
       continue-on-error: true
@@ -50,22 +50,53 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [
+          ubuntu-latest,
+          # macos-latest,
+          # windows-latest
+        ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Setup palgen
+      uses: palliate/palgen@master
+      with:
+        run: false
+        requirements: tools/requirements.txt
+
+    - name: List compilers
+      run: diagtest --list-compilers
+
+    - name: Run diagtest
+      run: palgen --debug diagnostics
+
   benchmark-runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [clang, gcc]
+
     runs-on: ubuntu-latest
-    container: alpine:latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install dependencies
+
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@v1.2
+  
+    - name: Set up Conan profile
       run: |
-        apk update
-        apk add --no-cache git clang17 gcc
+        conan config install https://github.com/Tsche/github-conan-profiles.git -sf=ubuntu-latest
+
+    - name: Build
+      run: conan build . -s build_type=Release --build=missing -pr ${{ matrix.compiler }} -pr:b ${{ matrix.compiler }} -o benchmark=True -c tools.build:skip_test=True
+
+    - name: Test
+      run: |
+        ./build/Release/repr_benchmark
 
   benchmark-compiletime:
     runs-on: ubuntu-latest

@@ -8,7 +8,7 @@ inline = false
 [project]
 name = "librepr"
 version = "0.1"
-sources = ["include", "benchmark"]
+sources = ["include", "benchmark", "test"]
 
 [amalgamate]
 root = "repr"
