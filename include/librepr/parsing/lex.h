@@ -5,7 +5,7 @@
 #include <librepr/util/hash.h>
 #include "token.h"
 #include "classify.h"
-#include "keywords.h"
+#include "token/keywords.h"
 
 namespace librepr::parsing {
 // NOLINTBEGIN(*-pointer-arithmetic)
@@ -15,12 +15,6 @@ public:
   std::uint16_t length;
   std::uint16_t cursor = 0;
 
-  // char const* begin;
-  // char const* cursor;
-  // char const* end;
-
-  // constexpr Lexer(char const* begin_, char const* end_) : begin(begin_), cursor(begin_), end(end_) {}
-  // constexpr explicit Lexer(std::string_view data) : begin(data.begin()), cursor(data.begin()), end(data.end()) {}
   constexpr explicit Lexer(std::string_view data) : data(data), length(data.length()) {
     // TODO assert data is small enough
   }
@@ -28,7 +22,7 @@ public:
   constexpr Token next(bool peek = false) {
     if (data.empty() || cursor >= length) {
       // nothing to do, return sentinel
-      return Token{nullptr, 0, TokenKind::eof};
+      return Token{nullptr, 0, token::TokenKind::eof};
     }
 
     auto const previous      = cursor;
@@ -98,37 +92,37 @@ private:
     if (!token.is(TokenCategory::numeric)) {
       // do not overwrite in-flight error
       if (!token.is(TokenCategory::error)) {
-        token = LexError::InvalidNumericLiteral;
+        token = token::LexError::InvalidNumericLiteral;
       }
 
       return false;
     }
 
-    auto& flags = token.get<Numeral>();
+    auto& flags = token.get<token::Numeral>();
     if (advance_if('0')) {
       if (advance_if('x', 'X')) {
         if (!advance_pred(is_hex)) {
-          token = LexError::InvalidNumericLiteral;
+          token = token::LexError::InvalidNumericLiteral;
           return false;
         }
       } else if (advance_if('b', 'B')) {
         if (!advance_if('0', '1')) {
-          token = LexError::InvalidNumericLiteral;
+          token = token::LexError::InvalidNumericLiteral;
           return false;
         }
-        flags.base = Numeral::binary;
+        flags.base = token::Numeral::binary;
         return true;
       }
       // TODO ensure b/x is not followed by ' or .
-      flags.base = Numeral::octal;
+      flags.base = token::Numeral::octal;
       return true;
     }
-    flags.base = Numeral::decimal;
+    flags.base = token::Numeral::decimal;
     return true;
   }
 
   constexpr Token lex_numeric(Token& token) {
-    auto& flags = token.get<Numeral>();
+    auto& flags = token.get<token::Numeral>();
 
     if (!flags.is_float()) {
       lex_numeric_head(token);
@@ -137,38 +131,38 @@ private:
     while (cursor < length) {
       if (advance_if('\'')) {
         if (check(0, '.')) {
-          return Token{token.start, cursor, LexError::DigitSeparatorAdjacentToDecimalPoint};
+          return Token{token.start, cursor, token::LexError::DigitSeparatorAdjacentToDecimalPoint};
         }
         if (check(0, '\'')) {
-          return Token{token.start, cursor, LexError::ConsecutiveDigitSeparator};
+          return Token{token.start, cursor, token::LexError::ConsecutiveDigitSeparator};
         }
         continue;
       }
 
-      if (flags.is(Numeral::binary)) {
+      if (flags.is(token::Numeral::binary)) {
         if (!advance_if('0', '1')) {
           break;
         }
       } else {
         if (advance_if('.')) {
           if (check(0, '\'')) {
-            return Token{token.start, cursor, LexError::DigitSeparatorAdjacentToDecimalPoint};
+            return Token{token.start, cursor, token::LexError::DigitSeparatorAdjacentToDecimalPoint};
           }
           if (flags.is_float()) {
-            return Token{token.start, cursor, LexError::MultipleDecimalPoints};
+            return Token{token.start, cursor, token::LexError::MultipleDecimalPoints};
           }
-          flags.set(Numeral::double_);
+          flags.set(token::Numeral::double_);
           continue;
         }
 
-        if (flags.is_float() && flags.is(Numeral::decimal)) {
+        if (flags.is_float() && flags.is(token::Numeral::decimal)) {
           if (advance_if('E', 'e')) {
             continue;
           }
           if (!advance_pred(is_numeric)) {
             break;
           }
-        } else if (flags.is_float() && flags.is(Numeral::hex)) {
+        } else if (flags.is_float() && flags.is(token::Numeral::hex)) {
           if (advance_if('P', 'p')) {
             continue;
           }
@@ -184,7 +178,7 @@ private:
     // consume literal suffix
     if (flags.is_float()) {
       if (advance_if('F', 'f')) {
-        flags.set(Numeral::float_);
+        flags.set(token::Numeral::float_);
       }
     } else {
       // TODO set types
@@ -207,10 +201,10 @@ private:
       ++cursor;
     }
     token.end                = cursor;
-    if (auto const* entry = detail::KeywordHash::find(token.start, token.end)) {
+    if (auto const* entry = token::detail::KeywordHash::find(token.start, token.end)) {
       token = entry->value;
     } else {
-      token = detail::Name{detail::Identifier::identifier};
+      token = token::Name{token::Identifier::identifier};
     }
 
     return token;
@@ -219,7 +213,7 @@ private:
   constexpr Token lex_string(Token& token) {
     while (cursor < length && data[cursor] != '"') { ++cursor; }
     if (data[cursor] != '"') {
-      return Token{token.start, cursor, LexError::UnclosedStringLiteral};
+      return Token{token.start, cursor, token::LexError::UnclosedStringLiteral};
     }
     ++cursor;
     token.end = cursor;
@@ -231,7 +225,7 @@ private:
     advance_if('\\');
     ++cursor;
     if (!advance_if('\'')) {
-      return Token{token.start, cursor, LexError::UnclosedCharacterLiteral};
+      return Token{token.start, cursor, token::LexError::UnclosedCharacterLiteral};
     }
     token.end = cursor;
     return token;
@@ -242,12 +236,12 @@ private:
     auto const start_cursor = cursor;
     if (cursor >= length) {
       // nothing to parse
-      return Token{nullptr, 0, TokenKind::eof};
+      return Token{nullptr, 0, token::TokenKind::eof};
     }
     ++cursor;
-    Token output = Token{&data.data()[start_cursor], cursor, TokenKind::eof};
+    Token output = Token{&data.data()[start_cursor], cursor, token::TokenKind::eof};
     switch (data[start_cursor]) {
-      using enum TokenKind::Kind;
+      using enum token::TokenKind::Kind;
       case '\0':
         // found end of file, nothing to parse
         output.end = cursor;
@@ -270,13 +264,13 @@ private:
       case '^': output = advance_if('=') ? caretequal : caret; break;
       case ':': output = advance_if(':') ? coloncolon : colon; break;
       case '=': output = advance_if('=') ? equalequal : equal; break;
-      case '"': output = StringFlags::is_plain; return lex_string(output);
-      case '\'': output = CharacterFlags::is_plain; return lex_character(output);
+      case '"': output = token::StringFlags::is_plain; return lex_string(output);
+      case '\'': output = token::CharacterFlags::is_plain; return lex_character(output);
 
       // clang-format off
       case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
         --cursor;
-        output = Numeral{};
+        output = token::Numeral{};
         return lex_numeric(output);
 
       case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':  case 'G': case 'H': case 'I': case 'J':
@@ -295,11 +289,11 @@ private:
       case 'L': {                             // wide literal or ident
         bool const is_raw = advance_if('R');  // wide raw literal or ident
         if (advance_if('"')) {
-          output = is_raw ? (StringFlags::Flag)(StringFlags::is_wide | StringFlags::is_raw) : StringFlags::is_wide;
+          output = is_raw ? (token::StringFlags::Flag)(token::StringFlags::is_wide | token::StringFlags::is_raw) : token::StringFlags::is_wide;
           return lex_string(output);
         } else if (advance_if('\'')) {
-          output = is_raw ? (CharacterFlags::Flag)(CharacterFlags::is_wide | CharacterFlags::is_raw)
-                          : CharacterFlags::is_wide;
+          output = is_raw ? (token::CharacterFlags::Flag)(token::CharacterFlags::is_wide | token::CharacterFlags::is_raw)
+                          : token::CharacterFlags::is_wide;
           return lex_character(output);
         } else {
           return lex_identifier(output);
@@ -308,15 +302,15 @@ private:
 
       case 'R':  // raw string literal or ident
         if (advance_if('"')) {
-          output = StringFlags::is_raw;
+          output = token::StringFlags::is_raw;
           return lex_string(output);
         }
         return lex_identifier(output);
 
       case '.':
         if (check(1, '1', '2', '3', '4', '5', '6', '7', '8', '9')) {
-          output = Numeral{};
-          output.get<Numeral>().set(Numeral::double_);
+          output = token::Numeral{};
+          output.get<token::Numeral>().set(token::Numeral::double_);
           return lex_numeric(output);
         }
         output = advance_if('*') ? periodstar : period;
@@ -347,8 +341,8 @@ private:
           output = advance_if('*') ? arrowstar : arrow;
         } else if (advance_pred(is_numeric)) {
           // -1234
-          output = Numeral{};
-          output.get<Numeral>().set(Numeral::sign);
+          output = token::Numeral{};
+          output.get<token::Numeral>().set(token::Numeral::sign);
           return lex_numeric(output);
         } else {
           output = minus;
@@ -408,7 +402,7 @@ private:
         }
         break;
 
-      default: output = LexError::UnknownCharacter; break;
+      default: output = token::LexError::UnknownCharacter; break;
     }
 
     return output;

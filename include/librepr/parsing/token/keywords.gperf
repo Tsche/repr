@@ -1,8 +1,8 @@
 %{
 #pragma once
-#include "token/name.h"
+#include "name.h"
 
-  namespace librepr::parsing::detail {
+namespace librepr::parsing::token::detail {
 //NOLINT
 %}
 

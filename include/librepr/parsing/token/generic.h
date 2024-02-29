@@ -1,5 +1,5 @@
 #pragma once
-namespace librepr::parsing::TokenKind {
+namespace librepr::parsing::token::TokenKind {
 enum Kind : unsigned short {
   invalid,
   eof,

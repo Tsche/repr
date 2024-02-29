@@ -4,8 +4,7 @@
 #include <librepr/util/concepts.h>
 #include "generic.h"
 
-namespace librepr::parsing::detail {
-
+namespace librepr::parsing::token {
 enum class Literal : unsigned char {
   True,
   False,
@@ -193,10 +192,7 @@ enum class Contextual : unsigned char {
   Module,
 };
 
-enum class Identifier : bool { 
-  error = false,
-  identifier = true
-};
+enum class Identifier : bool { error = false, identifier = true };
 
 enum class NameCategory : unsigned char {
   identifier = 0,
@@ -264,8 +260,8 @@ struct Name {
                                     util::UnionMember{&Kind::windows_seh_, NameCategory::windows_seh}>);
   };
 
-  Kind value {.identifier_=Identifier::error};
-  NameCategory category {NameCategory::identifier};
+  Kind value{.identifier_ = Identifier::error};
+  NameCategory category{NameCategory::identifier};
 
   constexpr Name() = default;
 
@@ -283,8 +279,11 @@ struct Name {
 
 static_assert(sizeof(Name) <= 4);
 
+namespace detail {
 struct KeywordEntry {
   const char* key;
   Name value;
 };
-}  // namespace librepr::parsing::detail
+}  // namespace detail
+
+}  // namespace librepr::parsing::token

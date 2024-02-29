@@ -13,7 +13,7 @@ error_list = {
 }
 }@
 
-namespace librepr::parsing::LexError {
+namespace librepr::parsing::token::LexError {
   enum Error : unsigned {
     @[for ident in error_list]@
     @ident,
@@ -26,9 +26,8 @@ namespace librepr::parsing::LexError {
       case @ident:
         return "@message";
       @[end for]@
-      default:
-        break;
+      default: break;
     }
     return "unrecognized error";
   }
-}  // namespace librepr::parsing::LexError
+}  // namespace librepr::parsing::token::LexError

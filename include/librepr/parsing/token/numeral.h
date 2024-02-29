@@ -1,6 +1,6 @@
 #pragma once
 
-namespace librepr::parsing {
+namespace librepr::parsing::token {
 struct Numeral {
   enum Flags : unsigned char {
     sign        = 1U << 0U,
@@ -41,36 +41,25 @@ struct Numeral {
   [[nodiscard]] constexpr std::size_t bit_width() const {
     if (is_float()) {
       switch (kind.floating) {
-        case float_:
-          return sizeof(float) * 8;
-        case double_:
-          return sizeof(double) * 8;
-        case long_double:
-          return sizeof(long double) * 8;
+        case float_: return sizeof(float) * 8;
+        case double_: return sizeof(double) * 8;
+        case long_double: return sizeof(long double) * 8;
         case float16:
-        case bfloat16:
-          return 16;
-        case float32:
-          return 32;
-        case float64:
-          return 64;
-        case float128:
-          return 128;
+        case bfloat16: return 16;
+        case float32: return 32;
+        case float64: return 64;
+        case float128: return 128;
       }
     } else {
       switch (kind.integer) {
         case int_:
-        case unsigned_:
-          return sizeof(int) * 8;
+        case unsigned_: return sizeof(int) * 8;
         case long_:
-        case unsigned_long:
-          return sizeof(long) * 8;
+        case unsigned_long: return sizeof(long) * 8;
         case long_long:
-        case unsigned_long_long:
-          return sizeof(long long) * 8;
+        case unsigned_long_long: return sizeof(long long) * 8;
         case size_t:
-        case ssize_t:
-          return sizeof(std::size_t) * 8;
+        case ssize_t: return sizeof(std::size_t) * 8;
       }
     }
     return 0;
@@ -86,13 +75,11 @@ struct Numeral {
       case int_:
       case long_:
       case long_long:
-      case ssize_t:
-        return true;
+      case ssize_t: return true;
       case unsigned_:
       case unsigned_long:
       case unsigned_long_long:
-      case size_t:
-        return false;
+      case size_t: return false;
     }
 
     // TODO use unreachable/throw here?
@@ -123,4 +110,5 @@ struct Numeral {
   constexpr void set(Flags flag) { flags = (Flags)(flag | flags); }
 };
 static_assert(sizeof(Numeral) <= 4);
-}
+
+}  // namespace librepr::parsing::token

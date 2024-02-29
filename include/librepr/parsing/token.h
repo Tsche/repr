@@ -21,12 +21,12 @@ concept is_token_category = std::same_as<std::remove_const_t<decltype(V)>, Token
 
 class Token {
   union Type {
-    LexError::Error lex_error;
-    TokenKind::Kind kind;
-    CharacterFlags::Flag char_flags;
-    StringFlags::Flag string_flags;
-    Numeral numeric_flags;
-    detail::Name name_flags;
+    token::LexError::Error lex_error;
+    token::TokenKind::Kind kind;
+    token::CharacterFlags::Flag char_flags;
+    token::StringFlags::Flag string_flags;
+    token::Numeral numeric_flags;
+    token::Name name_flags;
 
     static_assert(util::EnableUnion<util::UnionMember{&Type::lex_error, TokenCategory::error},
                                     util::UnionMember{&Type::kind, TokenCategory::generic},
@@ -39,9 +39,9 @@ public:
   char const* start;
   std::uint16_t end;
   TokenCategory category{TokenCategory::error};
-  Type type{.lex_error = LexError::Unknown};
+  Type type{.lex_error = token::LexError::Unknown};
 
-  constexpr Token() : start(0), end(0) {}
+  constexpr Token() : start(nullptr), end(0) {}
   constexpr Token(char const* start_, uint16_t end_) : start(start_), end(end_) {}
 
   template <typename T>
@@ -142,7 +142,7 @@ public:
     }
 
     if (category == TokenCategory::generic) {
-      return !is(TokenKind::eof);
+      return !is(token::TokenKind::eof);
     }
 
     return true;
