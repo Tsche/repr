@@ -11,7 +11,12 @@
 #include <librepr/util/string/buffer.h>
 #include <librepr/util/concepts.h>
 #include <librepr/macro/format.h>
-#include <librepr/repr/all.h>
+
+#include <librepr/repr/fallback.h>
+#include <librepr/repr/enum.h>
+#include <librepr/repr/fundamental.h>
+#include <librepr/repr/pointer.h>
+
 #include <librepr/name/type.h>
 #include <librepr/literal.h>
 #include <librepr/options.h>
@@ -41,7 +46,7 @@ private:
 
 public:
   explicit ReprVisitor(Options const& options_) : options(options_) {}
-  detail::StringBuffer result{};
+  util::StringBuffer result{};
 
   void nesting(bool increase) {
     if (increase) {

@@ -7,7 +7,7 @@
 
 namespace librepr {
 struct LayoutVisitor {
-  detail::StringBuffer result;
+  util::StringBuffer result;
 private:
   bool separate = false;
 

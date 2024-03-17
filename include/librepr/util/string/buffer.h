@@ -1,5 +1,5 @@
 #pragma once
-
+#include <cstdint>
 #include <cstring>
 #include <iosfwd>
 #include <string>
@@ -9,7 +9,7 @@
 #include <librepr/macro/assert.h>
 #include <librepr/macro/util.h>
 
-namespace librepr::detail {
+namespace librepr::util {
 /// Wrapper around std::string.
 struct StringBuffer {
   StringBuffer() = default;
@@ -30,14 +30,19 @@ struct StringBuffer {
     }
   }
 
-  LIBREPR_HINT_INLINE void write(std::string_view sv) {
-    auto* beg = sv.data();
-    this->write(beg, beg + sv.size());
+  LIBREPR_HINT_INLINE void write(std::string_view str) {
+    auto* beg = str.data();
+    this->write(beg, beg + str.size());
   }
 
-  LIBREPR_HINT_INLINE void write(char c) {
+  LIBREPR_HINT_INLINE void write(char character) {
     auto& target = (cursor == std::string::npos) ? buffer : inplace_buffer;
-    target.push_back(c);
+    target.push_back(character);
+  }
+
+  LIBREPR_HINT_INLINE void write(char character, std::uint16_t repeat){
+    auto& target = (cursor == std::string::npos) ? buffer : inplace_buffer;
+    target.append(repeat, character);
   }
 
   LIBREPR_HINT_INLINE std::string&& extract() {
@@ -55,22 +60,22 @@ struct StringBuffer {
     return &buffer;
   }
 
-  friend StringBuffer& operator<<(StringBuffer& buf, std::string_view sv){
-    buf.write(sv);
-    return buf;
+  friend StringBuffer& operator<<(StringBuffer& self, std::string_view str){
+    self.write(str);
+    return self;
   }
 
-  friend StringBuffer& operator<<(StringBuffer& buf, char c){
-    buf.write(c);
-    return buf;
+  friend StringBuffer& operator<<(StringBuffer& self, char character){
+    self.write(character);
+    return self;
   }
 
-  friend std::ostream& operator<<(std::ostream& stream, StringBuffer& buf){
-    buf.flush();
-    return stream << buf.buffer;
+  friend std::ostream& operator<<(std::ostream& stream, StringBuffer& self){
+    self.flush();
+    return stream << self.buffer;
   }
  
-  std::size_t size() {
+  [[nodiscard]] std::size_t size() const {
     return buffer.size() + inplace_buffer.size();
   }
 

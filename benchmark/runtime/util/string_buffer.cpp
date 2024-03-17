@@ -36,7 +36,7 @@ BENCHMARK(stringstream_append);
 
 void stringbuffer_append(::benchmark::State& state) {
   for (auto _ : state) {
-    librepr::detail::StringBuffer buffer{};
+    librepr::util::StringBuffer buffer{};
     for (unsigned i = 0; i < 100; ++i){
       buffer << "fooabc1234567890 asdf <>()";
     }
