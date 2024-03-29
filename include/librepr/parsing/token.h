@@ -7,14 +7,14 @@
 
 #include <librepr/util/concepts.h>
 #include "token/lex_error.h"
-#include "token/generic.h"
+#include "token/punctuation.h"
 #include "token/string.h"
 #include "token/numeral.h"
 #include "token/name.h"
 
 namespace librepr::parsing {
 
-enum class TokenCategory : unsigned char { error, generic, character, string, numeric, name };
+enum class TokenCategory : unsigned char { error, punctuation, character, string, numeric, name };
 
 template <auto V>
 concept is_token_category = std::same_as<std::remove_const_t<decltype(V)>, TokenCategory>;
@@ -22,14 +22,14 @@ concept is_token_category = std::same_as<std::remove_const_t<decltype(V)>, Token
 class Token {
   union Type {
     token::LexError::Error lex_error;
-    token::TokenKind::Kind kind;
+    token::Punctuation::Kind punctuation;
     token::CharacterFlags::Flag char_flags;
     token::StringFlags::Flag string_flags;
     token::Numeral numeric_flags;
     token::Name name_flags;
 
     static_assert(util::EnableUnion<util::UnionMember{&Type::lex_error, TokenCategory::error},
-                                    util::UnionMember{&Type::kind, TokenCategory::generic},
+                                    util::UnionMember{&Type::punctuation, TokenCategory::punctuation},
                                     util::UnionMember{&Type::char_flags, TokenCategory::character},
                                     util::UnionMember{&Type::string_flags, TokenCategory::string},
                                     util::UnionMember{&Type::numeric_flags, TokenCategory::numeric},
@@ -137,19 +137,23 @@ public:
   }
 
   [[nodiscard]] constexpr operator bool() const {
+    if (start == nullptr) {
+      return false;
+    }
+
     if (category == TokenCategory::error) {
       return false;
     }
 
-    if (category == TokenCategory::generic) {
-      return !is(token::TokenKind::eof);
+    if (category == TokenCategory::punctuation) {
+      return !is(token::Punctuation::eof);
     }
 
     return true;
   }
 
   [[nodiscard]] constexpr std::string_view extract() const {
-    return std::string_view{start, end};
+    return {start, end};
   }
 };
 static_assert(sizeof(Token) == 16);

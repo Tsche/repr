@@ -21,7 +21,7 @@ TEST(lex_token, error) {
 
 TEST(lex_token, tokenkind) {
   auto token = Token(0, 0, TokenKind::l_brace);
-  EXPECT_TRUE(token.is(TokenCategory::generic));
+  EXPECT_TRUE(token.is(TokenCategory::punctuation));
   // EXPECT_TRUE(token.in(TokenCategory::Category(~0U)));
 
   EXPECT_TRUE(token.is(TokenKind::l_brace));
@@ -91,7 +91,7 @@ TEST(lex_token, reassign) {
   EXPECT_TRUE(token.is(CharacterFlags::is_raw));
 
   token = TokenKind::l_brace;
-  EXPECT_TRUE(token.is(TokenCategory::generic));
+  EXPECT_TRUE(token.is(TokenCategory::punctuation));
   EXPECT_TRUE(token.is(TokenKind::l_brace));
 }
 }

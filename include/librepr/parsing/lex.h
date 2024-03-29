@@ -22,7 +22,7 @@ public:
   constexpr Token next(bool peek = false) {
     if (data.empty() || cursor >= length) {
       // nothing to do, return sentinel
-      return Token{nullptr, 0, token::TokenKind::eof};
+      return Token{nullptr, 0, token::Punctuation::eof};
     }
 
     auto const previous      = cursor;
@@ -86,7 +86,6 @@ private:
       ++cursor;
     }
   }
-
 
   constexpr bool lex_numeric_head(Token& token) {
     if (!token.is(TokenCategory::numeric)) {
@@ -200,7 +199,7 @@ private:
     while (cursor < length && is_ident_continue(data[cursor])) {
       ++cursor;
     }
-    token.end                = cursor;
+    token.end = cursor;
     if (auto const* entry = token::detail::KeywordHash::find(token.start, token.end)) {
       token = entry->value;
     } else {
@@ -211,7 +210,9 @@ private:
   }
 
   constexpr Token lex_string(Token& token) {
-    while (cursor < length && data[cursor] != '"') { ++cursor; }
+    while (cursor < length && data[cursor] != '"') {
+      ++cursor;
+    }
     if (data[cursor] != '"') {
       return Token{token.start, cursor, token::LexError::UnclosedStringLiteral};
     }
@@ -236,12 +237,12 @@ private:
     auto const start_cursor = cursor;
     if (cursor >= length) {
       // nothing to parse
-      return Token{nullptr, 0, token::TokenKind::eof};
+      return Token{nullptr, 0, token::Punctuation::eof};
     }
     ++cursor;
-    Token output = Token{&data.data()[start_cursor], cursor, token::TokenKind::eof};
+    Token output = Token{&data[start_cursor], cursor, token::Punctuation::eof};
     switch (data[start_cursor]) {
-      using enum token::TokenKind::Kind;
+      using enum token::Punctuation::Kind;
       case '\0':
         // found end of file, nothing to parse
         output.end = cursor;
@@ -275,7 +276,7 @@ private:
 
       case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':  case 'G': case 'H': case 'I': case 'J':
       case 'K': /*'L'*/   case 'M': case 'N': case 'O': case 'P': case 'Q': /*'R'*/    case 'S': case 'T': 
-      /*'U'*/   case 'W': case 'X': case 'Y': case 'Z': 
+      /*'U'*/   case 'V': case 'W': case 'X': case 'Y': case 'Z': 
       case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': 
       case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
       /*'u'*/   case 'v': case 'w': case 'x': case 'y': case 'z': case '_': case '$':
@@ -289,11 +290,13 @@ private:
       case 'L': {                             // wide literal or ident
         bool const is_raw = advance_if('R');  // wide raw literal or ident
         if (advance_if('"')) {
-          output = is_raw ? (token::StringFlags::Flag)(token::StringFlags::is_wide | token::StringFlags::is_raw) : token::StringFlags::is_wide;
+          output = is_raw ? (token::StringFlags::Flag)(token::StringFlags::is_wide | token::StringFlags::is_raw)
+                          : token::StringFlags::is_wide;
           return lex_string(output);
         } else if (advance_if('\'')) {
-          output = is_raw ? (token::CharacterFlags::Flag)(token::CharacterFlags::is_wide | token::CharacterFlags::is_raw)
-                          : token::CharacterFlags::is_wide;
+          output = is_raw
+                       ? (token::CharacterFlags::Flag)(token::CharacterFlags::is_wide | token::CharacterFlags::is_raw)
+                       : token::CharacterFlags::is_wide;
           return lex_character(output);
         } else {
           return lex_identifier(output);

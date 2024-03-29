@@ -1,8 +1,9 @@
 #pragma once
+#include <stdexcept>
 #include <string_view>
 #include <librepr/util/union.h>
 #include <librepr/util/concepts.h>
-#include "generic.h"
+#include "punctuation.h"
 
 namespace librepr::parsing::token {
 enum class Literal : unsigned char {
@@ -172,17 +173,17 @@ enum class Modifier : unsigned char {
 };
 
 enum class Operator : unsigned char {
-  And    = TokenKind::ampamp,
-  AndEq  = TokenKind::ampequal,
-  BitAnd = TokenKind::amp,
-  BitOr  = TokenKind::pipe,
-  Compl  = TokenKind::tilde,
-  Not    = TokenKind::exclaim,
-  NotEq  = TokenKind::exclaimequal,
-  Or     = TokenKind::pipepipe,
-  OrEq   = TokenKind::pipeequal,
-  Xor    = TokenKind::caret,
-  XorEq  = TokenKind::caretequal,
+  And    = Punctuation::ampamp,
+  AndEq  = Punctuation::ampequal,
+  BitAnd = Punctuation::amp,
+  BitOr  = Punctuation::pipe,
+  Compl  = Punctuation::tilde,
+  Not    = Punctuation::exclaim,
+  NotEq  = Punctuation::exclaimequal,
+  Or     = Punctuation::pipepipe,
+  OrEq   = Punctuation::pipeequal,
+  Xor    = Punctuation::caret,
+  XorEq  = Punctuation::caretequal,
 };
 
 enum class Contextual : unsigned char {
@@ -274,6 +275,33 @@ struct Name {
   [[nodiscard]] constexpr bool is(NameCategory type_) const { return category == type_; }
   [[nodiscard]] constexpr bool in(std::same_as<NameCategory> auto... types) const {
     return ((category == types) || ...);
+  }
+
+  template <typename T>
+  [[nodiscard]] constexpr T& get() {
+    constexpr NameCategory tag = util::get_union_tag<Kind, T>;
+
+    if (tag == category) {
+      return value.*util::get_union_accessor<Kind, tag>;
+    }
+    throw std::runtime_error("Member not held");
+  }
+
+  template <typename T>
+  [[nodiscard]] constexpr T const& get() const {
+    constexpr NameCategory tag = util::get_union_tag<Kind, T>;
+
+    if (tag == category) {
+      return value.*util::get_union_accessor<Kind, tag>;
+    }
+    throw std::runtime_error("Member not held");
+  }
+
+  [[nodiscard]] constexpr operator bool() const {
+    if (category == NameCategory::identifier){
+      return get<Identifier>() != Identifier::error;
+    }
+    return true;
   }
 };
 
