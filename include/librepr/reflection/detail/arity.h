@@ -3,9 +3,14 @@
 #include <type_traits>
 
 namespace librepr::detail {
+template <typename>
+inline constexpr bool dependent_false = false;
+
 struct Universal {
   template <typename T>
-  /* implicit */ constexpr operator T();  // NOLINT
+  explicit(false) operator T() {
+    static_assert(dependent_false<T>, "operator T can only be used in unevaluated contexts");
+  }
 };
 
 template <typename T>
