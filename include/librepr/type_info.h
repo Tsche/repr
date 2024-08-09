@@ -12,7 +12,7 @@ template <typename T>
 struct TypeName {
   static std::string to_string() noexcept { return librepr::get_name<T>(); }
 
-  /* implicit */ operator std::string() const noexcept {  // NOLINT
+  explicit(false) operator std::string() const noexcept {
     return to_string();
   }
 
