@@ -27,7 +27,7 @@ struct [[nodiscard]] const_string {
   [[nodiscard]] constexpr bool empty() const noexcept { return size == 0; }
 
   [[nodiscard]] constexpr char const& operator[](std::size_t Idx) const { return value[Idx]; }
-  friend constexpr auto operator==(const_string lhs, std::string_view rhs) noexcept { return rhs == lhs.data; }
+  friend constexpr auto operator==(const_string lhs, std::string_view rhs) noexcept { return rhs == lhs.value; }
 };
 
 template <std::size_t N>
